@@ -26,22 +26,58 @@ interface ThreadFormProps {}
 
 const ThreadForm: React.FC<ThreadFormProps> = (props) => {
   const policy = GetPolicy();
+  const [form, setForm] = useState<{}>();
+
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    debugger;
+    e.preventDefault();
+
+    if (form) {
+      const formData = new FormData(e.target);
+
+      // for (let [key, value] of Object.entries(form)) {
+      //   formData.append(key, value);
+      // }
+
+      fetch("/api/upload", {
+        method: "post",
+        body: formData,
+      }).then((resp) => {
+        alert("Post complete");
+        console.log(resp);
+      });
+    }
+  };
+
+  const handle = (
+    evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    console.log("CHANGE", evt);
+    setForm((prev) => ({
+      ...prev,
+      [evt.target.name]: evt.target.files || evt.target.value,
+    }));
+  };
 
   return (
-    <form>
+    <form onSubmit={submit}>
       <table>
-        <LabeldInput name="url" type="text" />
+        <LabeldInput name="url" type="text" onChange={handle} />
         <tr>
           <td>
             <label for="body">body</label>
           </td>
           <td>
-            <textarea name="body" cols={40} rows={4} />
+            <textarea name="body" cols={40} rows={4} onChange={handle} />
           </td>
         </tr>
-        <LabeldInput name="public key" />
-        <LabeldInput name="reply to" />
-        <LabeldInput name="tags" placeholder="comma, seperated, words" />
+        <LabeldInput name="public key" onChange={handle} />
+        <LabeldInput name="reply to" onChange={handle} />
+        <LabeldInput
+          name="tags"
+          placeholder="comma, seperated, words"
+          onChange={handle}
+        />
         <LabeldInput
           label={`embed up to ${policy.maxEmbeds} files`}
           name="embeds"
@@ -49,6 +85,7 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
           accept={policy.embeds.join(",")}
           multiple={policy.maxEmbeds > 1}
           size={policy.maxSize}
+          onChange={handle}
         />
       </table>
 
