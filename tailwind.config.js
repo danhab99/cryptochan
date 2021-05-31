@@ -7,6 +7,8 @@ module.exports = {
     extend: {
       colors: {
         background: colors.coolGray,
+        primary: colors.lightBlue,
+        muted: colors.gray,
       },
     },
   },
