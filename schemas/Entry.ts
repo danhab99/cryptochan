@@ -63,3 +63,131 @@ const EntrySchema: Schema = new Schema({
 
 export const Entry: Model<IEntry> =
   mongoose.models.Entry || model("Entry", EntrySchema);
+
+Entry.countDocuments().then((count) => {
+  if (count <= 0) {
+    console.log("Createing seed posts");
+    Entry.insertMany([
+      {
+        author: {
+          name: "test 1",
+          publickey: "sadfkjasdfpohjasdfkpjnb",
+        },
+        hash: {
+          algorithm: "sha256",
+          value: "asdfkjnasdfpkjnasdfkhjasdfk;jsfad",
+        },
+        signature: "sadfsadfnjasfkjsafk",
+        parenthash: "",
+        replies: true,
+        body: {
+          mimetype: "text/plain",
+          content: "This is a test post",
+        },
+        published: new Date(),
+        category: "cat1",
+        tag: ["t1", "t2", "t3"],
+        embeds: [
+          {
+            algorithm: "sha256",
+            hash: "sdfibjsadfipuhsdf",
+            mimetype: "application/null",
+            size: "1b",
+          },
+          {
+            algorithm: "sha256",
+            hash: "sdfibjsadfipuhsdf",
+            mimetype: "application/null",
+            size: "1b",
+          },
+          {
+            algorithm: "sha256",
+            hash: "sdfibjsadfipuhsdf",
+            mimetype: "application/null",
+            size: "1b",
+          },
+        ],
+      },
+      {
+        author: {
+          name: "test 2",
+          publickey: "sadfkjasdfpohjasdfkpjnb",
+        },
+        hash: {
+          algorithm: "sha256",
+          value: "asdfkjnasdfpkjnasdfkhjasdfk;jsfad",
+        },
+        signature: "sadfsadfnjasfkjsafk",
+        parenthash: "",
+        replies: true,
+        body: {
+          mimetype: "text/plain",
+          content: "This is a test post",
+        },
+        published: new Date(),
+        category: "cat1",
+        tag: ["t1", "t2", "t3"],
+        embeds: [
+          {
+            algorithm: "sha256",
+            hash: "sdfibjsadfipuhsdf",
+            mimetype: "application/null",
+            size: "1b",
+          },
+          {
+            algorithm: "sha256",
+            hash: "sdfibjsadfipuhsdf",
+            mimetype: "application/null",
+            size: "1b",
+          },
+          {
+            algorithm: "sha256",
+            hash: "sdfibjsadfipuhsdf",
+            mimetype: "application/null",
+            size: "1b",
+          },
+        ],
+      },
+      {
+        author: {
+          name: "test 3",
+          publickey: "sadfkjasdfpohjasdfkpjnb",
+        },
+        hash: {
+          algorithm: "sha256",
+          value: "asdfkjnasdfpkjnasdfkhjasdfk;jsfad",
+        },
+        signature: "sadfsadfnjasfkjsafk",
+        parenthash: "",
+        replies: true,
+        body: {
+          mimetype: "text/plain",
+          content: "This is a test post",
+        },
+        published: new Date(),
+        category: "cat2",
+        tag: ["t1", "t2", "t3"],
+        embeds: [
+          {
+            algorithm: "sha256",
+            hash: "sdfibjsadfipuhsdf",
+            mimetype: "application/null",
+            size: "1b",
+          },
+          {
+            algorithm: "sha256",
+            hash: "sdfibjsadfipuhsdf",
+            mimetype: "application/null",
+            size: "1b",
+          },
+          {
+            algorithm: "sha256",
+            hash: "sdfibjsadfipuhsdf",
+            mimetype: "application/null",
+            size: "1b",
+          },
+        ],
+      },
+    ]);
+  }
+});
