@@ -62,4 +62,4 @@ const EntrySchema: Schema = new Schema({
 });
 
 export const Entry: Model<IEntry> =
-  mongoose.models.Users || model("Entry", EntrySchema);
+  mongoose.models.Entry || model("Entry", EntrySchema);
