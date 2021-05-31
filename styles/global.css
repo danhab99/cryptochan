@@ -1,7 +1,9 @@
-@tailwind base;
+/* @tailwind base; */
 @tailwind components;
 @tailwind utilities;
 
+@import "./title.css";
+@import "./entry.css";
 @import "./threadform.css";
 
 body {

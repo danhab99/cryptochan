@@ -1,0 +1,7 @@
+.entryCard {
+  @apply container border-primary-400 border border-solid pl-3 m-3 bg-background-300;
+}
+
+.entryTitle {
+  @apply text-xs;
+}
