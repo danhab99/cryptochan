@@ -56,10 +56,10 @@
       <rule></rule>
     </posting>
 
-    <embeds maxcount="">
-      <rule mimetype="" maxsize="" reject="true|false">
-      <rule mimetype="" maxsize="" reject="true|false">
-      <rule mimetype="" maxsize="" reject="true|false">
+    <embeds maxcount="" maxsize="">
+      <rule mimetype="" accept="true|false">
+      <rule mimetype="" accept="true|false">
+      <rule mimetype="" accept="true|false">
     </embeds>
   </policy>
 </manifest>
