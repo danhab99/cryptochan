@@ -1,5 +1,5 @@
 .modalOverlay {
-  @apply fixed absolute z-50 overflow-auto bg-background-700 flex;
+  @apply fixed  z-50 overflow-auto bg-background-700 flex;
 }
 
 .modalBox {
