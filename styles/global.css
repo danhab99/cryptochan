@@ -5,6 +5,7 @@
 @import "./title.css";
 @import "./entry.css";
 @import "./threadform.css";
+@import "./modal.css";
 
 body {
   @apply bg-background-400;
