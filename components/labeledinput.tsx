@@ -1,20 +1,27 @@
 import React, { InputHTMLAttributes } from "react";
 
-interface LabeledInputProps {
-  name: string;
+interface LabeledRowProps {
+  name?: string;
   label?: string;
 }
-export const LabeldInput: React.FC<
-  LabeledInputProps & InputHTMLAttributes<HTMLInputElement>
-> = (props) => {
+
+export const LabeledRow: React.FC<LabeledRowProps> = (props) => {
   return (
     <tr>
       <td>
-        <label for={props.name}>{props.label || props.name}</label>
+        <label htmlFor={props.name || ""}>{props.label}</label>
       </td>
-      <td>
-        <input id={props.name} {...props} />
-      </td>
+      <td>{props.children}</td>
     </tr>
+  );
+};
+
+export const LabeledInput: React.FC<
+  LabeledRowProps & InputHTMLAttributes<HTMLInputElement>
+> = (props) => {
+  return (
+    <LabeledRow label={props.label || props.name} name={props.name}>
+      <input id={props.name} {...props} />
+    </LabeledRow>
   );
 };

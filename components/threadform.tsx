@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import _ from "lodash";
 import { GetPolicy } from "../policy";
-import { LabeldInput } from "./labeledinput";
+import { LabeledInput, LabeledRow } from "./labeledinput";
 
 interface ThreadFormProps {}
 
-const ThreadForm: React.FC<ThreadFormProps> = (props) => {
+const ThreadForm: React.FC<ThreadFormProps> = () => {
   const policy = GetPolicy();
   const [form, setForm] = useState<{}>();
 
@@ -13,7 +13,7 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
     e.preventDefault();
 
     if (form) {
-      const formData = new FormData(e.target);
+      const formData = new FormData();
 
       // for (let [key, value] of Object.entries(form)) {
       //   formData.append(key, value);
@@ -30,11 +30,13 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
   };
 
   const handle = (
-    evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    evt: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setForm((prev) => ({
       ...prev,
-      [evt.target.name]: evt.target.files || evt.target.value,
+      [evt.target.name]: /* evt.target.files || */ evt.target.value,
     }));
   };
 
@@ -42,20 +44,12 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
     <div>
       <form onSubmit={submit}>
         <table>
-          <LabeldInput name="url" type="text" onChange={handle} />
-          <tr>
-            <td>
-              <label for="body">body</label>
-            </td>
-            <td>
-              <textarea name="body" cols={50} rows={4} onChange={handle} />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label>Private key</label>
-            </td>
-            <td className="flex">
+          <LabeledInput name="url" type="text" onChange={handle} />
+          <LabeledRow name="body" label="body">
+            <textarea name="body" cols={50} rows={4} onChange={handle} />
+          </LabeledRow>
+          <LabeledRow label="private key">
+            <div className="flex">
               <input type="file" accept="application/pgp-keys" />
               <a
                 href="/newkeys"
@@ -63,27 +57,22 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
               >
                 Generate keys
               </a>
-            </td>
-          </tr>
-          <LabeldInput name="reply to" onChange={handle} />
-          <tr>
-            <td>
-              <label>Category</label>
-            </td>
-            <td>
-              <select>
-                {policy.categories.map((x) => (
-                  <option>{x}</option>
-                ))}
-              </select>
-            </td>
-          </tr>
-          <LabeldInput
+            </div>
+          </LabeledRow>
+          <LabeledInput name="reply to" onChange={handle} />
+          <LabeledRow label="category">
+            <select onChange={handle} name="category">
+              {policy.categories.map((x) => (
+                <option>{x}</option>
+              ))}
+            </select>
+          </LabeledRow>
+          <LabeledInput
             name="tags"
             placeholder="comma, seperated, words"
             onChange={handle}
           />
-          <LabeldInput
+          <LabeledInput
             label={`embed up to ${policy.maxEmbeds} files`}
             name="embeds"
             type="file"
