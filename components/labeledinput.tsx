@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from "react";
+import React, { InputHTMLAttributes, useRef } from "react";
 
 interface LabeledRowProps {
   name?: string;
@@ -19,9 +19,14 @@ export const LabeledRow: React.FC<LabeledRowProps> = (props) => {
 export const LabeledInput: React.FC<
   LabeledRowProps & InputHTMLAttributes<HTMLInputElement>
 > = (props) => {
+  const defaultRef = useRef(Math.random().toString(36));
+
   return (
-    <LabeledRow label={props.label || props.name} name={props.name}>
-      <input id={props.name} {...props} />
+    <LabeledRow
+      label={props.label || props.name || ""}
+      name={props.name || defaultRef.current}
+    >
+      <input id={props.name || defaultRef.current} {...props} />
     </LabeledRow>
   );
 };

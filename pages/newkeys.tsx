@@ -87,7 +87,7 @@ const NewKeys: React.FC = () => {
                       DO NOT UNDER ANY CIRCUMSTANCES LOOSE CONTROL OF THIS FILE
                     </strong>
                     . Anyone who has this file can sign whatever they want with
-                    it and everybody will thing that it was you. As a citizen of
+                    it and everybody will thing that it was you. As citizens of
                     the internet, we can all imagine some less that moral things
                     we don't want someone else signing with our name. You can
                     learn more about it{" "}
