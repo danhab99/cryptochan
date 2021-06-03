@@ -8,6 +8,7 @@ interface IPolicy {
   embeds: string[];
   maxEmbeds: number;
   maxSize: number;
+  categories: string[];
 }
 
 export function GetPolicy(): IPolicy {
@@ -21,5 +22,6 @@ export function GetPolicy(): IPolicy {
     maxEmbeds: 3,
     maxSize: 1e6,
     rules: ["No porn"],
+    categories: ["all", "test"],
   };
 }
