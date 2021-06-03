@@ -1,26 +1,7 @@
 import React, { InputHTMLAttributes, useState } from "react";
 import _ from "lodash";
 import { GetPolicy } from "../policy";
-
-interface LabeledInputProps {
-  name: string;
-  label?: string;
-}
-
-const LabeldInput: React.FC<
-  LabeledInputProps & InputHTMLAttributes<HTMLInputElement>
-> = (props) => {
-  return (
-    <tr>
-      <td>
-        <label for={props.name}>{props.label || props.name}</label>
-      </td>
-      <td>
-        <input id={props.name} {...props} />
-      </td>
-    </tr>
-  );
-};
+import { LabeldInput } from "./labeledinput";
 
 interface ThreadFormProps {}
 

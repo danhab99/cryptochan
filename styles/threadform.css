@@ -3,7 +3,7 @@ form label {
 }
 
 form td {
-  @apply bg-background-700 text-white text-right border-background-400 border border-solid;
+  @apply bg-background-600 text-white text-right border-background-400 border border-solid;
 }
 
 form input,
@@ -17,6 +17,7 @@ table {
   display: inline-block;
 }
 
-form input[type="submit"] {
+form input[type="submit"],
+.splitinhalf {
   width: 50%;
 }
