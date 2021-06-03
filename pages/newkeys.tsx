@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { generateKey } from "openpgp";
-import { LabeldInput } from "../components/labeledinput";
+import { LabeledInput } from "../components/labeledinput";
 import Title from "../components/title";
 
 const downloadToFile = (
@@ -65,60 +65,63 @@ const NewKeys: React.FC = () => {
             will be expected to keep your secret key secure. Your secret key and
             password are not recoverable.
           </p>
-          <p>
-            When you click <code>Generate</code> you will be saving 3 files to
-            your device.
-            <ol>
-              <li>
-                <p>
-                  The <code>.pub</code> file is your public key, it is not a
-                  secret and you are free to give it to whoever asks for it
-                  without consequences. It is used to verify that an entry you
-                  signed is actually yours.{" "}
-                  <MorInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
-                </p>
-              </li>
-              <li>
-                <p>
-                  The <code>.secret</code> file is used to sign your entries.{" "}
-                  <strong>
-                    DO NOT UNDER ANY CIRCUMSTANCES LOOSE CONTROL OF THIS FILE
-                  </strong>
-                  . Anyone who has this file can sign whatever they want with it
-                  and everybody will thing that it was you. As a citizen of the
-                  internet, we can all imagine some less that moral things we
-                  don't want someone else signing with our name. You can learn
-                  more about it{" "}
-                  <MorInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
-                </p>
-              </li>
-              <li>
-                <p>
-                  The <code>.rev</code> file is used to inform the world that
-                  your secret key was compromised and should be ignored. You
-                  cannot guarantee that everybody will respect your wishes and
-                  you should not rely on this file as a get-out-of-jail-free
-                  card.{" "}
-                  <MorInfo link="http://www.spywarewarrior.com/uiuc/ss/revoke/pgp-revoke.htm" />
-                </p>
-              </li>
-            </ol>
-          </p>
+          <details>
+            <summary>More info</summary>
+            <p>
+              When you click <code>Generate</code> you will be saving 3 files to
+              your device.
+              <ol>
+                <li>
+                  <p>
+                    The <code>.pub</code> file is your public key, it is not a
+                    secret and you are free to give it to whoever asks for it
+                    without consequences. It is used to verify that an entry you
+                    signed is actually yours.{" "}
+                    <MorInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    The <code>.secret</code> file is used to sign your entries.{" "}
+                    <strong>
+                      DO NOT UNDER ANY CIRCUMSTANCES LOOSE CONTROL OF THIS FILE
+                    </strong>
+                    . Anyone who has this file can sign whatever they want with
+                    it and everybody will thing that it was you. As a citizen of
+                    the internet, we can all imagine some less that moral things
+                    we don't want someone else signing with our name. You can
+                    learn more about it{" "}
+                    <MorInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    The <code>.rev</code> file is used to inform the world that
+                    your secret key was compromised and should be ignored. You
+                    cannot guarantee that everybody will respect your wishes and
+                    you should not rely on this file as a get-out-of-jail-free
+                    card.{" "}
+                    <MorInfo link="http://www.spywarewarrior.com/uiuc/ss/revoke/pgp-revoke.htm" />
+                  </p>
+                </li>
+              </ol>
+            </p>
+          </details>
           <form className="flex flex-row justify-center">
             <table>
-              <LabeldInput
+              <LabeledInput
                 label="name"
                 type="text"
                 name="name"
                 onChange={(e) => setName(e.target.value)}
               />
-              <LabeldInput
+              <LabeledInput
                 label="email"
                 type="email"
                 name="email"
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <LabeldInput
+              <LabeledInput
                 label="password"
                 type="password"
                 name="password"
