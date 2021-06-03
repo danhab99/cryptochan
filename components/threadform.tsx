@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useState } from "react";
+import React, { useState } from "react";
 import _ from "lodash";
 import { GetPolicy } from "../policy";
 import { LabeldInput } from "./labeledinput";
@@ -10,7 +10,6 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
   const [form, setForm] = useState<{}>();
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
-    debugger;
     e.preventDefault();
 
     if (form) {
@@ -33,7 +32,6 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
   const handle = (
     evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    console.log("CHANGE", evt);
     setForm((prev) => ({
       ...prev,
       [evt.target.name]: evt.target.files || evt.target.value,
@@ -41,37 +39,64 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
   };
 
   return (
-    <form onSubmit={submit}>
-      <table>
-        <LabeldInput name="url" type="text" onChange={handle} />
-        <tr>
-          <td>
-            <label for="body">body</label>
-          </td>
-          <td>
-            <textarea name="body" cols={40} rows={4} onChange={handle} />
-          </td>
-        </tr>
-        <LabeldInput name="public key" onChange={handle} />
-        <LabeldInput name="reply to" onChange={handle} />
-        <LabeldInput
-          name="tags"
-          placeholder="comma, seperated, words"
-          onChange={handle}
-        />
-        <LabeldInput
-          label={`embed up to ${policy.maxEmbeds} files`}
-          name="embeds"
-          type="file"
-          accept={policy.embeds.join(",")}
-          multiple={policy.maxEmbeds > 1}
-          size={policy.maxSize}
-          onChange={handle}
-        />
-      </table>
+    <div>
+      <form onSubmit={submit}>
+        <table>
+          <LabeldInput name="url" type="text" onChange={handle} />
+          <tr>
+            <td>
+              <label for="body">body</label>
+            </td>
+            <td>
+              <textarea name="body" cols={50} rows={4} onChange={handle} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>Private key</label>
+            </td>
+            <td className="flex">
+              <input type="file" accept="application/pgp-keys" />
+              <a
+                href="/newkeys"
+                className="whitespace-nowrap text-primary-500 text-sm pr-1"
+              >
+                Generate keys
+              </a>
+            </td>
+          </tr>
+          <LabeldInput name="reply to" onChange={handle} />
+          <tr>
+            <td>
+              <label>Category</label>
+            </td>
+            <td>
+              <select>
+                {policy.categories.map((x) => (
+                  <option>{x}</option>
+                ))}
+              </select>
+            </td>
+          </tr>
+          <LabeldInput
+            name="tags"
+            placeholder="comma, seperated, words"
+            onChange={handle}
+          />
+          <LabeldInput
+            label={`embed up to ${policy.maxEmbeds} files`}
+            name="embeds"
+            type="file"
+            accept={policy.embeds.join(",")}
+            multiple={policy.maxEmbeds > 1}
+            size={policy.maxSize}
+            onChange={handle}
+          />
+        </table>
 
-      <input type="submit" />
-    </form>
+        <input type="submit" />
+      </form>
+    </div>
   );
 };
 

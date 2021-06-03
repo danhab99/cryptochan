@@ -17,7 +17,6 @@ table {
   display: inline-block;
 }
 
-form input[type="submit"],
-.splitinhalf {
+form input[type="submit"] {
   width: 50%;
 }
