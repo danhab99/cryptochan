@@ -18,7 +18,7 @@ const Home: React.FC<HomeProps> = (props) => {
   return (
     <div>
       <Header />
-      <Title />
+      <Title newThreads />
 
       {props.entries?.map((entry) => (
         <EntryComponent entry={entry} />
