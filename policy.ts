@@ -9,6 +9,7 @@ interface IPolicy {
   maxEmbeds: number;
   maxSize: number;
   categories: string[];
+  hash_algo: "SHA-256" | "SHA-384" | "SHA_512";
 }
 
 export function GetPolicy(): IPolicy {
@@ -23,5 +24,6 @@ export function GetPolicy(): IPolicy {
     maxSize: 1e6,
     rules: ["No porn"],
     categories: ["all", "test"],
+    hash_algo: "SHA-256",
   };
 }
