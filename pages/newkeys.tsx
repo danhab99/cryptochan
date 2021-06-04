@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { generateKey } from "openpgp";
 import { LabeledInput } from "../components/labeledinput";
 import Title from "../components/title";
+import { Header } from "../components/header";
 
 const downloadToFile = (
   content: any,
@@ -54,6 +55,7 @@ const NewKeys: React.FC = () => {
 
   return (
     <div>
+      <Header />
       <Title newThreads={false} />
       <div className="flex flex-row justify-center">
         <div className="w-1/2">
