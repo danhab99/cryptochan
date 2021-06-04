@@ -1,13 +1,13 @@
 import mongoose, { model, Schema, Model, Document } from "mongoose";
 
-interface IEmbed {
+export interface IEmbed {
   hash: string;
   algorithm: string;
   mimetype: string;
   size: string;
 }
 
-export interface IEntry extends Document {
+export interface IEntrySimple {
   author: {
     name: string;
     publickey: string;
@@ -28,6 +28,8 @@ export interface IEntry extends Document {
   tag: string[];
   embeds: IEmbed[];
 }
+
+export type IEntry = Document<IEntrySimple>;
 
 const EmbedSchema: Schema = new Schema({
   hash: String,
