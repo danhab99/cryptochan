@@ -1,47 +1,87 @@
 import * as openpgp from "openpgp";
-import { IEntry } from "./schemas/Entry";
+import { encode } from "base64-arraybuffer";
+import str2ab from "string-to-arraybuffer";
+import { IEntrySimple, IEmbed } from "./schemas/Entry";
+import { GetPolicy } from "./policy";
 
-const EntryToMessage = (e: IEntry) => {
-  let text = [
-    e.hash,
-    e.author.name,
-    e.author.publickey,
-    e.body.content,
-    e.body.mimetype,
-    e.category,
-    e.tag.join(""),
-    e.embeds.map((x) => [
-      x.hash,
-      x.mimetype,
-      x.size,
-      // TODO: Get embed bits in here somehow
-    ]),
-  ].join("");
+const Policy = GetPolicy();
 
-  return openpgp.createCleartextMessage({ text });
+const appendBuffer = (left: ArrayBuffer, right: ArrayBuffer): ArrayBuffer => {
+  var t = new Uint8Array(left.byteLength + right.byteLength);
+  t.set(new Uint8Array(left), 0);
+  t.set(new Uint8Array(right), left.byteLength);
+  return t.buffer;
 };
+
+export const HashArrayBuffer = (data: ArrayBuffer): Promise<string> =>
+  crypto.subtle
+    .digest(Policy.hash_algo, data)
+    .then((hash) =>
+      [...new Uint8Array(hash)]
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("")
+    );
+
+export type EntryWithEmbeds = {
+  embeds: Array<{ bits: ArrayBuffer } & IEmbed>;
+} & IEntrySimple;
+
+const ArrayToArrayBuffer = (data: Array<any>): ArrayBuffer => {
+  return data
+    .map(
+      (x: string | ArrayBuffer): ArrayBuffer =>
+        x instanceof ArrayBuffer ? x : str2ab(x)
+    )
+    .reduce((acc, curr) => appendBuffer(acc, curr), new ArrayBuffer(0));
+};
+
+export interface EntrySignature {
+  hash: string;
+  signature: string;
+}
 
 export const SignEntry = async (
-  secretKey: openpgp.PrivateKey,
-  entry: IEntry
-) => {
-  let es = await EntryToMessage(entry);
+  armoredKey: string,
+  passphrase: string,
+  entry: Partial<EntryWithEmbeds>
+): Promise<EntrySignature> => {
+  let hashingSeries: Array<any> = [
+    entry?.author?.name,
+    entry?.author?.publickey,
+    entry?.body?.content,
+    entry?.body?.mimetype,
+    entry?.category,
+    entry?.parenthash,
+    entry?.published?.toISOString(),
+    entry?.tag?.join(""),
+    ...(entry.embeds || []).reduce(
+      (acc, e) => [...acc, e.hash, e.algorithm, e.mimetype, e.size, e.bits],
+      [] as any[]
+    ),
+  ];
 
-  return await openpgp.sign({
-    message: es, // CleartextMessage or Message object
-    signingKeys: secretKey, // for signing
-  });
-};
+  let hashingBuffer = ArrayToArrayBuffer(hashingSeries);
 
-export const VerifyEntry = async (
-  publicKey: openpgp.PublicKey,
-  entry: IEntry,
-  signature: openpgp.Signature
-) => {
-  let es = await EntryToMessage(entry);
-  return openpgp.verify({
-    message: es,
-    verificationKeys: publicKey,
-    signature,
+  let hash = await HashArrayBuffer(hashingBuffer);
+
+  let signingBuffer = ArrayToArrayBuffer(
+    ([] as Array<any>).concat([hash], hashingSeries)
+  );
+
+  let unsignedMessage = await openpgp.createMessage({
+    text: encode(signingBuffer),
   });
+
+  const privateKey = await openpgp.decryptKey({
+    privateKey: await openpgp.readKey({ armoredKey }),
+    passphrase,
+  });
+
+  let signature = await openpgp.sign({
+    message: unsignedMessage, // CleartextMessage or Message object
+    signingKeys: privateKey, // for signing
+    detached: true,
+  });
+
+  return { hash, signature };
 };
