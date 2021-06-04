@@ -14,7 +14,7 @@ const Title: React.FC<TitleProps> = (props) => {
         <h1 className="text-primary-600">{process.env.TITLE}</h1>
 
         {props.newThreads ? (
-          <div>
+          <div className="newthread">
             <button onClick={() => setShowForm(true)}>
               Start a new thread
             </button>
