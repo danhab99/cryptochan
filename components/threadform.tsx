@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import _ from "lodash";
 import prettyBytes from "pretty-bytes";
 import * as openpgp from "openpgp";
-import { Policy } from "../Policy";
+import { Policy } from "../policy";
 import { LabeledInput, LabeledRow } from "./labeledinput";
 import { EntrySignature, HashArrayBuffer, SignEntry } from "../crypto";
 import { IEmbed } from "../schemas/Entry";
