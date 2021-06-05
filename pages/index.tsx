@@ -2,12 +2,12 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import { Header } from "../components/header";
 import _ from "lodash";
-import { Entry, IEntry } from "../schemas/Entry";
+import { Thread, IThread } from "../schemas/Thread";
 import connectDB from "../middlewares/mongoose";
 import Title from "../components/title";
-import EntryComponent from "../components/entry";
+import ThreadComponent from "../components/thread";
 
-type HomeProps = { entries?: IEntry[]; error?: Error };
+type HomeProps = { entries?: IThread[]; error?: Error };
 
 interface HomeQueryParmas {
   page: number;
@@ -21,7 +21,7 @@ const Home: React.FC<HomeProps> = (props) => {
       <Title newThreads />
 
       {props.entries?.map((entry) => (
-        <EntryComponent entry={entry} />
+        <ThreadComponent entry={entry} />
       ))}
     </div>
   );
@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
   });
 
   try {
-    let entries = (await Entry.find({ parenthash: "" })
+    let entries = (await Thread.find({ parenthash: "" })
       .sort({ published: 1 })
       .skip(q.page * PAGE_COUNT)
       .limit(PAGE_COUNT)
@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
           _id: false,
         },
       })
-      .lean()) as IEntry[];
+      .lean()) as IThread[];
 
     return {
       props: {

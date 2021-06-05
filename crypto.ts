@@ -1,7 +1,7 @@
 import * as openpgp from "openpgp";
 import { encode } from "base64-arraybuffer";
 import str2ab from "string-to-arraybuffer";
-import { IEntrySimple, IEmbed } from "./schemas/Entry";
+import { IThreadSimple, IEmbed } from "./schemas/Thread";
 import { Policy } from "./policy";
 
 const appendBuffer = (left: ArrayBuffer, right: ArrayBuffer): ArrayBuffer => {
@@ -20,9 +20,9 @@ export const HashArrayBuffer = (data: ArrayBuffer): Promise<string> =>
         .join("")
     );
 
-export type EntryWithEmbeds = {
+export type ThreadWithEmbeds = {
   embeds: Array<{ bits: ArrayBuffer } & IEmbed>;
-} & IEntrySimple;
+} & IThreadSimple;
 
 const ArrayToArrayBuffer = (data: Array<any>): ArrayBuffer => {
   return data
@@ -33,16 +33,16 @@ const ArrayToArrayBuffer = (data: Array<any>): ArrayBuffer => {
     .reduce((acc, curr) => appendBuffer(acc, curr), new ArrayBuffer(0));
 };
 
-export interface EntrySignature {
+export interface ThreadSignature {
   hash: string;
   signature: string;
 }
 
-export const SignEntry = async (
+export const SignThread = async (
   armoredKey: string,
   passphrase: string,
-  entry: Partial<EntryWithEmbeds>
-): Promise<EntrySignature> => {
+  entry: Partial<ThreadWithEmbeds>
+): Promise<ThreadSignature> => {
   let hashingSeries: Array<any> = [
     entry?.author?.name,
     entry?.author?.publickey,

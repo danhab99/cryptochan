@@ -7,7 +7,7 @@ export interface IEmbed {
   size: string;
 }
 
-export interface IEntrySimple {
+export interface IThreadSimple {
   author: {
     name: string;
     publickey: string;
@@ -29,7 +29,7 @@ export interface IEntrySimple {
   embeds: IEmbed[];
 }
 
-export interface IEntry extends IEntrySimple, Document {}
+export interface IThread extends IThreadSimple, Document {}
 
 const EmbedSchema: Schema = new Schema({
   hash: String,
@@ -38,7 +38,7 @@ const EmbedSchema: Schema = new Schema({
   size: String,
 });
 
-const EntrySchema: Schema = new Schema({
+const ThreadSchema: Schema = new Schema({
   author: {
     name: String,
     publickey: String,
@@ -63,13 +63,13 @@ const EntrySchema: Schema = new Schema({
   embeds: [{ type: EmbedSchema }],
 });
 
-export const Entry: Model<IEntry> =
-  mongoose.models.Entry || model("Entry", EntrySchema);
+export const Thread: Model<IThread> =
+  mongoose.models.Thread || model("Thread", ThreadSchema);
 
-Entry.countDocuments().then((count) => {
+Thread.countDocuments().then((count) => {
   if (count <= 0) {
     console.log("Createing seed posts");
-    Entry.insertMany([
+    Thread.insertMany([
       {
         author: {
           name: "test 1",

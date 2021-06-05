@@ -4,7 +4,7 @@ import fsp from "fs/promises";
 import fs from "fs";
 // import hasha from "hasha";
 import connectDB from "../../middlewares/mongoose";
-import { Entry, IEntry, IEntrySimple } from "../../schemas/Entry";
+import { Thread, IThread, IThreadSimple } from "../../schemas/Thread";
 import { User } from "./schemas/User";
 import { Policy } from "../../policy";
 import path from "path";
@@ -26,9 +26,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    var fields: Partial<IEntrySimple> = {};
+    var fields: Partial<IThreadSimple> = {};
 
-    busboy.on("field", (fieldname: keyof IEntrySimple, value) => {
+    busboy.on("field", (fieldname: keyof IThreadSimple, value) => {
       console.log("FIELD", fieldname, value);
       fields[fieldname] = value;
     });
@@ -67,7 +67,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     busboy.on("finish", () => {
       console.log("Busboy finished");
 
-      Entry.create(fields).then((entry) => {
+      Thread.create(fields).then((entry) => {
         res.redirect(`/p/${entry.hash.value}`);
       });
     });

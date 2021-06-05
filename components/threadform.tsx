@@ -4,8 +4,8 @@ import prettyBytes from "pretty-bytes";
 import * as openpgp from "openpgp";
 import { Policy } from "../policy";
 import { LabeledInput, LabeledRow } from "./labeledinput";
-import { EntrySignature, HashArrayBuffer, SignEntry } from "../crypto";
-import { IEmbed } from "../schemas/Entry";
+import { ThreadSignature, HashArrayBuffer, SignThread } from "../crypto";
+import { IEmbed } from "../schemas/Thread";
 
 interface ThreadFormProps {}
 
@@ -71,53 +71,55 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
         }
       }
 
-      let { hash, signature } = await new Promise<EntrySignature>((resolve) => {
-        let skReader = new FileReader();
+      let { hash, signature } = await new Promise<ThreadSignature>(
+        (resolve) => {
+          let skReader = new FileReader();
 
-        skReader.onload = () => {
-          let bits = skReader.result;
-          openpgp
-            .readPrivateKey({
-              armoredKey: bits,
-            })
-            .then((sk) => {
-              return sk.getPrimaryUser().then((author) => ({ author, sk }));
-            })
-            .then(({ author, sk }) => {
-              // author.user.userID?.email;
-              // author.user.userID?.name;
+          skReader.onload = () => {
+            let bits = skReader.result;
+            openpgp
+              .readPrivateKey({
+                armoredKey: bits,
+              })
+              .then((sk) => {
+                return sk.getPrimaryUser().then((author) => ({ author, sk }));
+              })
+              .then(({ author, sk }) => {
+                // author.user.userID?.email;
+                // author.user.userID?.name;
 
-              const get = (attrib: string, def: string = "") =>
-                formData.get(attrib)?.toString() || def;
+                const get = (attrib: string, def: string = "") =>
+                  formData.get(attrib)?.toString() || def;
 
-              //! Make sure to diagnose this
-              debugger;
-              return SignEntry(bits, skPassword, {
-                author: {
-                  name: author.user.userID?.name || "anon",
-                  publickey: sk.getKeyID().toHex(),
-                },
-                body: {
-                  content: get("body"),
-                  mimetype: "text/plain",
-                },
-                category: get("category", "all"),
-                parenthash: get("reply to"),
-                published: new Date(parseInt(get("published"))),
-                embeds: embedsForSigning,
-                tag: get("tags").split(","),
-              }).then((sig) => {
-                resolve(sig);
+                //! Make sure to diagnose this
+                debugger;
+                return SignThread(bits, skPassword, {
+                  author: {
+                    name: author.user.userID?.name || "anon",
+                    publickey: sk.getKeyID().toHex(),
+                  },
+                  body: {
+                    content: get("body"),
+                    mimetype: "text/plain",
+                  },
+                  category: get("category", "all"),
+                  parenthash: get("reply to"),
+                  published: new Date(parseInt(get("published"))),
+                  embeds: embedsForSigning,
+                  tag: get("tags").split(","),
+                }).then((sig) => {
+                  resolve(sig);
+                });
               });
-            });
-        };
+          };
 
-        if (skFile) {
-          skReader.readAsText(skFile);
-        } else {
-          throw new Error("Secret key needed");
+          if (skFile) {
+            skReader.readAsText(skFile);
+          } else {
+            throw new Error("Secret key needed");
+          }
         }
-      });
+      );
 
       debugger;
 

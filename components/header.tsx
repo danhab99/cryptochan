@@ -1,9 +1,9 @@
 import React from "react";
 import Head from "next/head";
-import { IEntrySimple } from "../schemas/Entry";
+import { IThreadSimple } from "../schemas/Thread";
 
 type HeaderProps =
-  | { type: "entry"; entry: IEntrySimple }
+  | { type: "entry"; entry: IThreadSimple }
   | { type: "category"; category: string }
   | { type: "user"; user: any }
   | { type: "error"; error: string };

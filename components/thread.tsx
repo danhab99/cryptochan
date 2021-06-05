@@ -1,11 +1,11 @@
 import React from "react";
-import { IEntry } from "../schemas/Entry";
+import { IThread } from "../schemas/Thread";
 
-interface EntryProps {
-  entry: IEntry;
+interface ThreadProps {
+  entry: IThread;
 }
 
-const EntryComponent: React.FC<EntryProps> = ({ entry }) => {
+const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
   return (
     <div className="entryCard">
       <p className="entryTitle">
@@ -22,4 +22,4 @@ const EntryComponent: React.FC<EntryProps> = ({ entry }) => {
   );
 };
 
-export default EntryComponent;
+export default ThreadComponent;
