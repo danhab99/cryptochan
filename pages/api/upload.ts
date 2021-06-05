@@ -67,8 +67,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     busboy.on("finish", () => {
       console.log("Busboy finished");
 
-      Thread.create(fields).then((entry) => {
-        res.redirect(`/p/${entry.hash.value}`);
+      Thread.create(fields).then((thread) => {
+        res.redirect(`/p/${thread.hash.value}`);
       });
     });
 
