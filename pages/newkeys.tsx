@@ -19,7 +19,7 @@ const downloadToFile = (
   URL.revokeObjectURL(a.href);
 };
 
-const MorInfo: React.FC<{ link: string }> = (props) => {
+const MoreInfo: React.FC<{ link: string }> = (props) => {
   return (
     <>
       You can learn more about it <a href={props.link}>here</a>.
@@ -79,7 +79,7 @@ const NewKeys: React.FC = () => {
                     secret and you are free to give it to whoever asks for it
                     without consequences. It is used to verify that an entry you
                     signed is actually yours.{" "}
-                    <MorInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
+                    <MoreInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
                   </p>
                 </li>
                 <li>
@@ -91,9 +91,8 @@ const NewKeys: React.FC = () => {
                     . Anyone who has this file can sign whatever they want with
                     it and everybody will thing that it was you. As citizens of
                     the internet, we can all imagine some less that moral things
-                    we don't want someone else signing with our name. You can
-                    learn more about it{" "}
-                    <MorInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
+                    we don't want someone else signing with our name.{" "}
+                    <MoreInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
                   </p>
                 </li>
                 <li>
@@ -103,7 +102,7 @@ const NewKeys: React.FC = () => {
                     cannot guarantee that everybody will respect your wishes and
                     you should not rely on this file as a get-out-of-jail-free
                     card.{" "}
-                    <MorInfo link="http://www.spywarewarrior.com/uiuc/ss/revoke/pgp-revoke.htm" />
+                    <MoreInfo link="http://www.spywarewarrior.com/uiuc/ss/revoke/pgp-revoke.htm" />
                   </p>
                 </li>
               </ol>
