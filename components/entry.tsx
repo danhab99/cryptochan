@@ -10,7 +10,7 @@ const EntryComponent: React.FC<EntryProps> = ({ entry }) => {
     <div className="entryCard">
       <p className="entryTitle">
         <span className="font-bold">{entry.author.name}</span> (pk:
-        {entry.author.publickey}) {entry.published}
+        {entry.author.publickey}) {entry.published.toISOString()}
         <span className="text-muted-600">
           {"#"}
           {entry.hash.value}

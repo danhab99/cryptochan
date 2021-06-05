@@ -17,7 +17,7 @@ interface HomeQueryParmas {
 const Home: React.FC<HomeProps> = (props) => {
   return (
     <div>
-      <Header />
+      <Header type="category" category="all" />
       <Title newThreads />
 
       {props.entries?.map((entry) => (
@@ -42,19 +42,18 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
     sort: "date",
   });
 
-  console.log("INDEX", q);
-
   try {
-    let entries = await Entry.find({ parenthash: "" })
+    let entries = (await Entry.find({ parenthash: "" })
       .sort({ published: 1 })
       .skip(q.page * PAGE_COUNT)
       .limit(PAGE_COUNT)
-      .select("-_id")
-      .lean();
-
-    entries = JSON.parse(JSON.stringify(entries));
-
-    console.log("INDEX", entries);
+      .select({
+        _id: false,
+        embeds: {
+          _id: false,
+        },
+      })
+      .lean()) as IEntry[];
 
     return {
       props: {
@@ -62,7 +61,6 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
       },
     };
   } catch (e) {
-    console.error("INDEX", e);
     return {
       props: {
         error: e,
