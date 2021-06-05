@@ -29,7 +29,7 @@ export interface IEntrySimple {
   embeds: IEmbed[];
 }
 
-export type IEntry = Document<IEntrySimple>;
+export interface IEntry extends IEntrySimple, Document {}
 
 const EmbedSchema: Schema = new Schema({
   hash: String,

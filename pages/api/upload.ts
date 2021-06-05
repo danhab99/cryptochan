@@ -1,9 +1,13 @@
 import { NextApiRequest, NextApiResponse, PageConfig } from "next";
 import Busboy from "busboy";
+import fsp from "fs/promises";
+import fs from "fs";
+// import hasha from "hasha";
 import connectDB from "../../middlewares/mongoose";
-import { Entry } from "../../schemas/Entry";
-import { User } from "../../schemas/User";
+import { Entry, IEntry, IEntrySimple } from "../../schemas/Entry";
+import { User } from "./schemas/User";
 import { Policy } from "../../policy";
+import path from "path";
 
 export const config: PageConfig = {
   api: {
@@ -12,12 +16,61 @@ export const config: PageConfig = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  debugger;
   await connectDB();
 
   if (req.method === "POST") {
-    const busboy = new Busboy({ headers: req.headers });
-    // TODO Catch the incoming form https://www.npmjs.com/package/busboy
+    const busboy = new Busboy({
+      headers: req.headers,
+      limits: {
+        fileSize: Policy.maxSize,
+      },
+    });
+
+    var fields: Partial<IEntrySimple> = {};
+
+    busboy.on("field", (fieldname: keyof IEntrySimple, value) => {
+      console.log("FIELD", fieldname, value);
+      fields[fieldname] = value;
+    });
+
+    busboy.on("file", async (fieldname, file, filename, encoding, mimetype) => {
+      console.log("FILE", fieldname, filename);
+
+      await fsp.mkdir(path.join(process.cwd(), "embeds"), {
+        recursive: true,
+      });
+      let outfilename = path.join(process.cwd(), "embeds", filename);
+      let outstream = fs.createWriteStream(outfilename);
+
+      file.on("limit", () => {
+        file.unpipe(outstream);
+        outstream.close();
+        fs.unlinkSync(outfilename);
+      });
+
+      let size = 0;
+
+      file.on("data", (chunk) => (size += chunk.length));
+
+      file.on("end", () => {
+        fields["embeds"]?.push({
+          algorithm: Policy.hash_algo,
+          hash: filename,
+          mimetype,
+          size: `${size}`,
+        });
+      });
+
+      file.pipe(outstream);
+    });
+
+    busboy.on("finish", () => {
+      console.log("Busboy finished");
+
+      Entry.create(fields).then((entry) => {
+        res.redirect(`/p/${entry.hash.value}`);
+      });
+    });
 
     req.pipe(busboy);
   } else {
