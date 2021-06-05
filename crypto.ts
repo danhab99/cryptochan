@@ -2,9 +2,7 @@ import * as openpgp from "openpgp";
 import { encode } from "base64-arraybuffer";
 import str2ab from "string-to-arraybuffer";
 import { IEntrySimple, IEmbed } from "./schemas/Entry";
-import { GetPolicy } from "./policy";
-
-const Policy = GetPolicy();
+import { Policy } from "./policy";
 
 const appendBuffer = (left: ArrayBuffer, right: ArrayBuffer): ArrayBuffer => {
   var t = new Uint8Array(left.byteLength + right.byteLength);

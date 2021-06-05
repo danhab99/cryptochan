@@ -12,18 +12,16 @@ interface IPolicy {
   hash_algo: "SHA-256" | "SHA-384" | "SHA_512";
 }
 
-export function GetPolicy(): IPolicy {
-  return {
-    approve_posts: true,
-    publickey: {
-      preapproved: true,
-      require: true,
-    },
-    embeds: ["image/webp", "video/webm"],
-    maxEmbeds: 3,
-    maxSize: 1e6,
-    rules: ["No porn"],
-    categories: ["all", "test"],
-    hash_algo: "SHA-256",
-  };
-}
+export const Policy: IPolicy = {
+  approve_posts: true,
+  publickey: {
+    preapproved: true,
+    require: true,
+  },
+  embeds: ["image/webp", "video/webm"],
+  maxEmbeds: 3,
+  maxSize: 1e6,
+  rules: ["No porn"],
+  categories: ["all", "test"],
+  hash_algo: "SHA-256",
+};

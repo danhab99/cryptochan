@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import _ from "lodash";
 import prettyBytes from "pretty-bytes";
 import * as openpgp from "openpgp";
-import { GetPolicy } from "../policy";
+import { Policy } from "../Policy";
 import { LabeledInput, LabeledRow } from "./labeledinput";
 import { EntrySignature, HashArrayBuffer, SignEntry } from "../crypto";
 import { IEmbed } from "../schemas/Entry";
 
 interface ThreadFormProps {}
-
-const policy = GetPolicy();
 
 const ThreadForm: React.FC<ThreadFormProps> = () => {
   const [form, setForm] = useState<Record<string, any>>();
@@ -45,7 +43,7 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
       let embedsForSigning: Array<IEmbed & { bits: ArrayBuffer }> = [];
 
       for (file of form["embeds"]) {
-        if (file.size > policy.maxSize) {
+        if (file.size > Policy.maxSize) {
           alert("File too big");
           return;
         } else {
@@ -59,7 +57,7 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
                 resolve(hashname);
 
                 embedsForSigning.push({
-                  algorithm: policy.hash_algo,
+                  algorithm: Policy.hash_algo,
                   hash: hashname,
                   mimetype: file.type,
                   size: `${file.size}`,
@@ -176,7 +174,7 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
             <LabeledInput name="reply to" onChange={handle} />
             <LabeledRow label="category">
               <select onChange={handle} name="category">
-                {policy.categories.map((x) => (
+                {Policy.categories.map((x) => (
                   <option>{x}</option>
                 ))}
               </select>
@@ -187,14 +185,14 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
               onChange={handle}
             />
             <LabeledInput
-              label={`embed up to ${policy.maxEmbeds} files ${
-                policy.maxSize ? `(${prettyBytes(policy.maxSize)} max)` : ""
+              label={`embed up to ${Policy.maxEmbeds} files ${
+                Policy.maxSize ? `(${prettyBytes(Policy.maxSize)} max)` : ""
               }`}
               name="embeds"
               type="file"
-              accept={policy.embeds.join(",")}
-              multiple={policy.maxEmbeds > 1}
-              size={policy.maxSize}
+              accept={Policy.embeds.join(",")}
+              multiple={Policy.maxEmbeds > 1}
+              size={Policy.maxSize}
               onChange={handle}
             />
           </tbody>

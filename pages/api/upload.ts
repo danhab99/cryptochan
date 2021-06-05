@@ -3,9 +3,7 @@ import Busboy from "busboy";
 import connectDB from "../../middlewares/mongoose";
 import { Entry } from "../../schemas/Entry";
 import { User } from "../../schemas/User";
-import { GetPolicy } from "../../policy";
-
-const Policy = GetPolicy();
+import { Policy } from "../../policy";
 
 export const config: PageConfig = {
   api: {
