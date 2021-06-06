@@ -32,6 +32,8 @@ const NewKeys: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [autoUpload, setAutoUpload] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const generate = async () => {
     setGenerating(true);
@@ -51,13 +53,30 @@ const NewKeys: React.FC = () => {
     downloadToFile(publicKeyArmored, filename + ".pub", "application/pgp");
     downloadToFile(privateKeyArmored, filename + ".secret", "application/pgp");
     downloadToFile(revocationCertificate, filename + ".rev", "application/pgp");
+
+    if (autoUpload) {
+      setUploading(true);
+
+      let fd = new FormData();
+      fd.append("publickey", publicKeyArmored);
+
+      fetch("/api/regkey", {
+        method: "post",
+        body: fd,
+      }).then((resp) => {
+        setUploading(false);
+        if (!resp.ok) {
+          alert("Failed to upload public key");
+        }
+      });
+    }
   };
 
   return (
     <div>
       <Header />
       <Title newThreads={false} />
-      <div className="flex flex-row justify-center">
+      <div className="centeredFlex">
         <div className="w-1/2">
           <h1 className="text-center">Generate new key</h1>
           <p>
@@ -108,7 +127,7 @@ const NewKeys: React.FC = () => {
               </ol>
             </p>
           </details>
-          <form className="flex flex-row justify-center">
+          <form className="centeredFlex">
             <table>
               <LabeledInput
                 label="name"
@@ -128,6 +147,25 @@ const NewKeys: React.FC = () => {
                 name="password"
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <LabeledInput
+                label="auto upload"
+                type="checkbox"
+                name="autoupload"
+                checked={autoUpload}
+                onChange={(e) => setAutoUpload(e.target.checked)}
+              />
+              <tr>
+                <td colSpan={2}>
+                  <button
+                    type="button"
+                    className="w-full"
+                    disabled={generating}
+                    onClick={() => generate()}
+                  >
+                    Generate {uploading ? "(uploading public key...)" : ""}
+                  </button>
+                </td>
+              </tr>
             </table>
           </form>
           <button

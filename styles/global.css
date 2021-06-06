@@ -13,3 +13,7 @@ body {
 code {
   @apply bg-primary-900 text-white pr-1 pl-1;
 }
+
+.centeredFlex {
+  @apply flex flex-row justify-center;
+}
