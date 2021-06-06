@@ -24,6 +24,8 @@ export type ThreadWithEmbeds = {
   embeds: Array<{ bits: ArrayBuffer } & IEmbed>;
 } & IThreadSimple;
 
+export type PartialThreadWithEmbeds = Partial<ThreadWithEmbeds>;
+
 const ArrayToArrayBuffer = (data: Array<any>): ArrayBuffer => {
   return data
     .map(
@@ -33,16 +35,7 @@ const ArrayToArrayBuffer = (data: Array<any>): ArrayBuffer => {
     .reduce((acc, curr) => appendBuffer(acc, curr), new ArrayBuffer(0));
 };
 
-export interface ThreadSignature {
-  hash: string;
-  signature: string;
-}
-
-export const SignThread = async (
-  armoredKey: string,
-  passphrase: string,
-  entry: Partial<ThreadWithEmbeds>
-): Promise<ThreadSignature> => {
+const HashThread = async (entry: PartialThreadWithEmbeds) => {
   let hashingSeries: Array<any> = [
     entry?.author?.name,
     entry?.author?.publickey,
@@ -59,27 +52,71 @@ export const SignThread = async (
   ];
 
   let hashingBuffer = ArrayToArrayBuffer(hashingSeries);
-
   let hash = await HashArrayBuffer(hashingBuffer);
+  let hashedSeries = ([] as Array<any>).concat([hash], hashingSeries);
 
-  let signingBuffer = ArrayToArrayBuffer(
-    ([] as Array<any>).concat([hash], hashingSeries)
-  );
+  return { hashedSeries, hash };
+};
 
-  let unsignedMessage = await openpgp.createMessage({
+export interface ThreadSignature {
+  hash: string;
+  signature: string;
+}
+
+export const SignThread = async (
+  armoredKey: string,
+  passphrase: string,
+  entry: PartialThreadWithEmbeds
+): Promise<ThreadSignature> => {
+  let { hashedSeries, hash } = await HashThread(entry);
+
+  let signingBuffer = ArrayToArrayBuffer(hashedSeries);
+
+  let unsignedMessage = openpgp.createMessage({
     text: encode(signingBuffer),
   });
 
-  const privateKey = await openpgp.decryptKey({
-    privateKey: await openpgp.readKey({ armoredKey }),
+  const privateKey = openpgp.decryptKey({
+    privateKey: await openpgp.readPrivateKey({ armoredKey }),
     passphrase,
   });
 
   let signature = await openpgp.sign({
-    message: unsignedMessage, // CleartextMessage or Message object
-    signingKeys: privateKey, // for signing
+    message: await unsignedMessage, // CleartextMessage or Message object
+    signingKeys: await privateKey, // for signing
     detached: true,
   });
 
   return { hash, signature };
+};
+
+export const VerifyThread = async (
+  armoredKey: string,
+  signature: string | openpgp.Signature,
+  entry: PartialThreadWithEmbeds
+) => {
+  let publicKey = openpgp.readKey({
+    armoredKey: armoredKey,
+  });
+
+  let parsedSig: openpgp.Signature;
+
+  if (signature instanceof openpgp.Signature) {
+    parsedSig = signature;
+  } else {
+    parsedSig = await openpgp.readSignature({ armoredSignature: signature });
+  }
+
+  let { hashedSeries } = await HashThread(entry);
+
+  let testMessage = await openpgp.createMessage({
+    text: encode(ArrayToArrayBuffer(hashedSeries)),
+  });
+
+  return openpgp.verify({
+    verificationKeys: [await publicKey],
+    signature: parsedSig,
+    expectSigned: true,
+    message: testMessage,
+  });
 };
