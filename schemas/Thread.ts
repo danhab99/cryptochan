@@ -25,8 +25,8 @@ export interface IThreadSimple {
   };
   published: Date;
   category: string;
-  tag: string[];
   embeds: IEmbed[];
+  url: string;
 }
 
 export interface IThread extends IThreadSimple, Document {}
@@ -59,8 +59,8 @@ const ThreadSchema: Schema = new Schema({
   },
   published: Date,
   category: String,
-  tag: [{ type: String }],
   embeds: [{ type: EmbedSchema }],
+  url: String,
 });
 
 export const Thread: Model<IThread> =

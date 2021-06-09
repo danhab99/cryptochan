@@ -100,7 +100,7 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
         category: form["category"] || "all",
         parenthash: form["reply to"],
         published: publishTime,
-        tag: form["tags"],
+        url: form["url"],
       };
 
       let { hash, signature } = await SignThread(
@@ -173,11 +173,6 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
                 ))}
               </select>
             </LabeledRow>
-            <LabeledInput
-              name="tags"
-              placeholder="comma, seperated, words"
-              onChange={handle}
-            />
             <LabeledInput
               label={`embed up to ${Policy.maxEmbeds} files ${
                 Policy.maxSize ? `(${prettyBytes(Policy.maxSize)} max)` : ""
