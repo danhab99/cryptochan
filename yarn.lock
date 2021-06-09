@@ -1965,9 +1965,9 @@ once@^1.3.0:
   dependencies:
     wrappy "1"
 
-"openpgp@https://github.com/danhab99/openpgpjs":
+"openpgp@https://github.com/danhab99/openpgpjs#2ad039037b41025433635491032332e5e12cb07a":
   version "5.0.0-3"
-  resolved "https://github.com/danhab99/openpgpjs#9cc7819c1966bc6103190718f8cd9f1186fbcbb2"
+  resolved "https://github.com/danhab99/openpgpjs#2ad039037b41025433635491032332e5e12cb07a"
   dependencies:
     asn1.js "^5.0.0"
 

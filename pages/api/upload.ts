@@ -79,16 +79,30 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         try {
           let verify = await VerifyThread(dbPublicKey.key, sig, thread);
-          console.warn(verify);
+
+          let valids = await Promise.all(
+            verify.signatures
+              .filter((x) => x.keyID?.toHex?.() === issuer)
+              .map((x) => x.verified)
+          );
+
+          if (valids.every((x) => x)) {
+            Thread.create(thread).then((thread) => {
+              res.redirect(`/p/${thread.hash.value}`);
+            });
+          } else {
+            res.writeHead(401).end(
+              JSON.stringify({
+                error: "One or more issuers were not verifiable",
+              })
+            );
+          }
         } catch (e) {
           console.error(e);
+          res.writeHead(401).json(e);
+          return;
         }
-        debugger;
       }
-
-      Thread.create(thread).then((thread) => {
-        res.redirect(`/p/${thread.hash.value}`);
-      });
     });
 
     req.pipe(busboy);

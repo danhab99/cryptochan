@@ -20,7 +20,7 @@ export const HashArrayBuffer = async (data: ArrayBuffer): Promise<string> => {
     console.log("Digesting using node", data);
     let buf = node_crypto
       .createHash(Policy.hash_algo.toLowerCase().replace("-", ""))
-      .update(new Float32Array(data))
+      .update(new Uint8Array(data))
       .digest();
 
     hashab = Promise.resolve(new Uint8Array(buf).buffer);
@@ -57,8 +57,7 @@ const HashThread = async (entry: Partial<IThreadSimple>) => {
   console.log("Hashing input", serialized);
   debugger;
 
-  let hashingBuffer = ArrayToArrayBuffer(serialized);
-  let hash = await HashArrayBuffer(hashingBuffer);
+  let hash = await HashArrayBuffer(decode(serialized));
 
   console.log("Hash", hash);
 
@@ -117,10 +116,11 @@ export const VerifyThread = async (
     parsedSig = openpgp.readSignature({ armoredSignature: signature });
   }
 
-  delete entry.hash;
-  delete entry.signature;
+  let cleanEntry = _.cloneDeep(entry);
+  delete cleanEntry.hash;
+  delete cleanEntry.signature;
 
-  let hash = await HashThread(entry);
+  let hash = await HashThread(cleanEntry);
 
   console.log("Hashed for verifying", hash);
 
