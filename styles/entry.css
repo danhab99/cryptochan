@@ -3,5 +3,14 @@
 }
 
 .entryTitle {
-  @apply text-xs;
+  @apply text-xs leading-none;
+}
+
+.embedControl {
+  @apply text-xs leading-none m-0 text-primary-700 underline;
+}
+
+.embed {
+  @apply p-0 m-0;
+  height: 10em;
 }
