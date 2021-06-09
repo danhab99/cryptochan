@@ -29,7 +29,7 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
 
       let hashedEmbedsPromise: Promise<Array<IEmbed>>;
 
-      if (form["embeds"]) {
+      if (form["embeds"] && form["embeds"].length > 0) {
         hashedEmbedsPromise = Promise.all(
           ([...form["embeds"]] as Array<File>)
             .filter((file) => file.size < Policy.maxSize)
