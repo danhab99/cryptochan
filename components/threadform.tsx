@@ -5,7 +5,7 @@ import * as openpgp from "openpgp";
 import { Policy } from "../policy";
 import { LabeledInput, LabeledRow } from "./labeledinput";
 import { ThreadSignature, HashArrayBuffer, SignThread } from "../crypto";
-import { IEmbed } from "../schemas/Thread";
+import { IEmbed, IThread, IThreadSimple } from "../schemas/Thread";
 
 interface ThreadFormProps {}
 
@@ -20,115 +20,111 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
 
     if (form) {
       setSubmitting(true);
-      let initialData = new FormData(e.currentTarget);
-      let formData = new FormData();
-      let publishTime = Date.now();
+      let submissionForm = new FormData();
+      let publishTime = new Date();
 
-      formData.append("published", `${publishTime}`);
+      // TODO: So what we're gonna do is hash all the embeds, then include them in a datastruct in the shape of IThread, then stringify it using the stable stringifier you'll find in the deps list, then hash that datastruct, then sign that hash. Should be good enough.
 
-      let copy = (k: string) => {
-        let x = initialData.get(k);
-        if (x) {
-          formData.append(k, x);
-        }
-      };
+      console.log("Form", form);
+      debugger;
 
-      copy("url");
-      copy("body");
-      copy("reply to");
-      copy("category");
-      copy("tags");
+      let hashedEmbedsPromise: Promise<Array<IEmbed>> = Promise.all(
+        ([...form["embeds"]] as Array<File>)
+          .filter((file) => file.size < Policy.maxSize)
+          .map(
+            (file) =>
+              new Promise<IEmbed>((resolve) => {
+                let reader = new FileReader();
 
-      let file: File;
-      let embedsForSigning: Array<IEmbed & { bits: ArrayBuffer }> = [];
+                reader.onload = () => {
+                  let bytes = reader.result as ArrayBuffer;
+                  HashArrayBuffer(bytes).then((hashname) => {
+                    submissionForm.append("embeds", file, hashname);
 
-      for (file of form["embeds"]) {
-        if (file.size > Policy.maxSize) {
-          alert("File too big");
-          return;
-        } else {
-          await new Promise<string>((resolve) => {
-            let reader = new FileReader();
+                    resolve({
+                      algorithm: Policy.hash_algo,
+                      hash: hashname,
+                      mimetype: file.type,
+                      size: `${file.size}`,
+                    });
+                  });
+                };
 
-            reader.onload = () => {
-              let bytes = reader.result as ArrayBuffer;
-              HashArrayBuffer(bytes).then((hashname) => {
-                formData.append("embeds", file, hashname);
-                resolve(hashname);
+                reader.readAsArrayBuffer(file);
+              })
+          )
+      );
 
-                embedsForSigning.push({
-                  algorithm: Policy.hash_algo,
-                  hash: hashname,
-                  mimetype: file.type,
-                  size: `${file.size}`,
-                  bits: bytes,
-                });
-              });
-            };
+      debugger;
 
-            reader.readAsArrayBuffer(file);
-          });
-        }
-      }
+      let PrivateKeyReadPromise = await new Promise<{
+        author: openpgp.PrimaryUser;
+        sk: openpgp.PrivateKey;
+      }>((resolve) => {
+        let skReader = new FileReader();
 
-      let { hash, signature } = await new Promise<ThreadSignature>(
-        (resolve) => {
-          let skReader = new FileReader();
-
-          skReader.onload = () => {
-            let bits = skReader.result;
+        skReader.onload = () => {
+          let bits = skReader.result?.toString();
+          if (bits) {
             openpgp
               .readPrivateKey({
                 armoredKey: bits,
               })
               .then((sk) => {
-                return sk.getPrimaryUser().then((author) => ({ author, sk }));
-              })
-              .then(({ author, sk }) => {
-                // author.user.userID?.email;
-                // author.user.userID?.name;
-
-                const get = (attrib: string, def: string = "") =>
-                  formData.get(attrib)?.toString() || def;
-
-                //! Make sure to diagnose this
-                debugger;
-                return SignThread(bits, skPassword, {
-                  author: {
-                    name: author.user.userID?.name || "anon",
-                    publickey: sk.getKeyID().toHex(),
-                  },
-                  body: {
-                    content: get("body"),
-                    mimetype: "text/plain",
-                  },
-                  category: get("category", "all"),
-                  parenthash: get("reply to"),
-                  published: new Date(parseInt(get("published"))),
-                  embeds: embedsForSigning,
-                  tag: get("tags").split(","),
-                }).then((sig) => {
-                  resolve(sig);
+                return sk.getPrimaryUser().then((author) => {
+                  resolve({ author, sk });
                 });
               });
-          };
-
-          if (skFile) {
-            skReader.readAsText(skFile);
-          } else {
-            throw new Error("Secret key needed");
           }
+        };
+
+        if (skFile) {
+          skReader.readAsText(skFile);
+        } else {
+          throw new Error("Secret key needed");
         }
+      });
+
+      let [hashedEmbeds, { sk, author }] = await Promise.all([
+        hashedEmbedsPromise,
+        PrivateKeyReadPromise,
+      ]);
+
+      let rawThread: Partial<IThreadSimple> = {
+        embeds: hashedEmbeds,
+        author: {
+          name: author.user.userID?.name || "",
+          publickey: (await sk.getSigningKey()).getKeyID().toHex(),
+        },
+        body: form["body"],
+        category: form["category"] || "all",
+        parenthash: form["reply to"],
+        published: publishTime,
+        tag: form["tags"],
+      };
+
+      debugger;
+
+      let { hash, signature } = await SignThread(
+        sk.armor(),
+        skPassword,
+        rawThread
       );
 
       debugger;
 
-      formData.append("signature", signature);
-      formData.append("hash", hash);
+      rawThread["hash"] = {
+        algorithm: Policy.hash_algo,
+        value: hash,
+      };
+
+      rawThread["signature"] = signature;
+
+      submissionForm.append("thread", JSON.stringify(rawThread));
 
       let resp = await fetch("/api/upload", {
         method: "post",
-        body: formData,
+        body: submissionForm,
       });
 
       setSubmitting(false);

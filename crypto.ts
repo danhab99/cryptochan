@@ -1,8 +1,11 @@
 import * as openpgp from "openpgp";
-import { encode } from "base64-arraybuffer";
+import { encode, decode } from "base64-arraybuffer";
 import str2ab from "string-to-arraybuffer";
 import { IThreadSimple, IEmbed } from "./schemas/Thread";
 import { Policy } from "./policy";
+import _ from "lodash";
+import stringify from "json-stable-stringify";
+const node_crypto = require("crypto").webcrypto;
 
 const appendBuffer = (left: ArrayBuffer, right: ArrayBuffer): ArrayBuffer => {
   var t = new Uint8Array(left.byteLength + right.byteLength);
@@ -11,14 +14,20 @@ const appendBuffer = (left: ArrayBuffer, right: ArrayBuffer): ArrayBuffer => {
   return t.buffer;
 };
 
-export const HashArrayBuffer = (data: ArrayBuffer): Promise<string> =>
-  crypto.subtle
-    .digest(Policy.hash_algo, data)
-    .then((hash) =>
-      [...new Uint8Array(hash)]
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("")
-    );
+export const HashArrayBuffer = async (data: ArrayBuffer): Promise<string> => {
+  let hashab: Promise<ArrayBuffer>;
+  if (typeof window === "undefined") {
+    console.log("Digesting using node", data);
+    hashab = node_crypto.subtle.digest(Policy.hash_algo, encode(data));
+  } else {
+    console.log("Digesting using webcrypto", data);
+    hashab = crypto.subtle.digest(Policy.hash_algo, decode(encode(data)));
+  }
+
+  return [...new Uint8Array(await hashab)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+};
 
 export type ThreadWithEmbeds = {
   embeds: Array<{ bits: ArrayBuffer } & IEmbed>;
@@ -27,7 +36,7 @@ export type ThreadWithEmbeds = {
 export type PartialThreadWithEmbeds = Partial<ThreadWithEmbeds>;
 
 const ArrayToArrayBuffer = (data: Array<any>): ArrayBuffer => {
-  return data
+  return _.compact(data)
     .map(
       (x: string | ArrayBuffer): ArrayBuffer =>
         x instanceof ArrayBuffer ? x : str2ab(x)
@@ -35,27 +44,19 @@ const ArrayToArrayBuffer = (data: Array<any>): ArrayBuffer => {
     .reduce((acc, curr) => appendBuffer(acc, curr), new ArrayBuffer(0));
 };
 
-const HashThread = async (entry: PartialThreadWithEmbeds) => {
-  let hashingSeries: Array<any> = [
-    entry?.author?.name,
-    entry?.author?.publickey,
-    entry?.body?.content,
-    entry?.body?.mimetype,
-    entry?.category,
-    entry?.parenthash,
-    entry?.published?.toISOString(),
-    entry?.tag?.join(""),
-    ...(entry.embeds || []).reduce(
-      (acc, e) => [...acc, e.hash, e.algorithm, e.mimetype, e.size, e.bits],
-      [] as any[]
-    ),
-  ];
+const HashThread = async (entry: Partial<IThreadSimple>) => {
+  console.log("Hashing thread", entry);
 
-  let hashingBuffer = ArrayToArrayBuffer(hashingSeries);
+  const serialized = stringify(entry);
+
+  console.log("Hashing input", serialized);
+
+  let hashingBuffer = ArrayToArrayBuffer(serialized);
   let hash = await HashArrayBuffer(hashingBuffer);
-  let hashedSeries = ([] as Array<any>).concat([hash], hashingSeries);
 
-  return { hashedSeries, hash };
+  console.log("Hash", hash);
+
+  return hash;
 };
 
 export interface ThreadSignature {
@@ -66,14 +67,13 @@ export interface ThreadSignature {
 export const SignThread = async (
   armoredKey: string,
   passphrase: string,
-  entry: PartialThreadWithEmbeds
+  entry: Partial<IThreadSimple>
 ): Promise<ThreadSignature> => {
-  let { hashedSeries, hash } = await HashThread(entry);
-
-  let signingBuffer = ArrayToArrayBuffer(hashedSeries);
+  console.log("Signing Thread", armoredKey, entry);
+  let hash = await HashThread(entry);
 
   let unsignedMessage = openpgp.createMessage({
-    text: encode(signingBuffer),
+    text: hash,
   });
 
   const privateKey = openpgp.decryptKey({
@@ -87,35 +87,41 @@ export const SignThread = async (
     detached: true,
   });
 
+  console.log("Signature", signature);
+
   return { hash, signature };
 };
 
 export const VerifyThread = async (
   armoredKey: string,
   signature: string | openpgp.Signature,
-  entry: PartialThreadWithEmbeds
+  entry: IThreadSimple
 ) => {
+  console.log("Verifying Thread", armoredKey, signature, entry);
   let publicKey = openpgp.readKey({
     armoredKey: armoredKey,
   });
 
-  let parsedSig: openpgp.Signature;
+  let parsedSig: Promise<openpgp.Signature>;
 
   if (signature instanceof openpgp.Signature) {
-    parsedSig = signature;
+    console.log("Good signature", signature);
+    parsedSig = Promise.resolve(signature);
   } else {
-    parsedSig = await openpgp.readSignature({ armoredSignature: signature });
+    parsedSig = openpgp.readSignature({ armoredSignature: signature });
   }
 
-  let { hashedSeries } = await HashThread(entry);
+  let hash = await HashThread(entry);
+
+  console.log("Hashed for verifying", hash);
 
   let testMessage = await openpgp.createMessage({
-    text: encode(ArrayToArrayBuffer(hashedSeries)),
+    text: hash,
   });
 
   return openpgp.verify({
     verificationKeys: [await publicKey],
-    signature: parsedSig,
+    signature: await parsedSig,
     expectSigned: true,
     message: testMessage,
   });
