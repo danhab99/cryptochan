@@ -2,3 +2,7 @@ header h1,
 .newthread {
   @apply content-center container text-center;
 }
+
+header {
+  @apply mb-16;
+}

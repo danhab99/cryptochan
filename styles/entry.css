@@ -1,5 +1,5 @@
 .entryCard {
-  @apply container border-primary-400 border border-solid pl-3 m-3 bg-background-300;
+  @apply border-primary-400 border border-solid bg-background-300 mb-4;
 }
 
 .entryTitle {

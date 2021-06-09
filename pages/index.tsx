@@ -7,7 +7,9 @@ import connectDB from "../middlewares/mongoose";
 import Title from "../components/title";
 import ThreadComponent from "../components/thread";
 
-type HomeProps = { entries?: IThread[]; error?: Error };
+type ThreadWithReplys = Array<IThread & { replies: Array<IThread> }>;
+
+type HomeProps = { entries?: ThreadWithReplys; error?: Error };
 
 interface HomeQueryParmas {
   page: number;
@@ -21,7 +23,14 @@ const Home: React.FC<HomeProps> = (props) => {
       <Title newThreads />
 
       {props.entries?.map((entry) => (
-        <ThreadComponent entry={entry} />
+        <div>
+          <ThreadComponent entry={entry as unknown as IThread} />
+          <div className="ml-16">
+            {entry?.replies?.map?.((reply) => {
+              return <ThreadComponent entry={reply as unknown as IThread} />;
+            })}
+          </div>
+        </div>
       ))}
     </div>
   );
@@ -57,9 +66,28 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
       })
       .lean()) as IThread[];
 
+    let entriesAndReplies: ThreadWithReplys = await Promise.all(
+      entries.map((entry) => {
+        return Thread.find({ parenthash: entry.hash.value })
+          .select({
+            _id: false,
+            embeds: {
+              _id: false,
+            },
+          })
+          .lean()
+          .then((replies) => {
+            return {
+              ...entry,
+              replies,
+            };
+          });
+      })
+    );
+
     return {
       props: {
-        entries,
+        entries: entriesAndReplies,
       },
     };
   } catch (e) {
