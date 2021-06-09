@@ -6,19 +6,16 @@ import * as openpgp from "openpgp";
 import connectDB from "../../middlewares/mongoose";
 import { Thread, IThreadSimple } from "../../schemas/Thread";
 import { Policy } from "../../policy";
-import path from "path";
 import { PublicKey } from "../../schemas/PublicKey";
 import { VerifyThread } from "../../crypto";
 import _ from "lodash";
+import { evalFilename } from "./evalFilename";
 
 export const config: PageConfig = {
   api: {
     bodyParser: false,
   },
 };
-
-const evalFilename = (filename: string) =>
-  path.join(process.cwd(), "embeds", filename);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();
