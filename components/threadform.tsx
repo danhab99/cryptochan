@@ -27,32 +27,38 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
 
       console.log("Form", form);
 
-      let hashedEmbedsPromise: Promise<Array<IEmbed>> = Promise.all(
-        ([...form["embeds"]] as Array<File>)
-          .filter((file) => file.size < Policy.maxSize)
-          .map(
-            (file) =>
-              new Promise<IEmbed>((resolve) => {
-                let reader = new FileReader();
+      let hashedEmbedsPromise: Promise<Array<IEmbed>>;
 
-                reader.onload = () => {
-                  let bytes = reader.result as ArrayBuffer;
-                  HashArrayBuffer(bytes).then((hashname) => {
-                    submissionForm.append("embeds", file, hashname);
+      if (form["embeds"]) {
+        hashedEmbedsPromise = Promise.all(
+          ([...form["embeds"]] as Array<File>)
+            .filter((file) => file.size < Policy.maxSize)
+            .map(
+              (file) =>
+                new Promise<IEmbed>((resolve) => {
+                  let reader = new FileReader();
 
-                    resolve({
-                      algorithm: Policy.hash_algo,
-                      hash: hashname,
-                      mimetype: file.type,
-                      size: `${file.size}`,
+                  reader.onload = () => {
+                    let bytes = reader.result as ArrayBuffer;
+                    HashArrayBuffer(bytes).then((hashname) => {
+                      submissionForm.append("embeds", file, hashname);
+
+                      resolve({
+                        algorithm: Policy.hash_algo,
+                        hash: hashname,
+                        mimetype: file.type,
+                        size: `${file.size}`,
+                      });
                     });
-                  });
-                };
+                  };
 
-                reader.readAsArrayBuffer(file);
-              })
-          )
-      );
+                  reader.readAsArrayBuffer(file);
+                })
+            )
+        );
+      } else {
+        hashedEmbedsPromise = Promise.resolve([] as Array<IEmbed>);
+      }
 
       let PrivateKeyReadPromise = await new Promise<{
         author: openpgp.PrimaryUser;
