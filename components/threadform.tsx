@@ -26,7 +26,6 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
       // TODO: So what we're gonna do is hash all the embeds, then include them in a datastruct in the shape of IThread, then stringify it using the stable stringifier you'll find in the deps list, then hash that datastruct, then sign that hash. Should be good enough.
 
       console.log("Form", form);
-      debugger;
 
       let hashedEmbedsPromise: Promise<Array<IEmbed>> = Promise.all(
         ([...form["embeds"]] as Array<File>)
@@ -54,8 +53,6 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
               })
           )
       );
-
-      debugger;
 
       let PrivateKeyReadPromise = await new Promise<{
         author: openpgp.PrimaryUser;
@@ -103,15 +100,11 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
         tag: form["tags"],
       };
 
-      debugger;
-
       let { hash, signature } = await SignThread(
         sk.armor(),
         skPassword,
         rawThread
       );
-
-      debugger;
 
       rawThread["hash"] = {
         algorithm: Policy.hash_algo,
