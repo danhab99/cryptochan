@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ThreadForm from "./threadform";
+import { Policy } from "../policy";
 
 interface TitleProps {
   newThreads: boolean;
@@ -10,6 +11,13 @@ const Title: React.FC<TitleProps> = (props) => {
 
   return (
     <div>
+      <div className="categories">
+        <p>{"["}</p>
+        {Policy.categories.map((cat, i) => (
+          <a href={`/${cat}`}>/{cat}/</a>
+        ))}
+        <p>{"]"}</p>
+      </div>
       <header>
         <h1 className="text-primary-600">{process.env.TITLE}</h1>
 

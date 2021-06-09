@@ -6,3 +6,20 @@ header h1,
 header {
   @apply mb-16;
 }
+
+.categories {
+  @apply flex flex-row;
+}
+
+.categories a,
+.categories p {
+  @apply leading-none m-0 pr-1 font-mono text-xs text-primary-800 no-underline;
+}
+
+.categories a:hover {
+  @apply text-primary-600;
+}
+
+.categories a {
+  @apply mr-1 ml-1;
+}
