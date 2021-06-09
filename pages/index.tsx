@@ -43,7 +43,9 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
   });
 
   try {
-    let entries = (await Thread.find({ parenthash: "" })
+    let entries = (await Thread.find({
+      $or: [{ parenthash: "" }, { parenthash: undefined }],
+    })
       .sort({ published: 1 })
       .skip(q.page * PAGE_COUNT)
       .limit(PAGE_COUNT)

@@ -17,7 +17,7 @@ export interface IThreadSimple {
     value: string;
   };
   signature: string;
-  parenthash: string;
+  parenthash: string | undefined;
   replies: boolean;
   body: {
     mimetype: string;

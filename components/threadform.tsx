@@ -93,7 +93,10 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
           name: author.user.userID?.name || "",
           publickey: (await sk.getSigningKey()).getKeyID().toHex(),
         },
-        body: form["body"],
+        body: {
+          content: form["body"],
+          mimetype: "text/plain",
+        },
         category: form["category"] || "all",
         parenthash: form["reply to"],
         published: publishTime,
