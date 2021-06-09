@@ -5,7 +5,7 @@ import { IThreadSimple, IEmbed } from "./schemas/Thread";
 import { Policy } from "./policy";
 import _ from "lodash";
 import stringify from "json-stable-stringify";
-const node_crypto = require("crypto").webcrypto;
+import * as node_crypto from "crypto";
 
 const appendBuffer = (left: ArrayBuffer, right: ArrayBuffer): ArrayBuffer => {
   var t = new Uint8Array(left.byteLength + right.byteLength);
@@ -18,10 +18,15 @@ export const HashArrayBuffer = async (data: ArrayBuffer): Promise<string> => {
   let hashab: Promise<ArrayBuffer>;
   if (typeof window === "undefined") {
     console.log("Digesting using node", data);
-    hashab = node_crypto.subtle.digest(Policy.hash_algo, encode(data));
+    let buf = node_crypto
+      .createHash(Policy.hash_algo.toLowerCase().replace("-", ""))
+      .update(new Float32Array(data))
+      .digest();
+
+    hashab = Promise.resolve(new Uint8Array(buf).buffer);
   } else {
     console.log("Digesting using webcrypto", data);
-    hashab = crypto.subtle.digest(Policy.hash_algo, decode(encode(data)));
+    hashab = crypto.subtle.digest(Policy.hash_algo, data);
   }
 
   return [...new Uint8Array(await hashab)]
@@ -50,6 +55,7 @@ const HashThread = async (entry: Partial<IThreadSimple>) => {
   const serialized = stringify(entry);
 
   console.log("Hashing input", serialized);
+  debugger;
 
   let hashingBuffer = ArrayToArrayBuffer(serialized);
   let hash = await HashArrayBuffer(hashingBuffer);
@@ -95,7 +101,7 @@ export const SignThread = async (
 export const VerifyThread = async (
   armoredKey: string,
   signature: string | openpgp.Signature,
-  entry: IThreadSimple
+  entry: Partial<IThreadSimple>
 ) => {
   console.log("Verifying Thread", armoredKey, signature, entry);
   let publicKey = openpgp.readKey({
@@ -110,6 +116,9 @@ export const VerifyThread = async (
   } else {
     parsedSig = openpgp.readSignature({ armoredSignature: signature });
   }
+
+  delete entry.hash;
+  delete entry.signature;
 
   let hash = await HashThread(entry);
 
