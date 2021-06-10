@@ -13,8 +13,8 @@ const Title: React.FC<TitleProps> = (props) => {
     <div>
       <div className="categories">
         <p>{"["}</p>
-        {Policy.categories.map((cat, i) => (
-          <a href={`/${cat}`}>/{cat}/</a>
+        {Policy.categories.map((cat) => (
+          <a href={`/${cat.name}`}>/{cat.name}/</a>
         ))}
         <p>{"]"}</p>
       </div>
