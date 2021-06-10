@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Link from "next/link";
 import { IThread } from "../schemas/Thread";
+import SigValidator from "./sigvalidator";
 
 interface ThreadProps {
   entry: IThread;
@@ -83,6 +83,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
             </span>
           </a>{" "}
           {entry.published.toISOString()}
+          <SigValidator thread={entry} />
           <br />
           <span className="text-muted-600">
             {"#"}
