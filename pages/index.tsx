@@ -75,6 +75,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
               _id: false,
             },
           })
+          .limit(5)
           .lean()
           .then((replies) => {
             return {
