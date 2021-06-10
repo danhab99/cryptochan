@@ -29,7 +29,7 @@ const Title: React.FC<TitleProps> = (props) => {
 
         {props.newThreads ? (
           <div className="newthread">
-            <button onClick={() => setShowForm(true)}>
+            <button onClick={() => setShowForm((x) => !x)}>
               Start a new thread
             </button>
             {showForm ? (
