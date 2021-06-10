@@ -37,7 +37,7 @@ const Home: React.FC<HomeProps> = (props) => {
             ))}
           </ol>
 
-          <div className="entryCard">
+          <div className="entryCard w-full">
             <h2>Categories</h2>
 
             <div className="px-5">
