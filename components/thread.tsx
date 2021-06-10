@@ -85,7 +85,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
           {entry.published.toISOString()}
           <SigValidator thread={entry} />
           <br />
-          <span className="text-muted-600">
+          <span className="text-muted-600 shortHash">
             {"#"}
             {entry.hash.value}
           </span>

@@ -21,3 +21,9 @@ code {
 .replyBlock {
   @apply ml-16;
 }
+
+.shortHash:not(:hover) {
+  @apply truncate;
+  max-width: 30ch;
+  display: block;
+}
