@@ -3,7 +3,7 @@
 }
 
 .entryTitle {
-  @apply text-xs leading-none;
+  @apply text-xs leading-none m-0;
 }
 
 .embedControl {

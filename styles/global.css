@@ -17,3 +17,7 @@ code {
 .centeredFlex {
   @apply flex flex-row justify-center;
 }
+
+.replyBlock {
+  @apply ml-16;
+}

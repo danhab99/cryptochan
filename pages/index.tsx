@@ -25,7 +25,7 @@ const Home: React.FC<HomeProps> = (props) => {
       {props.entries?.map((entry) => (
         <div>
           <ThreadComponent entry={entry as unknown as IThread} />
-          <div className="ml-16">
+          <div className="replyBlock">
             {entry?.replies?.map?.((reply) => {
               return <ThreadComponent entry={reply as unknown as IThread} />;
             })}

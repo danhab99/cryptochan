@@ -92,7 +92,9 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
         </p>
 
         <div className="flex flex-row mt-2">
-          <a className="embedControl">[View Thread]</a>
+          <a className="embedControl" href={`/t/${entry.hash.value}`}>
+            [View Thread]
+          </a>
           &nbsp;
           <a className="embedControl">[Reply]</a>
         </div>
