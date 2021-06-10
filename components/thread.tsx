@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { IThread } from "../schemas/Thread";
 import SigValidator from "./sigvalidator";
 import ThreadForm from "./threadform";
+import { Policy, Category } from "../policy";
 
 interface ThreadProps {
   entry: IThread;
@@ -116,7 +117,14 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
         <p className="text-sm font-mono text-black">{entry.body.content}</p>
 
         {showReply ? (
-          <ThreadForm replyTo={entry.hash.value} category={entry.category} />
+          <ThreadForm
+            replyTo={entry.hash.value}
+            category={
+              Policy.categories.find(
+                (x) => x.name === entry.category
+              ) as Category
+            }
+          />
         ) : null}
       </div>
     </div>
