@@ -16,7 +16,7 @@ interface HomeQueryParmas {
   sort: "bump" | "date";
 }
 
-const Home: React.FC<HomeProps> = (props) => {
+const Category: React.FC<HomeProps> = (props) => {
   return (
     <div>
       <Header type="category" category="all" />
@@ -36,15 +36,17 @@ const Home: React.FC<HomeProps> = (props) => {
   );
 };
 
-export default Home;
+export default Category;
 
 const PAGE_COUNT = 24;
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
   query,
+  params,
 }) => {
   await connectDB();
   let q: HomeQueryParmas = query;
+  let { category } = params;
 
   _.defaults(q, {
     page: 0,
@@ -54,8 +56,9 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
   try {
     let entries = (await Thread.find({
       $or: [{ parenthash: "" }, { parenthash: undefined }],
+      ...(category === "all" ? {} : { category }),
     })
-      .sort({ published: 1 })
+      .sort({ published: -1 })
       .skip(q.page * PAGE_COUNT)
       .limit(PAGE_COUNT)
       .select({
