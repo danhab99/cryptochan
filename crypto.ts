@@ -7,13 +7,6 @@ import _ from "lodash";
 import stringify from "json-stable-stringify";
 import * as node_crypto from "crypto";
 
-const appendBuffer = (left: ArrayBuffer, right: ArrayBuffer): ArrayBuffer => {
-  var t = new Uint8Array(left.byteLength + right.byteLength);
-  t.set(new Uint8Array(left), 0);
-  t.set(new Uint8Array(right), left.byteLength);
-  return t.buffer;
-};
-
 export const HashArrayBuffer = async (data: ArrayBuffer): Promise<string> => {
   let hashab: Promise<ArrayBuffer>;
   if (typeof window === "undefined") {
@@ -40,25 +33,11 @@ export type ThreadWithEmbeds = {
 
 export type PartialThreadWithEmbeds = Partial<ThreadWithEmbeds>;
 
-const ArrayToArrayBuffer = (data: Array<any>): ArrayBuffer => {
-  return _.compact(data)
-    .map(
-      (x: string | ArrayBuffer): ArrayBuffer =>
-        x instanceof ArrayBuffer ? x : str2ab(x)
-    )
-    .reduce((acc, curr) => appendBuffer(acc, curr), new ArrayBuffer(0));
-};
-
 const HashThread = async (entry: Partial<IThreadSimple>) => {
   console.log("Hashing thread", entry);
-
   const serialized = stringify(entry);
-
   console.log("Hashing input", serialized);
-  debugger;
-
   let hash = await HashArrayBuffer(decode(serialized));
-
   console.log("Hash", hash);
 
   return hash;
@@ -116,9 +95,11 @@ export const VerifyThread = async (
     parsedSig = openpgp.readSignature({ armoredSignature: signature });
   }
 
-  let cleanEntry = _.cloneDeep(entry);
+  let cleanEntry: any = _.cloneDeep(entry);
   delete cleanEntry.hash;
   delete cleanEntry.signature;
+  delete cleanEntry.__v;
+  delete cleanEntry.replies;
 
   let hash = await HashThread(cleanEntry);
 
