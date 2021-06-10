@@ -13,7 +13,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
   const currentEmbedSource = `/api/e/${currentEmbed?.hash}`;
 
   return (
-    <div className="entryCard flex flex-row">
+    <div className="entryCard flex flex-row w-max p-2">
       <div className="m-4">
         {(() => {
           if (Object.keys(currentEmbed).length > 0) {
@@ -91,7 +91,13 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
           </span>
         </p>
 
-        <p className="text-sm font-mono">{entry.body.content}</p>
+        <div className="flex flex-row mt-2">
+          <a className="embedControl">[View Thread]</a>
+          &nbsp;
+          <a className="embedControl">[Reply]</a>
+        </div>
+
+        <p className="text-sm font-mono text-black">{entry.body.content}</p>
       </div>
     </div>
   );
