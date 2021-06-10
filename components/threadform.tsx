@@ -179,7 +179,11 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
             </LabeledRow>
             <LabeledInput name="reply to" onChange={handle} />
             <LabeledRow label="category">
-              <select onChange={handle} name="category">
+              <select
+                onChange={handle}
+                name="category"
+                defaultValue={window.location.pathname.split("/")[1]}
+              >
                 {Policy.categories.map((x) => (
                   <option>{x}</option>
                 ))}
