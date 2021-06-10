@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { IThread } from "../schemas/Thread";
 import SigValidator from "./sigvalidator";
+import ThreadForm from "./threadform";
 
 interface ThreadProps {
   entry: IThread;
@@ -10,6 +11,7 @@ interface ThreadProps {
 const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
   const router = useRouter();
   const [embedPage, setEmbedPage] = useState(0);
+  const [showReply, setShowReply] = useState(false);
 
   const currentEmbed = entry.embeds[embedPage] || {};
   const currentEmbedSource = `/api/e/${currentEmbed?.hash}`;
@@ -103,10 +105,17 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
             [View Thread]
           </a>
           &nbsp;
-          <a className="embedControl">[Reply]</a>
+          <span
+            className="embedControl"
+            onClick={() => setShowReply((x) => !x)}
+          >
+            [Reply]
+          </span>
         </div>
 
         <p className="text-sm font-mono text-black">{entry.body.content}</p>
+
+        {showReply ? <ThreadForm replyTo={entry.hash.value} /> : null}
       </div>
     </div>
   );

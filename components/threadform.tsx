@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import prettyBytes from "pretty-bytes";
 import * as openpgp from "openpgp";
@@ -7,9 +7,11 @@ import { LabeledInput, LabeledRow } from "./labeledinput";
 import { HashArrayBuffer, SignThread } from "../crypto";
 import { IEmbed, IThreadSimple } from "../schemas/Thread";
 
-interface ThreadFormProps {}
+interface ThreadFormProps {
+  replyTo?: string;
+}
 
-const ThreadForm: React.FC<ThreadFormProps> = () => {
+const ThreadForm: React.FC<ThreadFormProps> = (props) => {
   const [form, setForm] = useState<Record<string, any>>();
   const [submitting, setSubmitting] = useState(false);
   const [skFile, setSkFile] = useState<File>();
@@ -22,8 +24,6 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
       setSubmitting(true);
       let submissionForm = new FormData();
       let publishTime = new Date();
-
-      // TODO: So what we're gonna do is hash all the embeds, then include them in a datastruct in the shape of IThread, then stringify it using the stable stringifier you'll find in the deps list, then hash that datastruct, then sign that hash. Should be good enough.
 
       console.log("Form", form);
 
@@ -152,6 +152,14 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
     }));
   };
 
+  useEffect(() => {
+    if (props.replyTo) {
+      setForm({
+        "reply to": props.replyTo,
+      });
+    }
+  }, [props.replyTo]);
+
   return (
     <div>
       <form onSubmit={submit}>
@@ -177,7 +185,11 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
                 />
               </div>
             </LabeledRow>
-            <LabeledInput name="reply to" onChange={handle} />
+            <LabeledInput
+              name="reply to"
+              onChange={handle}
+              defaultValue={props.replyTo || ""}
+            />
             <LabeledRow label="category">
               <select
                 onChange={handle}
