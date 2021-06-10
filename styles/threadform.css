@@ -1,5 +1,5 @@
 form label {
-  @apply text-xs pr-1 pl-1;
+  @apply text-xs px-1;
 }
 
 form td {
@@ -17,6 +17,8 @@ table {
   display: inline-block;
 }
 
-form input[type="submit"] {
-  width: 50%;
+@screen desktop {
+  form input[type="submit"] {
+    width: 50%;
+  }
 }

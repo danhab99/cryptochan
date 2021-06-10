@@ -5,6 +5,11 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      screens: {
+        phone: { max: "767px" },
+        table: "768px",
+        desktop: "1024px",
+      },
       colors: {
         background: colors.coolGray,
         primary: colors.lightBlue,
