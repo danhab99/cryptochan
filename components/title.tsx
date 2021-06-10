@@ -17,6 +17,10 @@ const Title: React.FC<TitleProps> = (props) => {
           <a href={`/${cat.name}`}>/{cat.name}/</a>
         ))}
         <p>{"]"}</p>
+
+        <p>{"["}</p>
+        <a href="/newkeys">Generate new keys</a>
+        <p>{"]"}</p>
       </div>
       <header>
         <h1 className="text-primary-600 text-8xl">{process.env.TITLE}</h1>
