@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetServerSidePropsResult } from "next";
 import React from "react";
 import { Header } from "../../components/header";
 import _ from "lodash";
@@ -6,13 +6,15 @@ import { Thread, IThread } from "../../schemas/Thread";
 import connectDB from "../../middlewares/mongoose";
 import Title from "../../components/title";
 import ThreadComponent from "../../components/thread";
-import sanatize from "../../sanatizeQuery";
-import { LeanDocument, Query } from "mongoose";
-import { ParsedUrlQuery } from "querystring";
+import {
+  ParamNotFoundError,
+  sanatizeDB,
+  sanatizeParams,
+} from "../../sanatizeQuery";
 
 interface ThreadPageProps {
   thread: IThread;
-  parent?: IThread;
+  parent?: IThread | null;
   replies?: Array<IThread>;
 }
 
@@ -44,38 +46,50 @@ const ThreadPage: React.FC<ThreadPageProps> = (props) => {
 
 export default ThreadPage;
 
-interface ServerSideProps extends ParsedUrlQuery {
-  tid: string;
-}
-
-export const getServerSideProps: GetServerSideProps<
-  ThreadPageProps,
-  ServerSideProps
-> = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
+  params,
+}): Promise<GetServerSidePropsResult<ThreadPageProps>> => {
   await connectDB();
-  const tid = params?.tid || "";
+  try {
+    const tid = sanatizeParams(params?.tid);
 
-  const thread = await sanatize(Thread.findOne({ "hash.value": tid }));
-  const replies = sanatize(Thread.find({ parenthash: tid }));
+    const thread = await sanatizeDB(Thread.findOne({ "hash.value": tid }));
 
-  if (thread?.parenthash) {
-    const parent = sanatize(
-      Thread.findOne({ "hash.value": thread.parenthash })
-    );
+    if (!thread) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const replies = sanatizeDB(Thread.find({ parenthash: tid }));
+
+    if (thread?.parenthash) {
+      const parent = sanatizeDB(
+        Thread.findOne({ "hash.value": thread.parenthash })
+      );
+
+      return {
+        props: {
+          thread,
+          parent: await parent,
+          replies: await replies,
+        },
+      };
+    }
 
     return {
       props: {
         thread,
-        parent: await parent,
         replies: await replies,
       },
     };
+  } catch (e) {
+    if (e instanceof ParamNotFoundError) {
+      return Promise.resolve({
+        notFound: true,
+      });
+    } else {
+      throw e;
+    }
   }
-
-  return {
-    props: {
-      thread,
-      replies: await replies,
-    },
-  };
 };

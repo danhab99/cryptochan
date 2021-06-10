@@ -2,12 +2,15 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import { Header } from "../components/header";
 import _ from "lodash";
-import { Thread, IThread } from "../schemas/Thread";
+import { Thread, IThread, IThreadSimple } from "../schemas/Thread";
 import connectDB from "../middlewares/mongoose";
 import Title from "../components/title";
 import ThreadComponent from "../components/thread";
+import { sanatizeDB } from "../sanatizeQuery";
 
-type ThreadWithReplys = Array<IThread & { replies: Array<IThread> }>;
+type ThreadWithReply = IThreadSimple & { replyThreads: Array<IThreadSimple> };
+
+type ThreadWithReplys = Array<ThreadWithReply>;
 
 type HomeProps = { entries?: ThreadWithReplys; error?: Error };
 
@@ -26,7 +29,7 @@ const Category: React.FC<HomeProps> = (props) => {
         <div>
           <ThreadComponent entry={entry as unknown as IThread} />
           <div className="replyBlock">
-            {entry?.replies?.map?.((reply) => {
+            {entry?.replyThreads?.map?.((reply) => {
               return <ThreadComponent entry={reply as unknown as IThread} />;
             })}
           </div>
@@ -40,13 +43,28 @@ export default Category;
 
 const PAGE_COUNT = 24;
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
+export const getServerSideProps: GetServerSideProps = async ({
   query,
   params,
 }) => {
   await connectDB();
-  let q: HomeQueryParmas = query;
-  let { category } = params;
+  let q: HomeQueryParmas = {
+    page: typeof query.page === "string" ? parseInt(query.page) : 0,
+    sort: "date",
+  };
+
+  if (!params) {
+    return {
+      notFound: true,
+    };
+  }
+  let category = params["category"];
+
+  if (!category || Array.isArray(category)) {
+    return {
+      notFound: true,
+    };
+  }
 
   _.defaults(q, {
     page: 0,
@@ -54,38 +72,25 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
   });
 
   try {
-    let entries = (await Thread.find({
-      $or: [{ parenthash: "" }, { parenthash: undefined }],
-      ...(category === "all" ? {} : { category }),
-    })
-      .sort({ published: -1 })
-      .skip(q.page * PAGE_COUNT)
-      .limit(PAGE_COUNT)
-      .select({
-        _id: false,
-        embeds: {
-          _id: false,
-        },
+    let entries = (await sanatizeDB(
+      Thread.find({
+        $or: [{ parenthash: "" }, { parenthash: undefined }],
+        ...(category === "all" ? {} : { category }),
       })
-      .lean()) as IThread[];
+        .sort({ published: -1 })
+        .skip(q.page * PAGE_COUNT)
+        .limit(PAGE_COUNT)
+    )) as IThread[];
 
     let entriesAndReplies: ThreadWithReplys = await Promise.all(
-      entries.map((entry) => {
-        return Thread.find({ parenthash: entry.hash.value })
-          .select({
-            _id: false,
-            embeds: {
-              _id: false,
-            },
-          })
-          .limit(5)
-          .lean()
-          .then((replies) => {
-            return {
-              ...entry,
-              replies,
-            };
-          });
+      entries.map(async (entry) => {
+        const replyThreads = await sanatizeDB(
+          Thread.find({ parenthash: entry.hash.value }).limit(5)
+        );
+        return {
+          ...entry,
+          replyThreads,
+        };
       })
     );
 

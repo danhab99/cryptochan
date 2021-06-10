@@ -3,14 +3,7 @@ import { Header } from "../components/header";
 import Title from "../components/title";
 import { Policy } from "../policy";
 
-type HomeProps = { entries?: ThreadWithReplys; error?: Error };
-
-interface HomeQueryParmas {
-  page: number;
-  sort: "bump" | "date";
-}
-
-const Home: React.FC<HomeProps> = (props) => {
+const Home: React.FC = () => {
   return (
     <div className="home">
       <Header type="nothing" />

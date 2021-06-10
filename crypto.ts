@@ -1,6 +1,5 @@
 import * as openpgp from "openpgp";
-import { encode, decode } from "base64-arraybuffer";
-import str2ab from "string-to-arraybuffer";
+import { decode } from "base64-arraybuffer";
 import { IThreadSimple, IEmbed } from "./schemas/Thread";
 import { Policy } from "./policy";
 import _ from "lodash";

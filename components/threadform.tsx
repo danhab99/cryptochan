@@ -4,8 +4,8 @@ import prettyBytes from "pretty-bytes";
 import * as openpgp from "openpgp";
 import { Policy } from "../policy";
 import { LabeledInput, LabeledRow } from "./labeledinput";
-import { ThreadSignature, HashArrayBuffer, SignThread } from "../crypto";
-import { IEmbed, IThread, IThreadSimple } from "../schemas/Thread";
+import { HashArrayBuffer, SignThread } from "../crypto";
+import { IEmbed, IThreadSimple } from "../schemas/Thread";
 
 interface ThreadFormProps {}
 
@@ -143,7 +143,7 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
 
   const handle = (
     evt: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      HTMLInputElement & HTMLTextAreaElement & HTMLSelectElement
     >
   ) => {
     setForm((prev) => ({
@@ -167,7 +167,7 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
                   type="file"
                   accept="application/pgp-keys"
                   required
-                  onChange={(e) => setSkFile(e.target.files[0])}
+                  onChange={(e) => setSkFile(e?.target?.files?.[0])}
                 />
                 <input
                   type="password"

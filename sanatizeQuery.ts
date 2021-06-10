@@ -1,6 +1,8 @@
 import { Query, Document } from "mongoose";
 
-export default async function sanatize<
+export class ParamNotFoundError extends Error {}
+
+export async function sanatizeDB<
   ResultType,
   DocType extends Document<any, any>,
   THelpers = {}
@@ -13,4 +15,23 @@ export default async function sanatize<
       },
     })
     .lean()) as ResultType;
+}
+
+export function sanatizeParams(
+  param: string | string[] | undefined,
+  def?: string
+): string {
+  if (param) {
+    if (Array.isArray(param)) {
+      return param[0];
+    } else {
+      return param;
+    }
+  } else {
+    if (def) {
+      return def;
+    } else {
+      throw new ParamNotFoundError();
+    }
+  }
 }
