@@ -185,7 +185,7 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
                 defaultValue={window.location.pathname.split("/")[1]}
               >
                 {Policy.categories.map((x) => (
-                  <option>{x}</option>
+                  <option>{x.title}</option>
                 ))}
               </select>
             </LabeledRow>
