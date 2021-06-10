@@ -99,6 +99,7 @@ export const VerifyThread = async (
   delete cleanEntry.signature;
   delete cleanEntry.__v;
   delete cleanEntry.replies;
+  delete cleanEntry.replyThreads;
 
   let hash = await HashThread(cleanEntry);
 

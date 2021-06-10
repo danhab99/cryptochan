@@ -1,10 +1,12 @@
 // next.config.js
-const withTypescript = require("@zeit/next-typescript");
-module.exports = withTypescript({
+module.exports = {
   webpack(config, options) {
     return config;
   },
   env: {
     TITLE: "Cryptochan",
   },
-});
+  future: {
+    webpack5: true,
+  },
+};
