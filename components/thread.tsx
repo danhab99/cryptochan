@@ -19,7 +19,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
   }, []);
 
   return (
-    <div className="entryCard flex flex-row w-max p-2">
+    <div className="entryCard desktop:flex flex-row p-2">
       <div className="m-4">
         {(() => {
           if (Object.keys(currentEmbed).length > 0) {

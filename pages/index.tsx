@@ -17,7 +17,7 @@ const Home: React.FC<HomeProps> = (props) => {
       <Title newThreads />
 
       <div className="centeredFlex">
-        <div className=" w-1/2 ">
+        <div className="desktop:w-1/2">
           <p className="text-lg text-center">Welcom to {process.env.TITLE}!!</p>
           <p className="text-center">
             {process.env.TITLE} is a confederated blockchain based image board

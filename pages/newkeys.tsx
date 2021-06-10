@@ -77,7 +77,7 @@ const NewKeys: React.FC = () => {
       <Header />
       <Title newThreads={false} />
       <div className="centeredFlex">
-        <div className="w-1/2">
+        <div className="desktop:w-1/2">
           <h1 className="text-center">Generate new key</h1>
           <p>
             This utility is for generating PGP crypto keys meant exclusivly for
