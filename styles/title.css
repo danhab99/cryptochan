@@ -1,6 +1,6 @@
 header h1,
 .newthread {
-  @apply content-center container text-center;
+  @apply text-center;
 }
 
 header {
