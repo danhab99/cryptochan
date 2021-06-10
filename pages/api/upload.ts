@@ -85,7 +85,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           if (valids.every((x) => x)) {
             Thread.create(thread).then((thread) => {
-              res.redirect(`/p/${thread.hash.value}`);
+              res.redirect(`/t/${thread.hash.value}`);
             });
           } else {
             res.writeHead(401).end(

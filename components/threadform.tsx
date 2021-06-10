@@ -132,6 +132,12 @@ const ThreadForm: React.FC<ThreadFormProps> = () => {
       setSubmitting(false);
       alert("Post complete");
       console.log(resp);
+
+      if (resp.redirected) {
+        if (resp.url) {
+          window.location.href = resp.url;
+        }
+      }
     }
   };
 
