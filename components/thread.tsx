@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { IThread } from "../schemas/Thread";
 import SigValidator from "./sigvalidator";
 
@@ -7,10 +8,15 @@ interface ThreadProps {
 }
 
 const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
+  const router = useRouter();
   const [embedPage, setEmbedPage] = useState(0);
 
   const currentEmbed = entry.embeds[embedPage] || {};
   const currentEmbedSource = `/api/e/${currentEmbed?.hash}`;
+
+  useEffect(() => {
+    router.prefetch(`/t/${entry.hash.value}`);
+  }, []);
 
   return (
     <div className="entryCard flex flex-row w-max p-2">
@@ -76,6 +82,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
       <div>
         <p className="entryTitle">
           <span className="font-bold">{entry.author.name}</span>{" "}
+          <span>in {entry.category} </span>
           <a href={`/api/pk/${entry.author.publickey}`}>
             <span>
               (pk:
