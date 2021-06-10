@@ -104,7 +104,7 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
           content: form["body"],
           mimetype: "text/plain",
         },
-        category: form["category"],
+        category: form["category"] || props.category?.name || "all",
         parenthash: form["reply to"],
         published: publishTime,
         url: form["url"],
