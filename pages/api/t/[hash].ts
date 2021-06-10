@@ -8,7 +8,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   console.log("Getting Thread", req.query);
 
-  sanatizeDB(Thread.findOne({ "hash.value": req.query.hash as string }))
+  sanatizeDB(
+    Thread.find({
+      [req.query.replies ? "parenthash" : "hash.value"]: req.query
+        .hash as string,
+    })
+      .skip(parseInt((req.query.skip as string) || "0"))
+      .limit(Math.min(10, parseInt((req.query.take as string) || "10")))
+  )
     .then((thread) => {
       if (thread) {
         res.setHeader("Cache-Control", "public, max-age=604800, immutable");
