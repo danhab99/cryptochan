@@ -7,8 +7,7 @@ module.exports = {
     extend: {
       screens: {
         phone: { max: "767px" },
-        table: "768px",
-        desktop: "1024px",
+        desktop: "768px",
       },
       colors: {
         background: colors.coolGray,
