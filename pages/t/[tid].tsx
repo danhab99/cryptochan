@@ -61,7 +61,9 @@ export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
       };
     }
 
-    const replies = sanatizeDB(Thread.find({ parenthash: tid }));
+    const replies = sanatizeDB(
+      Thread.find({ parenthash: tid }).sort({ published: -1 })
+    );
 
     if (thread?.parenthash) {
       const parent = sanatizeDB(

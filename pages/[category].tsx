@@ -85,7 +85,9 @@ export const getServerSideProps: GetServerSideProps = async ({
     let entriesAndReplies: ThreadWithReplys = await Promise.all(
       entries.map(async (entry) => {
         const replyThreads = await sanatizeDB(
-          Thread.find({ parenthash: entry.hash.value }).limit(5)
+          Thread.find({ parenthash: entry.hash.value })
+            .sort({ published: -1 })
+            .limit(5)
         );
         return {
           ...entry,
