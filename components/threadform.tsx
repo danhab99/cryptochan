@@ -110,11 +110,19 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
         url: form["url"],
       };
 
-      let { hash, signature } = await SignThread(
-        sk.armor(),
-        skPassword,
-        rawThread
-      );
+      let hash: string, signature: string;
+
+      try {
+        ({ hash, signature } = await SignThread(
+          sk.armor(),
+          skPassword,
+          rawThread
+        ));
+      } catch (e) {
+        alert("Unable to decrypt private key with password");
+        setSubmitting(false);
+        return;
+      }
 
       rawThread["hash"] = {
         algorithm: Policy.hash_algo,
