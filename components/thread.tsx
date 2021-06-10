@@ -115,7 +115,9 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
 
         <p className="text-sm font-mono text-black">{entry.body.content}</p>
 
-        {showReply ? <ThreadForm replyTo={entry.hash.value} /> : null}
+        {showReply ? (
+          <ThreadForm replyTo={entry.hash.value} category={entry.category} />
+        ) : null}
       </div>
     </div>
   );

@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import prettyBytes from "pretty-bytes";
 import * as openpgp from "openpgp";
-import { Policy } from "../policy";
+import { Policy, Category } from "../policy";
 import { LabeledInput, LabeledRow } from "./labeledinput";
 import { HashArrayBuffer, SignThread } from "../crypto";
 import { IEmbed, IThreadSimple } from "../schemas/Thread";
 
 interface ThreadFormProps {
   replyTo?: string;
+  category?: Category;
 }
 
 const ThreadForm: React.FC<ThreadFormProps> = (props) => {
@@ -103,7 +104,7 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
           content: form["body"],
           mimetype: "text/plain",
         },
-        category: form["category"] || "all",
+        category: form["category"],
         parenthash: form["reply to"],
         published: publishTime,
         url: form["url"],
@@ -153,12 +154,11 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
   };
 
   useEffect(() => {
-    if (props.replyTo) {
-      setForm({
-        "reply to": props.replyTo,
-      });
-    }
-  }, [props.replyTo]);
+    setForm({
+      "reply to": props.replyTo,
+      category: props.category?.name,
+    });
+  }, [props.replyTo, props.category]);
 
   return (
     <div>
@@ -194,10 +194,12 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
               <select
                 onChange={handle}
                 name="category"
-                defaultValue={window.location.pathname.split("/")[1]}
+                defaultValue={
+                  props.category?.name || window.location.pathname.split("/")[1]
+                }
               >
                 {Policy.categories.map((x) => (
-                  <option>{x.title}</option>
+                  <option value={x.name}>{x.title}</option>
                 ))}
               </select>
             </LabeledRow>
