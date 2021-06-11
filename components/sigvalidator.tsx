@@ -25,16 +25,7 @@ const SigValidator: React.FC<SigValidatorProps> = (props) => {
       if (resp.ok) {
         let pk = await resp.text();
         try {
-          let verified = await VerifyThread(
-            pk,
-            props.thread.signature,
-            props.thread
-          );
-          let valid = await Promise.all(
-            verified.signatures.map((x) => x.verified)
-          );
-
-          if (valid.some((x) => x)) {
+          if (await VerifyThread(pk, props.thread.signature, props.thread)) {
             setState(ValidatorState.VALID);
           } else {
             setState(ValidatorState.INVALID);

@@ -104,15 +104,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       try {
-        let verify = await VerifyThread(dbPublicKey.key, sig, thread);
-
-        let valids = await Promise.all(
-          verify.signatures
-            .filter((x) => x.keyID?.toHex?.() === issuer)
-            .map((x) => x.verified)
-        );
-
-        if (valids.every((x) => x)) {
+        if (await VerifyThread(dbPublicKey.key, sig, thread)) {
           Thread.create(thread).then((thread) => {
             res.redirect(`/t/${thread.hash.value}`);
           });

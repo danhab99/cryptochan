@@ -79,19 +79,18 @@ export const VerifyThread = async (
   armoredKey: string,
   signature: string | openpgp.Signature,
   entry: Partial<IThreadSimple>
-) => {
+): Promise<boolean> => {
   console.log("Verifying Thread", armoredKey, signature, entry);
   let publicKey = openpgp.readKey({
     armoredKey: armoredKey,
   });
 
-  let parsedSig: Promise<openpgp.Signature>;
+  let parsedSig: openpgp.Signature;
 
   if (signature instanceof openpgp.Signature) {
-    console.log("Good signature", signature);
-    parsedSig = Promise.resolve(signature);
+    parsedSig = signature;
   } else {
-    parsedSig = openpgp.readSignature({ armoredSignature: signature });
+    parsedSig = await openpgp.readSignature({ armoredSignature: signature });
   }
 
   let cleanEntry: any = _.cloneDeep(entry);
@@ -109,10 +108,21 @@ export const VerifyThread = async (
     text: hash,
   });
 
-  return openpgp.verify({
+  let verify = await openpgp.verify({
     verificationKeys: [await publicKey],
-    signature: await parsedSig,
+    signature: parsedSig,
     expectSigned: true,
     message: testMessage,
   });
+
+  let valid = await Promise.all(
+    verify.signatures
+      .filter(
+        (x) =>
+          x.keyID?.toHex?.() in parsedSig.getIssuerIDs().map((x) => x.toHex())
+      )
+      .map((x) => x.verified)
+  );
+
+  return valid.every((x) => x);
 };
