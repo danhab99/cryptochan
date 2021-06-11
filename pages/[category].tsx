@@ -11,7 +11,7 @@ import {
   HomeQueryParmas,
   PAGE_COUNT,
   ThreadWithReplys,
-} from "./getEntriesInCategory";
+} from "./getThreadsInCategory";
 
 type HomeProps = { threads?: ThreadWithReplys; error?: Error; more: boolean };
 
