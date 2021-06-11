@@ -66,6 +66,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
+      if (thread.parenthash) {
+        if (await Thread.exists({ parenthash: thread.parenthash })) {
+          res
+            .status(401)
+            .json(
+              new Error("Thread is replying to a thread that doesn't exist")
+            );
+          return;
+        }
+      }
+
       const sig = await openpgp.readSignature({
         armoredSignature: thread.signature,
       });
@@ -75,7 +86,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       let dbPublicKey = await PublicKey.findOne({ keyid: issuer });
 
       if (dbPublicKey === null) {
-        res.writeHead(404).end("Public key not found");
+        res.status(404).json(new Error("Public key not found"));
       } else {
         try {
           let verify = await VerifyThread(dbPublicKey.key, sig, thread);
