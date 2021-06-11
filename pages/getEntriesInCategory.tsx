@@ -12,11 +12,11 @@ type ThreadWithReply = IThreadSimple & { replyThreads: Array<IThreadSimple> };
 
 export type ThreadWithReplys = Array<ThreadWithReply>;
 
-export async function getEntriesInCategory(
+export async function getThreadsInCategory(
   category: string,
   q: HomeQueryParmas
-): Promise<{ entriesAndReplies: ThreadWithReplys; entries: IThread[] }> {
-  let entries = (await sanatizeDB(
+): Promise<{ threadsAndReplies: ThreadWithReplys; threads: IThread[] }> {
+  let threads = (await sanatizeDB(
     Thread.find({
       $or: [{ parenthash: "" }, { parenthash: undefined }],
       ...(category === "all" ? {} : { category }),
@@ -26,19 +26,19 @@ export async function getEntriesInCategory(
       .limit(PAGE_COUNT)
   )) as IThread[];
 
-  let entriesAndReplies: ThreadWithReplys = await Promise.all(
-    entries.map(async (entry) => {
+  let threadsAndReplies: ThreadWithReplys = await Promise.all(
+    threads.map(async (thread) => {
       const replyThreads = await sanatizeDB(
-        Thread.find({ parenthash: entry.hash.value })
+        Thread.find({ parenthash: thread.hash.value })
           .sort({ published: -1 })
           .limit(5)
       );
       return {
-        ...entry,
+        ...thread,
         replyThreads,
       };
     })
   );
 
-  return { entriesAndReplies, entries };
+  return { threadsAndReplies, threads };
 }

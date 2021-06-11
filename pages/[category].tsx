@@ -7,27 +7,27 @@ import connectDB from "../middlewares/mongoose";
 import Title from "../components/title";
 import ThreadComponent from "../components/thread";
 import {
-  getEntriesInCategory,
+  getThreadsInCategory,
   HomeQueryParmas,
   PAGE_COUNT,
   ThreadWithReplys,
 } from "./getEntriesInCategory";
 
-type HomeProps = { entries?: ThreadWithReplys; error?: Error; more: boolean };
+type HomeProps = { threads?: ThreadWithReplys; error?: Error; more: boolean };
 
 const Category: React.FC<HomeProps> = (props) => {
-  const [entries, setEntries] = useState(props.entries);
+  const [threads, setThreads] = useState(props.threads);
 
   return (
     <div>
       <Header type="category" category="all" />
       <Title newThreads />
 
-      {entries?.map((entry) => (
+      {threads?.map((thread) => (
         <div>
-          <ThreadComponent entry={entry as unknown as IThread} />
+          <ThreadComponent entry={thread as unknown as IThread} />
           <div className="replyBlock">
-            {entry?.replyThreads?.map?.((reply) => {
+            {thread?.replyThreads?.map?.((reply) => {
               return <ThreadComponent entry={reply as unknown as IThread} />;
             })}
           </div>
@@ -68,15 +68,15 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
 
   try {
-    let { entriesAndReplies, entries } = await getEntriesInCategory(
+    let { threadsAndReplies, threads } = await getThreadsInCategory(
       category,
       q
     );
 
     return {
       props: {
-        entries: entriesAndReplies,
-        more: entries.length >= PAGE_COUNT,
+        threads: threadsAndReplies,
+        more: threads.length >= PAGE_COUNT,
       },
     };
   } catch (e) {
