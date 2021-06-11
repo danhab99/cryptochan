@@ -69,12 +69,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       if (thread.parenthash) {
         if (await Thread.exists({ parenthash: thread.parenthash })) {
           res
-            .status(401)
+            .status(406)
             .json(
               new Error("Thread is replying to a thread that doesn't exist")
             );
           return;
         }
+      }
+
+      if (Policy.publickey.require && !thread.signature) {
+        res.status(401).json(new Error("Signature required"));
+        return;
       }
 
       const sig = await openpgp.readSignature({
