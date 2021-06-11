@@ -198,6 +198,7 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
               name="reply to"
               onChange={handle}
               defaultValue={props.replyTo || ""}
+              disabled={props.replyTo ? true : false}
             />
             <LabeledRow label="category">
               <select
@@ -206,6 +207,7 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
                 defaultValue={
                   props.category?.name || window.location.pathname.split("/")[1]
                 }
+                disabled={props.category ? true : false}
               >
                 {Policy.categories.map((x) => (
                   <option value={x.name}>{x.title}</option>
