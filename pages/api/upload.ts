@@ -90,42 +90,41 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const sig = await openpgp.readSignature({
         armoredSignature: thread.signature,
       });
-
       let issuer: string = sig.getIssuerIDs()[0].toHex();
-
       let dbPublicKey = await PublicKey.findOne({ keyid: issuer });
 
       if (dbPublicKey === null) {
         res.status(404).json(new Error("Public key not found"));
-      } else {
-        if (Policy.publickey.preapproved && !dbPublicKey.approved) {
-          res.status(401).json(new Error("Public key not approved"));
-          return;
+        return;
+      }
+
+      if (Policy.publickey.preapproved && !dbPublicKey.approved) {
+        res.status(401).json(new Error("Public key not approved"));
+        return;
+      }
+
+      try {
+        let verify = await VerifyThread(dbPublicKey.key, sig, thread);
+
+        let valids = await Promise.all(
+          verify.signatures
+            .filter((x) => x.keyID?.toHex?.() === issuer)
+            .map((x) => x.verified)
+        );
+
+        if (valids.every((x) => x)) {
+          Thread.create(thread).then((thread) => {
+            res.redirect(`/t/${thread.hash.value}`);
+          });
+        } else {
+          res
+            .status(401)
+            .json(new Error("One or more issuers were not verifiable"));
         }
-
-        try {
-          let verify = await VerifyThread(dbPublicKey.key, sig, thread);
-
-          let valids = await Promise.all(
-            verify.signatures
-              .filter((x) => x.keyID?.toHex?.() === issuer)
-              .map((x) => x.verified)
-          );
-
-          if (valids.every((x) => x)) {
-            Thread.create(thread).then((thread) => {
-              res.redirect(`/t/${thread.hash.value}`);
-            });
-          } else {
-            res
-              .status(401)
-              .json(new Error("One or more issuers were not verifiable"));
-          }
-        } catch (e) {
-          console.error(e);
-          res.writeHead(401).json(e);
-          return;
-        }
+      } catch (e) {
+        console.error(e);
+        res.writeHead(401).json(e);
+        return;
       }
     });
 
