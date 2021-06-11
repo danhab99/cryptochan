@@ -42,18 +42,18 @@ const SigValidator: React.FC<SigValidatorProps> = (props) => {
 
   switch (state) {
     case ValidatorState.INVALID:
-      return <span className="text-invalid-500 font-mono">[INVALID]</span>;
+      return <span className="text-invalid-500 sigValidator">[INVALID]</span>;
 
     case ValidatorState.VALID:
-      return <span className="text-valid-600 font-mono">[VALID]</span>;
+      return <span className="text-valid-500 sigValidator">[VALID]</span>;
 
     case ValidatorState.WORKING:
       return (
-        <span className="text-validating-500 font-mono">[WORKING...]</span>
+        <span className="text-validating-500 sigValidator">[WORKING...]</span>
       );
 
     case ValidatorState.ERROR:
-      return <span className="text-invalid-600 font-mono">[ERROR...]</span>;
+      return <span className="text-invalid-500 sigValidator">[ERROR]</span>;
   }
 };
 

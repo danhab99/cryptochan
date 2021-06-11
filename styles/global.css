@@ -27,3 +27,7 @@ code {
   max-width: 30ch;
   display: block;
 }
+
+.sigValidator {
+  @apply font-mono font-bold;
+}
