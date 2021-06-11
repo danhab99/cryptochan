@@ -1,10 +1,11 @@
 // next.config.js
-require("dotenv").config();
 module.exports = {
   webpack(config, options) {
     return config;
   },
-  env: process.env,
+  env: {
+    TITLE: "Cryptochan",
+  },
   future: {
     webpack5: true,
   },
