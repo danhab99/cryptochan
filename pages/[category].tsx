@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Header } from "../components/header";
 import _ from "lodash";
 import { IThread } from "../schemas/Thread";
