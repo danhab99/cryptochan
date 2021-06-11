@@ -10,16 +10,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   PublicKey.findOne({ keyid: req.query.kid as string })
     .then((pk) => {
       if (pk) {
-        res.writeHead(200, {
-          "Cache-Control": "public, max-age=604800, immutable",
-        });
+        res.setHeader("Cache-Control", "public, max-age=604800, immutable");
         res.end(pk.key);
       } else {
-        res.writeHead(404).end("Not found");
+        res.status(404).json(new Error("Not found"));
       }
     })
     .catch((e) => {
-      res.writeHead(500);
-      res.end(JSON.stringify(e));
+      res.status(500).json(e);
     });
 };

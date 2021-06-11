@@ -21,11 +21,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.setHeader("Cache-Control", "public, max-age=604800, immutable");
         res.json(thread);
       } else {
-        res.writeHead(404).end("Not found");
+        res.status(404).json(new Error("Not found"));
       }
     })
     .catch((e) => {
-      res.writeHead(500);
-      res.end(JSON.stringify(e));
+      res.status(500).json(e);
     });
 };
