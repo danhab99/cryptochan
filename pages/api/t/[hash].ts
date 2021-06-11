@@ -18,7 +18,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   )
     .then((thread) => {
       if (thread) {
-        res.setHeader("Cache-Control", "public, max-age=604800, immutable");
+        if (!req.query.replies) {
+          res.setHeader("Cache-Control", "public, max-age=604800, immutable");
+        }
         res.json(thread);
       } else {
         res.status(404).json(new Error("Not found"));
