@@ -93,7 +93,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
               {entry.author.publickey})
             </span>
           </a>{" "}
-          {entry.published.toISOString()}
+          {new Date(entry.published).toISOString()}
           <SigValidator thread={entry} />
           <br />
           <span className="text-muted-600 shortHash">
