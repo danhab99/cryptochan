@@ -1,5 +1,49 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Environments and Policies
+
+The config files are split between `.env` and `policy.ts`
+
+### .env
+
+```ini
+TITLE=  # The title of the webpage to be displayed in the meta and the screen
+MONGO_SRV= # Link for the mongo database
+DOMAIN= # The domain attatched to the page
+```
+
+### policy.ts
+
+```typescript
+import { IPolicy } from "./IPolicy";
+
+export const Policy: IPolicy = {
+  approve_posts: true, // Posts require manual approval before joining the blockchain
+  publickey: {
+    preapproved: true, // If there is a public key, it has to have already been approved
+    require: true, // Public keys are required
+  },
+  embeds: ["image/webp", "video/webm"], // The mimetype of the embedded files allowed
+  maxEmbeds: 3, // Maximum number of embedded files
+  maxSize: 1e7, // Maximum size of the embedded files in bytes (currently 10MB)
+  rules: [ // Rules that will be displayed on the index page
+    "Rule 1",
+    "Rule 2",
+    "Rule 3",
+  ],
+  categories: [ // Allowed categories, equivilant to 4chan's boards
+    {
+      name: "all",
+      title: "All",
+      description: "Welcomes all posts",
+    },
+  },
+  hash_algo: "SHA-256", // Default hashing algorithm
+};
+
+
+```
+
 ## Getting Started
 
 First, run the development server:
