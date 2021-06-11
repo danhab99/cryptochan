@@ -14,6 +14,7 @@ export interface IPolicy {
   embeds: string[];
   maxEmbeds: number;
   maxSize: number;
+  maxLength: number;
   categories: Category[];
   hash_algo: "SHA-256" | "SHA-384" | "SHA_512";
 }

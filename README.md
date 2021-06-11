@@ -26,6 +26,7 @@ export const Policy: IPolicy = {
   embeds: ["image/webp", "video/webm"], // The mimetype of the embedded files allowed
   maxEmbeds: 3, // Maximum number of embedded files
   maxSize: 1e7, // Maximum size of the embedded files in bytes (currently 10MB)
+  maxLength: 10000 // Maximum length of the body of a thread in characters
   rules: [ // Rules that will be displayed on the index page
     "Rule 1",
     "Rule 2",

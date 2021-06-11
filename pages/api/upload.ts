@@ -61,7 +61,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     busboy.on("finish", async () => {
       console.log("Busboy finished");
 
-      debugger;
+      if (thread.body.content.length > Policy.maxLength) {
+        res.status(413).json(new Error("Body too long"));
+        return;
+      }
 
       const sig = await openpgp.readSignature({
         armoredSignature: thread.signature,
@@ -88,11 +91,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
               res.redirect(`/t/${thread.hash.value}`);
             });
           } else {
-            res.writeHead(401).end(
-              JSON.stringify({
-                error: "One or more issuers were not verifiable",
-              })
-            );
+            res
+              .status(401)
+              .json(new Error("One or more issuers were not verifiable"));
           }
         } catch (e) {
           console.error(e);

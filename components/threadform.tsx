@@ -23,6 +23,11 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
     e.preventDefault();
 
     if (form) {
+      if (form["body"]?.length > Policy.maxLength) {
+        alert("Body too long");
+        return;
+      }
+
       setSubmitting(true);
       let submissionForm = new FormData();
       let publishTime = new Date();
@@ -175,7 +180,12 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
         <table>
           <tbody>
             <LabeledInput name="url" type="url" onChange={handle} />
-            <LabeledRow name="body" label="body">
+            <LabeledRow
+              name="body"
+              label={`body (${
+                Policy.maxLength - (form?.["body"]?.length || 0)
+              } characters left)`}
+            >
               <textarea name="body" cols={50} rows={4} onChange={handle} />
             </LabeledRow>
             <LabeledRow label="private key">
