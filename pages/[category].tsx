@@ -1,31 +1,29 @@
 import { GetServerSideProps } from "next";
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "../components/header";
 import _ from "lodash";
-import { Thread, IThread, IThreadSimple } from "../schemas/Thread";
+import { IThread } from "../schemas/Thread";
 import connectDB from "../middlewares/mongoose";
 import Title from "../components/title";
 import ThreadComponent from "../components/thread";
-import { sanatizeDB } from "../sanatizeQuery";
+import {
+  getEntriesInCategory,
+  HomeQueryParmas,
+  PAGE_COUNT,
+  ThreadWithReplys,
+} from "./getEntriesInCategory";
 
-type ThreadWithReply = IThreadSimple & { replyThreads: Array<IThreadSimple> };
-
-type ThreadWithReplys = Array<ThreadWithReply>;
-
-type HomeProps = { entries?: ThreadWithReplys; error?: Error };
-
-interface HomeQueryParmas {
-  page: number;
-  sort: "bump" | "date";
-}
+type HomeProps = { entries?: ThreadWithReplys; error?: Error; more: boolean };
 
 const Category: React.FC<HomeProps> = (props) => {
+  const [entries, setEntries] = useState(props.entries);
+
   return (
     <div>
       <Header type="category" category="all" />
       <Title newThreads />
 
-      {props.entries?.map((entry) => (
+      {entries?.map((entry) => (
         <div>
           <ThreadComponent entry={entry as unknown as IThread} />
           <div className="replyBlock">
@@ -40,8 +38,6 @@ const Category: React.FC<HomeProps> = (props) => {
 };
 
 export default Category;
-
-const PAGE_COUNT = 24;
 
 export const getServerSideProps: GetServerSideProps = async ({
   query,
@@ -72,33 +68,15 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
 
   try {
-    let entries = (await sanatizeDB(
-      Thread.find({
-        $or: [{ parenthash: "" }, { parenthash: undefined }],
-        ...(category === "all" ? {} : { category }),
-      })
-        .sort({ published: -1 })
-        .skip(q.page * PAGE_COUNT)
-        .limit(PAGE_COUNT)
-    )) as IThread[];
-
-    let entriesAndReplies: ThreadWithReplys = await Promise.all(
-      entries.map(async (entry) => {
-        const replyThreads = await sanatizeDB(
-          Thread.find({ parenthash: entry.hash.value })
-            .sort({ published: -1 })
-            .limit(5)
-        );
-        return {
-          ...entry,
-          replyThreads,
-        };
-      })
+    let { entriesAndReplies, entries } = await getEntriesInCategory(
+      category,
+      q
     );
 
     return {
       props: {
         entries: entriesAndReplies,
+        more: entries.length >= PAGE_COUNT,
       },
     };
   } catch (e) {
