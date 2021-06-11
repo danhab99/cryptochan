@@ -12,6 +12,7 @@ interface IPublicKey extends Document {
   fingerprint: string;
   keyid: string;
   owner: IUser;
+  approved: boolean;
 }
 
 const UserSchema: Schema = new Schema({
@@ -26,6 +27,10 @@ const PublicKeySchema: Schema = new Schema({
   fingerprint: String,
   keyid: String,
   owner: UserSchema,
+  approved: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const PublicKey: Model<IPublicKey> =

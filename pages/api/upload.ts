@@ -88,6 +88,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       if (dbPublicKey === null) {
         res.status(404).json(new Error("Public key not found"));
       } else {
+        if (Policy.publickey.preapproved && !dbPublicKey.approved) {
+          res.status(401).json(new Error("Public key not approved"));
+          return;
+        }
+
         try {
           let verify = await VerifyThread(dbPublicKey.key, sig, thread);
 
