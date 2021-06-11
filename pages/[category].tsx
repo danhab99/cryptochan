@@ -11,12 +11,12 @@ import {
   HomeQueryParmas,
   PAGE_COUNT,
   ThreadWithReplys,
-} from "./getThreadsInCategory";
+} from "../query/getThreadsInCategory";
 
 type HomeProps = { threads?: ThreadWithReplys; error?: Error; more: boolean };
 
 const Category: React.FC<HomeProps> = (props) => {
-  const [threads, setThreads] = useState(props.threads);
+  const [threads, _setThreads] = useState(props.threads);
 
   return (
     <div>
