@@ -1,21 +1,4 @@
-export interface Category {
-  name: string;
-  title: string;
-  description: string;
-}
-interface IPolicy {
-  publickey: {
-    require: boolean;
-    preapproved: boolean;
-  };
-  approve_posts: boolean;
-  rules: string[];
-  embeds: string[];
-  maxEmbeds: number;
-  maxSize: number;
-  categories: Category[];
-  hash_algo: "SHA-256" | "SHA-384" | "SHA_512";
-}
+import { IPolicy } from "./IPolicy";
 
 export const Policy: IPolicy = {
   approve_posts: true,

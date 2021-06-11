@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import { IThread } from "../schemas/Thread";
 import SigValidator from "./sigvalidator";
 import ThreadForm from "./threadform";
-import { Policy, Category } from "../policy";
+import { Policy } from "../policy";
+import { Category } from "../IPolicy";
 
 interface ThreadProps {
   entry: IThread;
