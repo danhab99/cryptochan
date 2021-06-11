@@ -82,6 +82,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
+      if (!(thread.category in Policy.categories.map((x) => x.name))) {
+        res.status(406).json(new Error("Unknown category"));
+        return;
+      }
+
       const sig = await openpgp.readSignature({
         armoredSignature: thread.signature,
       });
