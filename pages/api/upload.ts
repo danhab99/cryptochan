@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse, PageConfig } from "next";
 import Busboy from "busboy";
-import fsp from "fs/promises";
-import fs from "fs";
 import * as openpgp from "openpgp";
 import connectDB from "../../middlewares/mongoose";
 import { Thread, IThreadSimple } from "../../schemas/Thread";
@@ -9,7 +7,8 @@ import { Policy } from "../../policy";
 import { PublicKey } from "../../schemas/PublicKey";
 import { VerifyThread } from "../../crypto";
 import _ from "lodash";
-import { evalFilename } from "./evalFilename";
+import { minioClient } from "../../middlewares/minio";
+import { Readable } from "stream";
 
 export const config: PageConfig = {
   api: {
@@ -42,19 +41,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       async (fieldname, file, filename, _encoding, _mimetype) => {
         console.log("FILE", fieldname, filename);
 
-        await fsp.mkdir(evalFilename(""), {
-          recursive: true,
-        });
-        let outfilename = evalFilename(filename);
-        let outstream = fs.createWriteStream(outfilename);
-
-        file.on("limit", () => {
-          file.unpipe(outstream);
-          outstream.close();
-          fs.unlinkSync(outfilename);
-        });
-
-        file.pipe(outstream);
+        minioClient.putObject(
+          (process.env.S3_PREFIX as string) + "-embeds",
+          filename,
+          file as Readable,
+          (err, obj) => {
+            console.log(err, obj);
+          }
+        );
       }
     );
 
@@ -82,7 +76,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      if (!(thread.category in Policy.categories.map((x) => x.name))) {
+      if (!Policy.categories.map((x) => x.name).includes(thread.category)) {
         res.status(406).json(new Error("Unknown category"));
         return;
       }
