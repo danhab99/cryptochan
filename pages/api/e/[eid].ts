@@ -10,19 +10,29 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
 
-  minioClient.presignedGetObject(
+  minioClient.statObject(
     (process.env.S3_PREFIX as string) + "-embeds",
     req.query.eid as string,
-    30,
-    {
-      "Cache-Control": "public, max-age=604800, immutable",
-    },
-    (err, url) => {
-      console.log(err, url);
+    (err, stat) => {
       if (err) {
         res.status(500).json(err);
       } else {
-        res.redirect(url);
+        minioClient.presignedGetObject(
+          (process.env.S3_PREFIX as string) + "-embeds",
+          req.query.eid as string,
+          30,
+          {
+            "response-cache-control": "public, max-age=604800, immutable",
+            "response-content-type": stat.metaData.mimetype,
+          },
+          (err, url) => {
+            if (err) {
+              res.status(500).json(err);
+            } else {
+              res.redirect(url);
+            }
+          }
+        );
       }
     }
   );
