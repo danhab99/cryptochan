@@ -1,10 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { evalFilename } from "../evalFilename";
 import { minioClient } from "../../../middlewares/minio";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  let p = evalFilename(req.query.eid as string);
-
   if (!req.query.eid) {
     res.status(400).json(new Error("Embed hash required"));
     return;
@@ -29,6 +26,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             if (err) {
               res.status(500).json(err);
             } else {
+              res.setHeader(
+                "Cache-Control",
+                "public, max-age=604800, immutable"
+              );
               res.redirect(url);
             }
           }
