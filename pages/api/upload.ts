@@ -38,17 +38,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     busboy.on(
       "file",
-      async (fieldname, file, filename, _encoding, _mimetype) => {
+      async (fieldname, file, filename, _encoding, mimetype) => {
         console.log("FILE", fieldname, filename);
 
-        minioClient.putObject(
-          (process.env.S3_PREFIX as string) + "-embeds",
-          filename,
-          file as Readable,
-          (err, obj) => {
-            console.log(err, obj);
-          }
-        );
+        minioClient
+          .putObject(
+            (process.env.S3_PREFIX as string) + "-embeds",
+            filename,
+            file as Readable,
+            { mimetype }
+          )
+          .then((e) => console.log(e));
       }
     );
 
