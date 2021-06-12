@@ -49,7 +49,7 @@ const ThreadPage: React.FC<ThreadPageProps> = (props) => {
 
   return (
     <div>
-      <Header type="entry" entry={props.thread} />
+      <Header prefix={props.thread.hash.value.slice(0, 8)} />
       <Title newThreads />
 
       {props.parent ? (

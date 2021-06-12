@@ -49,7 +49,7 @@ const Category: React.FC<HomeProps> = (props) => {
 
   return (
     <div>
-      <Header type="category" category="all" />
+      <Header prefix={props.category} />
       <Title newThreads />
 
       {threads?.map((thread) => (

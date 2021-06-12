@@ -74,7 +74,7 @@ const NewKeys: React.FC = () => {
 
   return (
     <div>
-      <Header type="nothing" />
+      <Header prefix="Key Generator" />
       <Title newThreads={false} />
       <div className="centeredFlex">
         <div className="desktop:w-1/2">

@@ -6,7 +6,7 @@ import { Policy } from "../policy";
 const Home: React.FC = () => {
   return (
     <div className="home">
-      <Header type="nothing" />
+      <Header />
       <Title newThreads />
 
       <div className="centeredFlex">
