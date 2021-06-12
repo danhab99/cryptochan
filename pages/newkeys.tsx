@@ -168,14 +168,6 @@ const NewKeys: React.FC = () => {
               </tr>
             </table>
           </form>
-          <button
-            type="button"
-            className="w-full"
-            disabled={generating}
-            onClick={() => generate()}
-          >
-            Generate
-          </button>
         </div>
       </div>
     </div>
