@@ -1,0 +1,20 @@
+import React from "react";
+import Title from "../../components/title";
+import { Header } from "../../components/header";
+
+const Keys: React.FC = () => {
+  return (
+    <div>
+      <Title newThreads={false} />
+      <Header prefix="Keys" />
+
+      <div className="text-center">
+        <a href="/keys/newkeys">
+          <h1>Generate Keys</h1>
+        </a>
+      </div>
+    </div>
+  );
+};
+
+export default Keys;
