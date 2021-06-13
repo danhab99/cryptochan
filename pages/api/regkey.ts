@@ -30,7 +30,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   busboy.on("finish", () => {
-    debugger;
     if (armoredKey.length) {
       openpgp
         .readKey({
@@ -53,13 +52,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
               comment: uid?.comment,
             },
           }).then(() => {
-            res.writeHead(201, "added public key");
-            res.end();
+            res.status(201).send("added public key");
           });
         });
     } else {
-      res.writeHead(400);
-      res.end("field 'publickey' required");
+      res.status(400).send("field 'publickey' required");
     }
   });
 
