@@ -19,7 +19,7 @@ const Title: React.FC<TitleProps> = (props) => {
         <p>{"]"}</p>
 
         <p>{"["}</p>
-        <a href="/newkeys">Generate new keys</a>
+        <a href="/keys/newkeys">Generate new keys</a>
         <p>{"]"}</p>
       </div>
       <header>

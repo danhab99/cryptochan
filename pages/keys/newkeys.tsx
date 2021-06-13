@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { generateKey } from "openpgp";
-import { LabeledInput } from "../components/labeledinput";
-import Title from "../components/title";
-import { Header } from "../components/header";
+import { LabeledInput } from "../../components/labeledinput";
+import Title from "../../components/title";
+import { Header } from "../../components/header";
 
 const downloadToFile = (
   content: any,
