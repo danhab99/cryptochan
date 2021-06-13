@@ -118,9 +118,11 @@ export const VerifyThread = async (
 
   let valid = await Promise.all(
     verify.signatures
-      .filter(
-        (x) =>
-          x.keyID?.toHex?.() in parsedSig.getIssuerIDs().map((x) => x.toHex())
+      .filter((x) =>
+        parsedSig
+          .getSigningKeyIDs()
+          .map((x) => x.toHex())
+          .includes(x.keyID?.toHex?.())
       )
       .map((x) => x.verified)
   );

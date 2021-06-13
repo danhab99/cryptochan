@@ -2177,9 +2177,9 @@ onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-"openpgp@https://github.com/danhab99/openpgpjs#2ad039037b41025433635491032332e5e12cb07a":
+"openpgp@https://github.com/danhab99/openpgpjs":
   version "5.0.0-3"
-  resolved "https://github.com/danhab99/openpgpjs#2ad039037b41025433635491032332e5e12cb07a"
+  resolved "https://github.com/danhab99/openpgpjs#196dbbd02eccb7e6619ae67009877788ca7397f1"
   dependencies:
     asn1.js "^5.0.0"
 

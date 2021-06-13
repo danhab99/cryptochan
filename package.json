@@ -19,7 +19,7 @@
     "mongo": "^0.1.0",
     "mongoose": "^5.12.12",
     "next": "10.2.3",
-    "openpgp": "https://github.com/danhab99/openpgpjs#2ad039037b41025433635491032332e5e12cb07a",
+    "openpgp": "https://github.com/danhab99/openpgpjs",
     "pretty-bytes": "^5.6.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
