@@ -8,10 +8,10 @@ import Title from "../components/title";
 import ThreadComponent from "../components/thread";
 import {
   getThreadsInCategory,
-  HomeQueryParmas,
   PAGE_COUNT,
   ThreadWithReplys,
 } from "../query/getThreadsInCategory";
+import { sanatizeParams } from "../sanatizeQuery";
 
 type HomeProps = {
   threads?: ThreadWithReplys;
@@ -84,40 +84,31 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   await connectDB();
-  let q: HomeQueryParmas = {
-    page: typeof query.page === "string" ? parseInt(query.page) : 0,
-    sort: "date",
-  };
 
-  if (!params) {
+  const page = parseInt(sanatizeParams(query.page, "0"));
+  const sort = sanatizeParams(query.sort, "date");
+  const category = sanatizeParams(params?.["category"]);
+
+  if (!category) {
     return {
       notFound: true,
     };
   }
-  let category = params["category"];
-
-  if (!category || Array.isArray(category)) {
-    return {
-      notFound: true,
-    };
-  }
-
-  _.defaults(q, {
-    page: 0,
-    sort: "date",
-  });
 
   try {
-    let { threadsAndReplies, threads } = await getThreadsInCategory(
+    const { threadsAndReplies, threads } = await getThreadsInCategory(
       category,
-      q
+      {
+        page,
+        sort,
+      }
     );
 
     return {
       props: {
         threads: threadsAndReplies,
         more: threads.length >= PAGE_COUNT,
-        startPage: q.page,
+        startPage: page,
         category,
       },
     };
