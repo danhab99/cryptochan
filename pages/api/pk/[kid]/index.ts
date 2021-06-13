@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../middlewares/mongoose";
-import { PublicKey } from "../../../schemas/PublicKey";
+import connectDB from "../../../../middlewares/mongoose";
+import { PublicKey } from "../../../../schemas/PublicKey";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();
