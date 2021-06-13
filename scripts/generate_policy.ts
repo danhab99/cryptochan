@@ -1,4 +1,4 @@
-import { IPolicy } from "./IPolicy";
+import { IPolicy } from "../IPolicy";
 
 const policy: IPolicy = {
   approve_posts: true,
@@ -24,7 +24,7 @@ const policy: IPolicy = {
     },
   ],
   hash_algo: "SHA-256",
-  maxLength: 1e6,
+  maxLength: 1e5,
 };
 
 console.log(JSON.stringify(policy));
