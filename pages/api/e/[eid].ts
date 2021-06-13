@@ -17,7 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         minioClient.presignedGetObject(
           (process.env.S3_PREFIX as string) + "-embeds",
           req.query.eid as string,
-          30,
+          604799,
           {
             "response-cache-control": "public, max-age=604800, immutable",
             "response-content-type": stat.metaData.mimetype,
