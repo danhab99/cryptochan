@@ -19,6 +19,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     { page }
   );
 
-  res.setHeader("Cache-Control", "public, max-age=604800, immutable");
   res.json({ threads: threadsAndReplies, moreAvaliable: more });
 };
