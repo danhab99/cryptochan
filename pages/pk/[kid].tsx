@@ -40,7 +40,7 @@ const PKPage: React.FC<PKPageProps> = (props) => {
 
       <ThreadList
         more={props.more}
-        source={``}
+        source={`pk/${props.publicKey.keyid}/t`}
         startPage={props.startPage}
         threads={props.threads}
       />
