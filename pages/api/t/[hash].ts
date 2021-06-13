@@ -6,8 +6,6 @@ import { Thread } from "../../../schemas/Thread";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();
 
-  console.log("Getting Thread", req.query);
-
   sanatizeDB(
     Thread.find({
       [req.query.replies ? "parenthash" : "hash.value"]: req.query
