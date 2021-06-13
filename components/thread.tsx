@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { IThread } from "../schemas/Thread";
+import { IThreadSimple } from "../schemas/Thread";
 import SigValidator from "./sigvalidator";
 import ThreadForm from "./threadform";
 import { Policy } from "../policy";
 import { Category } from "../IPolicy";
 
 interface ThreadProps {
-  entry: IThread;
+  entry: IThreadSimple;
 }
 
 const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
