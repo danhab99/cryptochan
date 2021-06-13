@@ -20,6 +20,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "server.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "server.js",
+    "public/robots.txt"
+  ],
   "exclude": ["node_modules"]
 }
