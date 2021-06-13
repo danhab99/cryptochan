@@ -3,10 +3,6 @@ import Title from "../components/title";
 import { Header } from "../components/header";
 import { useRouter } from "next/router";
 
-interface ErrorProps {
-  kind: "category" | "thread";
-}
-
 const Error404Page: React.FC = () => {
   const router = useRouter();
   console.log(router);

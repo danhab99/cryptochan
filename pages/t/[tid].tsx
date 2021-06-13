@@ -1,8 +1,8 @@
 import { GetServerSideProps, GetServerSidePropsResult } from "next";
-import React, { useState, useRef } from "react";
+import React from "react";
 import { Header } from "../../components/header";
 import _ from "lodash";
-import { Thread, IThread, IThreadSimple } from "../../schemas/Thread";
+import { Thread, IThreadSimple } from "../../schemas/Thread";
 import connectDB from "../../middlewares/mongoose";
 import Title from "../../components/title";
 import ThreadComponent from "../../components/thread";

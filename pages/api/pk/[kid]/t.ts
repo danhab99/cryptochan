@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../../middlewares/mongoose";
 import { getThreadsAndReplies } from "../../../../query/getThreadsAndReplies";
-import { sanatizeDB, sanatizeParams } from "../../../../sanatizeQuery";
-import { Thread } from "../../../../schemas/Thread";
+import { sanatizeParams } from "../../../../sanatizeQuery";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await connectDB();

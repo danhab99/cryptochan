@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { VerifyThread } from "../crypto";
-import { IThread } from "../schemas/Thread";
+import { IThreadSimple } from "../schemas/Thread";
 
 enum ValidatorState {
   WORKING,
@@ -10,7 +10,7 @@ enum ValidatorState {
 }
 
 interface SigValidatorProps {
-  thread: IThread;
+  thread: IThreadSimple;
 }
 
 const SigValidator: React.FC<SigValidatorProps> = (props) => {
