@@ -87,7 +87,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
         <p className="entryTitle">
           <span className="font-bold">{entry.author.name}</span>{" "}
           <span>in {entry.category} </span>
-          <a href={`/api/pk/${entry.author.publickey}`}>
+          <a href={`/pk/${entry.author.publickey}`}>
             <span>
               (pk:
               {entry.author.publickey})
