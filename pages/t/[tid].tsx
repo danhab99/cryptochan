@@ -70,8 +70,17 @@ export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
       { page }
     );
 
+    if (threadsAndReplies.length <= 0) {
+      return {
+        notFound: true,
+      };
+    }
+
     const parent = (await sanatizeDB(
-      Thread.findOne({ "hash.value": threadsAndReplies[0].parenthash })
+      Thread.findOne({
+        "hash.value": threadsAndReplies[0].parenthash,
+        approved: true,
+      })
     )) as IThreadSimple;
 
     return {

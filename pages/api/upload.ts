@@ -61,7 +61,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       if (thread.parenthash) {
-        if (await Thread.exists({ parenthash: thread.parenthash })) {
+        if (
+          !(await Thread.exists({
+            parenthash: thread.parenthash,
+            approved: true,
+          }))
+        ) {
           res
             .status(406)
             .json(

@@ -45,7 +45,7 @@ export async function getThreadsAndReplies(
   }
 
   let threads = (await sanatizeDB(
-    Thread.find(queryObj)
+    Thread.find({ ...queryObj, approved: true })
       .sort({ published: -1 })
       .skip(params.page * PAGE_COUNT)
       .limit(PAGE_COUNT)
@@ -54,7 +54,7 @@ export async function getThreadsAndReplies(
   let threadsAndReplies: ThreadWithReplys = await Promise.all(
     threads.map(async (thread) => {
       const replyThreads = await sanatizeDB(
-        Thread.find({ parenthash: thread.hash.value })
+        Thread.find({ parenthash: thread.hash.value, approved: true })
           .sort({ published: -1 })
           .limit(5)
       );

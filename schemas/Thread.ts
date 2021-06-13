@@ -61,6 +61,10 @@ const ThreadSchema: Schema = new Schema({
   category: String,
   embeds: [{ type: EmbedSchema }],
   url: String,
+  approved: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const Thread: Model<IThread> =
