@@ -1,7 +1,13 @@
 import { Thread, IThread, IThreadSimple } from "../schemas/Thread";
 import { sanatizeDB } from "../sanatizeQuery";
+import { FilterQuery } from "mongoose";
 
 export const PAGE_COUNT = 24;
+
+export type ThreadsQuery =
+  | { type: "category"; category?: string }
+  | { type: "replies"; parent: string }
+  | { type: "publickey"; pk: string };
 
 export interface HomeQueryParmas {
   page: number;
@@ -13,16 +19,35 @@ type ThreadWithReply = IThreadSimple & { replyThreads: Array<IThreadSimple> };
 export type ThreadWithReplys = Array<ThreadWithReply>;
 
 export async function getThreadsInCategory(
-  category: string,
-  q: HomeQueryParmas
-): Promise<{ threadsAndReplies: ThreadWithReplys; threads: IThread[] }> {
+  query: ThreadsQuery,
+  params: HomeQueryParmas
+): Promise<{ threadsAndReplies: ThreadWithReplys; more: boolean }> {
+  let queryObj: FilterQuery<IThread>;
+
+  switch (query.type) {
+    case "category":
+      queryObj = {
+        $or: [{ parenthash: "" }, { parenthash: undefined }],
+        ...(query.category === "all" ? {} : { category: query.category }),
+      };
+      break;
+
+    case "replies":
+      queryObj = { "hash.value": query.parent };
+      break;
+
+    case "publickey":
+      queryObj = { "author.publickey": query.pk };
+      break;
+
+    default:
+      throw new Error("Query required");
+  }
+
   let threads = (await sanatizeDB(
-    Thread.find({
-      $or: [{ parenthash: "" }, { parenthash: undefined }],
-      ...(category === "all" ? {} : { category }),
-    })
+    Thread.find(queryObj)
       .sort({ published: -1 })
-      .skip(q.page * PAGE_COUNT)
+      .skip(params.page * PAGE_COUNT)
       .limit(PAGE_COUNT)
   )) as IThread[];
 
@@ -40,5 +65,5 @@ export async function getThreadsInCategory(
     })
   );
 
-  return { threadsAndReplies, threads };
+  return { threadsAndReplies, more: threads.length >= PAGE_COUNT };
 }
