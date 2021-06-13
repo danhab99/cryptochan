@@ -2,7 +2,7 @@ import { GetServerSideProps, GetServerSidePropsResult } from "next";
 import React, { useState, useRef } from "react";
 import { Header } from "../../components/header";
 import _ from "lodash";
-import { Thread, IThread } from "../../schemas/Thread";
+import { Thread, IThread, IThreadSimple } from "../../schemas/Thread";
 import connectDB from "../../middlewares/mongoose";
 import Title from "../../components/title";
 import ThreadComponent from "../../components/thread";
@@ -11,45 +11,24 @@ import {
   sanatizeDB,
   sanatizeParams,
 } from "../../sanatizeQuery";
+import {
+  getThreadsAndReplies,
+  ThreadWithReplys,
+} from "../../query/getThreadsAndReplies";
+import { ThreadList } from "../../components/threadList";
 
 interface ThreadPageProps {
-  thread: IThread;
-  parent?: IThread | null;
-  replies?: Array<IThread>;
+  threads: ThreadWithReplys;
+  parent?: IThreadSimple;
   startPage: number;
   more: boolean;
   hash: string;
 }
 
 const ThreadPage: React.FC<ThreadPageProps> = (props) => {
-  const page = useRef(props.startPage);
-  const [loading, setLoading] = useState(false);
-  const [replies, setReplies] = useState(props.replies);
-  const [more, setMore] = useState(props.more);
-
-  const loadMore = async () => {
-    page.current += 1;
-    setLoading(true);
-    let resp = await fetch(`/api/t/${props.hash}?page=${page.current}`);
-
-    if (resp.ok) {
-      let threads: Array<IThread>;
-      let moreAvaliable: boolean;
-
-      ({ threads, moreAvaliable } = await resp.json());
-
-      setReplies((prev) => (prev ? prev.concat(threads) : threads));
-      setMore(moreAvaliable);
-    } else {
-      alert("Unable to fetch more");
-      console.error(await resp.text());
-    }
-    setLoading(false);
-  };
-
   return (
     <div>
-      <Header prefix={props.thread.hash.value.slice(0, 8)} />
+      <Header prefix={props.threads[0].hash.value.slice(0, 8)} />
       <Title newThreads />
 
       {props.parent ? (
@@ -59,33 +38,17 @@ const ThreadPage: React.FC<ThreadPageProps> = (props) => {
         </div>
       ) : null}
 
-      <ThreadComponent entry={props.thread} />
-
-      {replies ? (
-        <div className="replyBlock">
-          {replies?.map((r) => (
-            <ThreadComponent entry={r} />
-          ))}
-        </div>
-      ) : null}
-
-      {more ? (
-        <div>
-          <h3
-            className="text-primary-700 text-center underline"
-            onClick={() => loadMore()}
-          >
-            [Load more{loading ? "..." : ""}]
-          </h3>
-        </div>
-      ) : null}
+      <ThreadList
+        threads={props.threads}
+        more={props.more}
+        source={`/t/${props.hash}`}
+        startPage={props.startPage}
+      />
     </div>
   );
 };
 
 export default ThreadPage;
-
-const PAGE_COUNT = 30;
 
 export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
   params,
@@ -96,41 +59,28 @@ export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
     const tid = sanatizeParams(params?.tid);
     const page = parseInt((query.page as string) || "0");
 
-    const thread = await sanatizeDB(Thread.findOne({ "hash.value": tid }));
-
-    if (!thread) {
+    if (!tid) {
       return {
         notFound: true,
       };
     }
 
-    const replies = await sanatizeDB(
-      Thread.find({ parenthash: tid })
-        .sort({ published: -1 })
-        .skip(page * PAGE_COUNT)
-        .limit(PAGE_COUNT)
+    const { threadsAndReplies, more } = await getThreadsAndReplies(
+      { type: "replies", parent: tid },
+      { page }
     );
 
-    if (thread?.parenthash) {
-      const parent = sanatizeDB(
-        Thread.findOne({ "hash.value": thread.parenthash })
-      );
-
-      return {
-        props: {
-          thread,
-          parent: await parent,
-          replies,
-          more: replies.length >= PAGE_COUNT,
-          startPage: page,
-        },
-      };
-    }
+    const parent = (await sanatizeDB(
+      Thread.findOne({ "hash.value": threadsAndReplies[0].parenthash })
+    )) as IThreadSimple;
 
     return {
       props: {
-        thread,
-        replies: await replies,
+        threads: threadsAndReplies,
+        parent,
+        more,
+        startPage: page,
+        hash: tid,
       },
     };
   } catch (e) {

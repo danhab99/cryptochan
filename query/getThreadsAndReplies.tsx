@@ -11,7 +11,7 @@ export type ThreadsQuery =
 
 export interface HomeQueryParmas {
   page: number;
-  sort: string;
+  // sort: string;
 }
 
 type ThreadWithReply = IThreadSimple & { replyThreads: Array<IThreadSimple> };
