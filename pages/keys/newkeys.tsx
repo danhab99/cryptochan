@@ -52,7 +52,6 @@ const NewKeys: React.FC = () => {
     )}_key.gpg`;
     downloadToFile(publicKeyArmored, filename + ".pub", "application/pgp");
     downloadToFile(privateKeyArmored, filename + ".secret", "application/pgp");
-    downloadToFile(revocationCertificate, filename + ".rev", "application/pgp");
 
     if (autoUpload) {
       setUploading(true);
@@ -112,16 +111,6 @@ const NewKeys: React.FC = () => {
                     the internet, we can all imagine some less that moral things
                     we don't want someone else signing with our name.{" "}
                     <MoreInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
-                  </p>
-                </li>
-                <li>
-                  <p>
-                    The <code>.rev</code> file is used to inform the world that
-                    your secret key was compromised and should be ignored. You
-                    cannot guarantee that everybody will respect your wishes and
-                    you should not rely on this file as a get-out-of-jail-free
-                    card.{" "}
-                    <MoreInfo link="http://www.spywarewarrior.com/uiuc/ss/revoke/pgp-revoke.htm" />
                   </p>
                 </li>
               </ol>

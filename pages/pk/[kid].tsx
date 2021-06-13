@@ -24,7 +24,7 @@ const PKPage: React.FC<PKPageProps> = (props) => {
       <Title newThreads={false} />
       <Header prefix={`${props.publicKey.owner.name}'s key`} />
 
-      <h2 className="phone:text-center">
+      <h2 className={`phone:text-center`}>
         {props.publicKey.owner.name} {"("}
         <a href={`mailto:${props.publicKey.owner.email}`}>
           {props.publicKey.owner.email}
@@ -32,10 +32,23 @@ const PKPage: React.FC<PKPageProps> = (props) => {
         {")"}
       </h2>
 
+      {props.publicKey.revokeCert ? (
+        <>
+          <h2 className="text-red-600 phone:text-center">
+            {"["}REVOKED{"]"}
+          </h2>
+          <p className="text-red-600 font-bold">
+            THE PUBLIC KEY WAS REVOKED ITS OWNER USING A REVOCATION CERTIFICATE.
+            SIGNING POSTS WITH THIS PUBLIC KEY IS NO LONGER POSSIBLE.
+          </p>
+        </>
+      ) : null}
+
       <p>{props.publicKey.owner.comment}</p>
 
       <pre className="phone:overflow-scroll desktop:w-max border-primary-500 border border-solid phone:p-1 desktop:p-3 bg-gray-800 text-white">
         {props.publicKey.key}
+        {props.publicKey.revokeCert}
       </pre>
 
       <ThreadList
