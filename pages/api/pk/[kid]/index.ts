@@ -17,6 +17,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     })
     .catch((e) => {
-      res.status(500).json(e);
+      res.end(JSON.stringify(e));
     });
 };
