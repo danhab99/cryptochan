@@ -1,13 +1,13 @@
 import mongoose, { model, Schema, Model, Document } from "mongoose";
 
-interface IUser extends Document {
+export interface IUser extends Document {
   name: string;
   email: string;
   userID: string;
   comment: string;
 }
 
-interface IPublicKey extends Document {
+export interface IPublicKey extends Document {
   key: string;
   fingerprint: string;
   keyid: string;

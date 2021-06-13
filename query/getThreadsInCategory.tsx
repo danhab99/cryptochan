@@ -5,7 +5,7 @@ export const PAGE_COUNT = 24;
 
 export interface HomeQueryParmas {
   page: number;
-  sort: "bump" | "date";
+  sort: string;
 }
 
 type ThreadWithReply = IThreadSimple & { replyThreads: Array<IThreadSimple> };

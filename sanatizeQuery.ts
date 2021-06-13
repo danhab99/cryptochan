@@ -13,6 +13,9 @@ export async function sanatizeDB<
       embeds: {
         _id: false,
       },
+      owner: {
+        _id: false,
+      },
     })
     .lean()) as ResultType;
 }
