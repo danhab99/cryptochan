@@ -89,12 +89,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const sig = await openpgp.readSignature({
         armoredSignature: thread.signature,
       });
-      let issuer: string = sig.getIssuerIDs()[0].toHex();
+      let issuer: string = sig.getSigningKeyIDs()[0].toHex();
       let dbPublicKey = await PublicKey.findOne({ keyid: issuer });
 
       if (dbPublicKey === null) {
         res.status(404).json(new Error("Public key not found"));
         return;
+      }
+
+      if (dbPublicKey.revokeCert) {
+        res
+          .status(401)
+          .json(new Error("Public key has been revoked by certificate"));
       }
 
       if (Policy.publickey.preapproved && !dbPublicKey.approved) {
