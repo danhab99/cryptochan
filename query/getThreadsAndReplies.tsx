@@ -18,7 +18,7 @@ type ThreadWithReply = IThreadSimple & { replyThreads: Array<IThreadSimple> };
 
 export type ThreadWithReplys = Array<ThreadWithReply>;
 
-export async function getThreadsInCategory(
+export async function getThreadsAndReplies(
   query: ThreadsQuery,
   params: HomeQueryParmas
 ): Promise<{ threadsAndReplies: ThreadWithReplys; more: boolean }> {
