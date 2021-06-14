@@ -19,7 +19,7 @@ import { ThreadList } from "../../components/threadList";
 
 interface ThreadPageProps {
   threads: ThreadWithReplys;
-  parent?: IThreadSimple;
+  parents?: IThreadSimple[];
   startPage: number;
   more: boolean;
   hash: string;
@@ -31,11 +31,13 @@ const ThreadPage: React.FC<ThreadPageProps> = (props) => {
       <Header prefix={props.threads[0].hash.value.slice(0, 8)} />
       <Title newThreads />
 
-      {props.parent ? (
-        <div>
-          <ThreadComponent entry={props.parent} />
+      {props.parents ? (
+        <>
+          {props.parents.map((thread) => (
+            <ThreadComponent entry={thread} />
+          ))}
           <hr />
-        </div>
+        </>
       ) : null}
 
       <ThreadList
@@ -49,6 +51,8 @@ const ThreadPage: React.FC<ThreadPageProps> = (props) => {
 };
 
 export default ThreadPage;
+
+const MAX_PREV_THREADS = 6;
 
 export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
   params,
@@ -76,17 +80,38 @@ export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
       };
     }
 
-    const parent = (await sanatizeDB(
-      Thread.findOne({
-        "hash.value": threadsAndReplies[0].parenthash,
-        approved: true,
-      })
-    )) as IThreadSimple;
+    let parents: IThreadSimple[] = [];
+
+    if (threadsAndReplies[0].parenthash) {
+      parents.push(
+        (await sanatizeDB(
+          Thread.findOne({
+            "hash.value": threadsAndReplies[0].parenthash,
+            approved: true,
+          })
+        )) as IThreadSimple
+      );
+
+      while (parents.length < MAX_PREV_THREADS && parents[0].parenthash) {
+        const parent = (await sanatizeDB(
+          Thread.findOne({
+            "hash.value": parents[0].parenthash,
+            approved: true,
+          })
+        )) as IThreadSimple;
+
+        if (parent) {
+          parents.unshift(parent);
+        } else {
+          break;
+        }
+      }
+    }
 
     return {
       props: {
         threads: threadsAndReplies,
-        parent,
+        parents,
         more,
         startPage: page,
         hash: tid,
