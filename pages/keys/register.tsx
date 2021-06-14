@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  createMessage,
-  decryptKey,
-  generateKey,
-  PrivateKey,
-  readPrivateKey,
-  sign,
-} from "openpgp";
+import { createMessage, decryptKey, readPrivateKey, sign } from "openpgp";
 import { LabeledInput } from "../../components/labeledinput";
 import Title from "../../components/title";
 import { Header } from "../../components/header";
@@ -23,46 +16,36 @@ const readFile = (f: File): Promise<string> => {
 };
 
 const NewKeys: React.FC = () => {
-  const [newKeyFiles, setNewKeyFile] = useState<FileList>();
+  const [newKeyFile, setNewKeyFile] = useState<File>();
   const [signingKeyFile, setSigningKeyFile] = useState<File>();
   const [password, setPassword] = useState<string>();
   const [uploading, setUploading] = useState(false);
 
   const upload = async () => {
-    setUploading(true);
-
-    if (newKeyFiles) {
+    if (newKeyFile) {
+      setUploading(true);
       const form = new FormData();
+
+      const newkey = await readFile(newKeyFile);
+      form.append("newkey", newkey);
+
       if (signingKeyFile && password) {
-        let sk = await decryptKey({
+        const sk = await decryptKey({
           privateKey: await readPrivateKey({
             armoredKey: await readFile(signingKeyFile),
           }),
           passphrase: password,
         });
 
-        await Promise.all(
-          Array.from(newKeyFiles).map(
-            (newkey) =>
-              new Promise<void>(async (resolve) => {
-                let armored = await readFile(newkey);
-                let signed = await sign({
-                  message: await createMessage({ text: armored }),
-                  signingKeys: sk,
-                });
-                form.append("newkey", signed);
-                resolve();
-              })
-          )
-        );
-      } else {
-        for (let i = 0; i < newKeyFiles.length || 0; i++) {
-          let f = newKeyFiles.item(i);
-          if (f) {
-            form.append("newkey", f);
-          }
-        }
+        const sig = await sign({
+          message: await createMessage({ text: newkey }),
+          signingKeys: sk,
+          detached: true,
+        });
+
+        form.append("signature", sig);
       }
+
       const resp = await fetch("/api/regkey", {
         method: "post",
         body: form,
@@ -73,8 +56,8 @@ const NewKeys: React.FC = () => {
       } else {
         alert("ERROR:" + (await resp.text()));
       }
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   return (
@@ -121,10 +104,9 @@ const NewKeys: React.FC = () => {
                 type="file"
                 accept="application/pgp"
                 name="newkey"
-                multiple
                 required
                 onChange={(e) =>
-                  e.target.files && setNewKeyFile(e.target.files)
+                  e.target.files && setNewKeyFile(e.target.files[0])
                 }
               />
               <LabeledInput
@@ -151,7 +133,7 @@ const NewKeys: React.FC = () => {
                     disabled={uploading}
                     onClick={() => upload()}
                   >
-                    Upload
+                    Upload{uploading ? "..." : ""}
                   </button>
                 </td>
               </tr>
