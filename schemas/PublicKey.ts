@@ -14,6 +14,8 @@ export interface IPublicKey extends Document {
   owner: IUser;
   approved: boolean;
   revokeCert: string;
+  signingKey: String;
+  signingKeyID: String;
 }
 
 const UserSchema: Schema = new Schema({
@@ -33,6 +35,8 @@ const PublicKeySchema: Schema = new Schema({
     default: false,
   },
   revokeCert: String,
+  signingKey: String,
+  signingKeyID: String,
 });
 
 export const PublicKey: Model<IPublicKey> =
