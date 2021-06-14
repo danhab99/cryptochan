@@ -148,11 +148,8 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
       console.log(resp);
 
       if (resp.ok) {
-        if (resp.redirected && resp.url) {
-          window.location.href = resp.url;
-        }
-      } else {
-        alert("Unable to post:" + (await resp.text()));
+        let hash = await resp.text();
+        window.location.href = `/t/${hash}`;
       }
     }
   };

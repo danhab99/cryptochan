@@ -61,12 +61,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       if (thread.parenthash) {
-        if (
-          !(await Thread.exists({
-            parenthash: thread.parenthash,
-            approved: true,
-          }))
-        ) {
+        let exists = await Thread.exists({
+          "hash.value": thread.parenthash,
+          approved: true,
+        });
+
+        if (!exists) {
           res
             .status(406)
             .json(
@@ -111,7 +111,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         if (await VerifyThread(dbPublicKey.key, sig, thread)) {
           Thread.create(thread).then((thread) => {
-            res.redirect(`/t/${thread.hash.value}`);
+            res.status(201).end(thread.hash.value);
           });
         } else {
           res
