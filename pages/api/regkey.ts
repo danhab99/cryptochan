@@ -17,47 +17,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     headers: req.headers,
     limits: {
       fileSize: 0,
-      fields: 1,
+      fields: 12,
     },
   });
 
-  let armoredKey: string;
+  let newkeys: string[] = [];
 
   busboy.on("field", (fieldname: string, val: string) => {
-    if (fieldname === "publickey") {
-      armoredKey = val;
+    if (fieldname === "newkey") {
+      newkeys.push(val);
     }
   });
 
-  busboy.on("finish", () => {
-    if (armoredKey.length) {
-      openpgp
-        .readKey({
-          armoredKey,
-        })
-        .then((key) => {
-          return key.getPrimaryUser().then((user) => ({ key, user }));
-        })
-        .then(({ key, user }) => {
-          let uid = user.user.userID;
-
-          PublicKey.create({
-            key: armoredKey,
-            fingerprint: key.getFingerprint(),
-            keyid: key.getKeyID().toHex(),
-            owner: {
-              name: uid?.name,
-              email: uid?.email,
-              userID: uid?.userID,
-              comment: uid?.comment,
-            },
-          }).then(() => {
-            res.status(201).send("added public key");
-          });
-        });
-    } else {
-      res.status(400).send("field 'publickey' required");
-    }
+  busboy.on("finish", async () => {
+    await Promise.all(newkeys.map((newkey) => {}));
   });
 
   req.pipe(busboy);

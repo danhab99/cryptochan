@@ -12,6 +12,9 @@ const Keys: React.FC = () => {
         <a href="/keys/newkeys">
           <h1>Generate Keys</h1>
         </a>
+        <a href="/keys/register">
+          <h1>Register Keys</h1>
+        </a>
       </div>
     </div>
   );
