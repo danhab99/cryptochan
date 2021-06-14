@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { generateKey } from "openpgp";
+import { generateKey, PrivateKey, readPrivateKey } from "openpgp";
 import { LabeledInput } from "../../components/labeledinput";
 import Title from "../../components/title";
 import { Header } from "../../components/header";
@@ -32,16 +32,19 @@ const NewKeys: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [generating, setGenerating] = useState(false);
-  const [autoUpload, setAutoUpload] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [comment, setComment] = useState("");
 
   const generate = async () => {
     setGenerating(true);
+
     const { privateKeyArmored, publicKeyArmored } = await generateKey({
       type: "ecc", // Type of the key, defaults to ECC
       curve: "curve25519", // ECC curve name, defaults to curve25519
       userIDs: [{ name, email }], // you can pass multiple user IDs
       passphrase: password, // protects the private key
+      config: {
+        commentString: comment,
+      },
     });
 
     setGenerating(false);
@@ -51,23 +54,6 @@ const NewKeys: React.FC = () => {
     )}_key.gpg`;
     downloadToFile(publicKeyArmored, filename + ".pub", "application/pgp");
     downloadToFile(privateKeyArmored, filename + ".secret", "application/pgp");
-
-    if (autoUpload) {
-      setUploading(true);
-
-      let fd = new FormData();
-      fd.append("publickey", publicKeyArmored);
-
-      fetch("/api/regkey", {
-        method: "post",
-        body: fd,
-      }).then((resp) => {
-        setUploading(false);
-        if (!resp.ok) {
-          alert("Failed to upload public key");
-        }
-      });
-    }
   };
 
   return (
@@ -136,11 +122,11 @@ const NewKeys: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <LabeledInput
-                label="auto upload"
-                type="checkbox"
-                name="autoupload"
-                checked={autoUpload}
-                onChange={(e) => setAutoUpload(e.target.checked)}
+                label="comment"
+                type="text"
+                name="comment"
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="optional"
               />
               <tr>
                 <td colSpan={2}>
@@ -150,7 +136,7 @@ const NewKeys: React.FC = () => {
                     disabled={generating}
                     onClick={() => generate()}
                   >
-                    Generate {uploading ? "(uploading public key...)" : ""}
+                    Generate
                   </button>
                 </td>
               </tr>
