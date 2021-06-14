@@ -37,13 +37,12 @@ const NewKeys: React.FC = () => {
 
   const generate = async () => {
     setGenerating(true);
-    const { privateKeyArmored, publicKeyArmored, revocationCertificate } =
-      await generateKey({
-        type: "ecc", // Type of the key, defaults to ECC
-        curve: "curve25519", // ECC curve name, defaults to curve25519
-        userIDs: [{ name, email }], // you can pass multiple user IDs
-        passphrase: password, // protects the private key
-      });
+    const { privateKeyArmored, publicKeyArmored } = await generateKey({
+      type: "ecc", // Type of the key, defaults to ECC
+      curve: "curve25519", // ECC curve name, defaults to curve25519
+      userIDs: [{ name, email }], // you can pass multiple user IDs
+      passphrase: password, // protects the private key
+    });
 
     setGenerating(false);
     const filename = `${name.replace(/\s/g, "_")}_${email.replace(
