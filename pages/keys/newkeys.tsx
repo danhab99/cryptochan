@@ -32,7 +32,6 @@ const NewKeys: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [generating, setGenerating] = useState(false);
-  const [comment, setComment] = useState("");
 
   const generate = async () => {
     setGenerating(true);
@@ -42,9 +41,6 @@ const NewKeys: React.FC = () => {
       curve: "curve25519", // ECC curve name, defaults to curve25519
       userIDs: [{ name, email }], // you can pass multiple user IDs
       passphrase: password, // protects the private key
-      config: {
-        commentString: comment,
-      },
     });
 
     setGenerating(false);
@@ -120,13 +116,6 @@ const NewKeys: React.FC = () => {
                 type="password"
                 name="password"
                 onChange={(e) => setPassword(e.target.value)}
-              />
-              <LabeledInput
-                label="comment"
-                type="text"
-                name="comment"
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="optional"
               />
               <tr>
                 <td colSpan={2}>
