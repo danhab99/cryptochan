@@ -28,7 +28,10 @@ const UserSchema: Schema = new Schema({
 const PublicKeySchema: Schema = new Schema({
   key: String,
   fingerprint: String,
-  keyid: String,
+  keyid: {
+    type: String,
+    unique: true,
+  },
   owner: UserSchema,
   approved: {
     type: Boolean,
