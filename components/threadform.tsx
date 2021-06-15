@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import _ from "lodash";
+import _, { shuffle } from "lodash";
 import prettyBytes from "pretty-bytes";
 import * as openpgp from "openpgp";
 import { Policy } from "../policy";
@@ -18,6 +18,7 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
   const [submitting, setSubmitting] = useState(false);
   const [skFile, setSkFile] = useState<File>();
   const [skPassword, setSkPassword] = useState("");
+  const [singleUse, setSingleUse] = useState(false);
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -100,11 +101,60 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
         PrivateKeyReadPromise,
       ]);
 
+      let authorName = author.user.userID?.name || "";
+      let authorPublicKeyID = sk.toPublic().getKeyID().toHex();
+      let useSKArmored = sk.armor();
+      let useSKPassword = skPassword;
+
+      if (singleUse) {
+        const rand = () => Math.random().toString(36).substring(7);
+        useSKPassword = rand();
+        authorName = rand();
+        let { privateKeyArmored, publicKeyArmored } = await openpgp.generateKey(
+          {
+            type: "ecc",
+            curve: "curve25519",
+            userIDs: [{ name: authorName, email: rand() + "@c.ccc" }],
+            passphrase: useSKPassword,
+          }
+        );
+        useSKArmored = privateKeyArmored;
+
+        let sig = await openpgp.sign({
+          message: await openpgp.createMessage({ text: publicKeyArmored }),
+          signingKeys: await openpgp.decryptKey({
+            privateKey: sk,
+            passphrase: skPassword,
+          }),
+          detached: true,
+        });
+
+        let tpk = await openpgp.readKey({
+          armoredKey: publicKeyArmored,
+        });
+        authorPublicKeyID = tpk.getKeyID().toHex();
+
+        const registerForm = new FormData();
+        registerForm.append("signature", sig);
+        registerForm.append("newkey", publicKeyArmored);
+
+        let resp = await fetch("/api/regkey", {
+          method: "post",
+          body: registerForm,
+        });
+
+        if (!resp.ok) {
+          alert("Unable to register temporary key");
+          setSubmitting(false);
+          return;
+        }
+      }
+
       let rawThread: Partial<IThreadSimple> = {
         embeds: hashedEmbeds,
         author: {
-          name: author.user.userID?.name || "",
-          publickey: (await sk.getSigningKey()).getKeyID().toHex(),
+          name: authorName,
+          publickey: authorPublicKeyID,
         },
         body: {
           content: form["body"],
@@ -120,8 +170,8 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
 
       try {
         ({ hash, signature } = await SignThread(
-          sk.armor(),
-          skPassword,
+          useSKArmored,
+          useSKPassword,
           rawThread
         ));
       } catch (e) {
@@ -143,6 +193,32 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
         method: "post",
         body: submissionForm,
       });
+
+      if (singleUse && useSKArmored) {
+        let revokeForm = new FormData();
+        let sk = await openpgp.decryptKey({
+          privateKey: await openpgp.readPrivateKey({
+            armoredKey: useSKArmored,
+          }),
+          passphrase: useSKPassword,
+        });
+
+        let revSK = await sk.revoke({
+          flag: openpgp.enums.reasonForRevocation.keyRetired,
+          string: "One time use",
+        });
+
+        revokeForm.append("publickey", revSK.toPublic().armor());
+
+        let resp = await fetch("/api/revoke", {
+          method: "post",
+          body: revokeForm,
+        });
+
+        if (!resp.ok) {
+          alert("Unable to revoke temp key");
+        }
+      }
 
       setSubmitting(false);
       console.log(resp);
@@ -207,6 +283,12 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
                 />
               </div>
             </LabeledRow>
+            <LabeledInput
+              type="checkbox"
+              label="use single-use key"
+              checked={singleUse}
+              onChange={(e) => setSingleUse(e.target.checked)}
+            />
             <LabeledInput
               name="reply to"
               onChange={handle}

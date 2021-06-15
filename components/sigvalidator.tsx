@@ -7,6 +7,7 @@ enum ValidatorState {
   VALID,
   INVALID,
   ERROR,
+  REVOKED,
 }
 
 interface SigValidatorProps {
@@ -30,8 +31,12 @@ const SigValidator: React.FC<SigValidatorProps> = (props) => {
           } else {
             setState(ValidatorState.INVALID);
           }
-        } catch (e) {
-          setState(ValidatorState.INVALID);
+        } catch (e: any) {
+          if (e && e.message && e.message.includes("revoke")) {
+            setState(ValidatorState.REVOKED);
+          } else {
+            setState(ValidatorState.INVALID);
+          }
           console.error(e);
         }
       } else {
@@ -67,6 +72,11 @@ const SigValidator: React.FC<SigValidatorProps> = (props) => {
           case ValidatorState.ERROR:
             return (
               <span className="text-invalid-500 sigValidator">[ERROR]</span>
+            );
+
+          case ValidatorState.REVOKED:
+            return (
+              <span className="text-revoked-500 sigValidator">[REVOKED]</span>
             );
         }
       })()}

@@ -16,6 +16,7 @@ module.exports = {
         validating: colors.yellow,
         invalid: colors.red,
         valid: colors.lime,
+        revoked: colors.purple,
       },
     },
   },
