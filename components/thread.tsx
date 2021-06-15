@@ -129,7 +129,11 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
           ) : null}
         </div>
 
-        <p className="text-sm font-mono text-black">{entry.body.content}</p>
+        {entry.body.content.split("\n").map((x) => (
+          <p className="text-sm font-mono text-black desktop:max-w-prose">
+            {x}
+          </p>
+        ))}
 
         {showReply ? (
           <ThreadForm
