@@ -12,7 +12,7 @@ const Home: React.FC = () => {
       <div className="centeredFlex">
         <div className="desktop:w-1/2">
           <p className="text-lg text-center">
-            Welcom to {process.env.NEXT_PUBLIC_TITLE}!!
+            Welcome to {process.env.NEXT_PUBLIC_TITLE}!!
           </p>
           <p className="text-center">
             {process.env.NEXT_PUBLIC_TITLE} is a confederated blockchain based
