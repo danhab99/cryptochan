@@ -32,14 +32,14 @@ const PKPage: React.FC<PKPageProps> = (props) => {
         {")"}
       </h2>
 
-      {props.publicKey.revokeCert ? (
+      {props.publicKey.revoked ? (
         <>
           <h2 className="text-red-600 phone:text-center">
             {"["}REVOKED{"]"}
           </h2>
           <p className="text-red-600 font-bold">
-            THE PUBLIC KEY WAS REVOKED ITS OWNER USING A REVOCATION CERTIFICATE.
-            SIGNING POSTS WITH THIS PUBLIC KEY IS NO LONGER POSSIBLE.
+            THE PUBLIC KEY WAS REVOKED ITS OWNER. SIGNING POSTS WITH THIS PUBLIC
+            KEY IS NO LONGER POSSIBLE.
           </p>
         </>
       ) : null}
@@ -48,7 +48,6 @@ const PKPage: React.FC<PKPageProps> = (props) => {
 
       <pre className="phone:overflow-scroll desktop:w-max border-primary-500 border border-solid phone:p-1 desktop:p-3 bg-gray-800 text-white">
         {props.publicKey.key}
-        {props.publicKey.revokeCert}
       </pre>
 
       <ThreadList

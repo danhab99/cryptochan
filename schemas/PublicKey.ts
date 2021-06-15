@@ -13,7 +13,7 @@ export interface IPublicKey extends Document {
   keyid: string;
   owner: IUser;
   approved: boolean;
-  revokeCert: string;
+  revoked: boolean;
   signingKey: String;
   signingKeyID: String;
 }
@@ -37,7 +37,7 @@ const PublicKeySchema: Schema = new Schema({
     type: Boolean,
     default: false,
   },
-  revokeCert: String,
+  revoked: Boolean,
   signingKey: String,
   signingKeyID: String,
 });
