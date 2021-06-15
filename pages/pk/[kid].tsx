@@ -46,9 +46,16 @@ const PKPage: React.FC<PKPageProps> = (props) => {
 
       <p>{props.publicKey.owner.comment}</p>
 
-      <pre className="phone:overflow-scroll desktop:w-max border-primary-500 border border-solid phone:p-1 desktop:p-3 bg-gray-800 text-white">
+      <pre className="phone:overflow-scroll desktop:w-max border-primary-500 border border-solid phone:p-1 desktop:p-3 bg-gray-800 text-white m-0">
         {props.publicKey.key}
       </pre>
+      <a
+        className="embedControl"
+        href={`https://cirw.in/gpg-decoder/#${encodeURI(props.publicKey.key)}`}
+        target="_blank"
+      >
+        [Analysis]
+      </a>
 
       <ThreadList
         more={props.more}

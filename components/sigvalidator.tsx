@@ -24,6 +24,7 @@ const SigValidator: React.FC<SigValidatorProps> = (props) => {
 
       if (resp.ok) {
         let pk = await resp.text();
+        setPK(pk);
         try {
           if (await VerifyThread(pk, props.thread.signature, props.thread)) {
             setState(ValidatorState.VALID);
@@ -40,21 +41,38 @@ const SigValidator: React.FC<SigValidatorProps> = (props) => {
     })();
   }, [props.thread]);
 
-  switch (state) {
-    case ValidatorState.INVALID:
-      return <span className="text-invalid-500 sigValidator">[INVALID]</span>;
+  return (
+    <a
+      href={`https://cirw.in/gpg-decoder/#${encodeURI(props.thread.signature)}`}
+      target="_blank"
+      className="no-underline"
+    >
+      {" "}
+      {(() => {
+        switch (state) {
+          case ValidatorState.INVALID:
+            return (
+              <span className="text-invalid-500 sigValidator">[INVALID]</span>
+            );
 
-    case ValidatorState.VALID:
-      return <span className="text-valid-500 sigValidator">[VALID]</span>;
+          case ValidatorState.VALID:
+            return <span className="text-valid-500 sigValidator">[VALID]</span>;
 
-    case ValidatorState.WORKING:
-      return (
-        <span className="text-validating-500 sigValidator">[WORKING...]</span>
-      );
+          case ValidatorState.WORKING:
+            return (
+              <span className="text-validating-500 sigValidator">
+                [WORKING...]
+              </span>
+            );
 
-    case ValidatorState.ERROR:
-      return <span className="text-invalid-500 sigValidator">[ERROR]</span>;
-  }
+          case ValidatorState.ERROR:
+            return (
+              <span className="text-invalid-500 sigValidator">[ERROR]</span>
+            );
+        }
+      })()}
+    </a>
+  );
 };
 
 export default SigValidator;
