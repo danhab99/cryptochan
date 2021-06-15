@@ -3,9 +3,13 @@ import immutable from "../../../middlewares/immutable";
 import connectDB from "../../../middlewares/mongoose";
 import { sanatizeDB } from "../../../sanatizeQuery";
 import { Thread } from "../../../schemas/Thread";
+import LoggingFactory from "../../../middlewares/logging";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const log = LoggingFactory(req, res, "API Thread");
   await connectDB();
+
+  log("Getting thread", req.query);
 
   sanatizeDB(
     Thread.find({
@@ -17,15 +21,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   )
     .then((thread) => {
       if (thread) {
+        log("Got thread");
         if (!req.query.replies) {
           immutable(req, res);
         }
         res.json(thread);
       } else {
+        log("Thread not found", req.query);
         res.status(404).json(new Error("Not found"));
       }
     })
     .catch((e) => {
+      log("Error", e);
       res.status(500).json(e);
     });
 };

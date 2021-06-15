@@ -10,6 +10,7 @@ import {
   getThreadsAndReplies,
   ThreadWithReplys,
 } from "../../query/getThreadsAndReplies";
+import LoggingFactory from "../../middlewares/logging";
 
 interface PKPageProps {
   publicKey: IPublicKey;
@@ -73,16 +74,20 @@ export default PKPage;
 export const getServerSideProps: GetServerSideProps = async ({
   query,
   params,
+  req,
+  res,
 }) => {
+  const log = LoggingFactory(req, res, "Public key props");
   await connectDB();
   const page = parseInt(sanatizeParams(query.page, "0"));
   const kid = sanatizeParams(params?.["kid"]);
 
+  log("Collecting threads by", kid, page);
+
   const pk = await sanatizeDB(PublicKey.findOne({ keyid: kid }));
 
-  debugger;
-
   if (!pk) {
+    log("Could not find public key");
     return {
       notFound: true,
     };
@@ -92,6 +97,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     { type: "publickey", pk: kid },
     { page }
   );
+
+  log("Collected threads");
 
   return {
     props: { threads: threadsAndReplies, publicKey: pk, startPage: page, more },

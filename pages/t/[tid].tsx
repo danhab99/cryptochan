@@ -16,6 +16,7 @@ import {
   ThreadWithReplys,
 } from "../../query/getThreadsAndReplies";
 import { ThreadList } from "../../components/threadList";
+import LoggingFactory from "../../middlewares/logging";
 
 interface ThreadPageProps {
   threads: ThreadWithReplys;
@@ -57,13 +58,19 @@ const MAX_PREV_THREADS = 6;
 export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
   params,
   query,
+  req,
+  res,
 }): Promise<GetServerSidePropsResult<ThreadPageProps>> => {
+  const log = LoggingFactory(req, res, "Thread props");
   await connectDB();
   try {
     const tid = sanatizeParams(params?.tid);
     const page = parseInt((query.page as string) || "0");
 
+    log("Collecting replies for thread", tid, page);
+
     if (!tid) {
+      log("No thread specified");
       return {
         notFound: true,
       };
@@ -75,6 +82,7 @@ export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
     );
 
     if (threadsAndReplies.length <= 0) {
+      log("No thread found");
       return {
         notFound: true,
       };
@@ -83,6 +91,10 @@ export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
     let parents: IThreadSimple[] = [];
 
     if (threadsAndReplies[0].parenthash) {
+      log(
+        "Thread is a reply, collecting parent threads",
+        threadsAndReplies[0].parenthash
+      );
       parents.push(
         (await sanatizeDB(
           Thread.findOne({
@@ -93,6 +105,7 @@ export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
       );
 
       while (parents.length < MAX_PREV_THREADS && parents[0].parenthash) {
+        log("Collecting last generation", parents.length);
         const parent = (await sanatizeDB(
           Thread.findOne({
             "hash.value": parents[0].parenthash,
@@ -103,6 +116,7 @@ export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
         if (parent) {
           parents.unshift(parent);
         } else {
+          log("Reached end of thread");
           break;
         }
       }
@@ -118,6 +132,7 @@ export const getServerSideProps: GetServerSideProps<ThreadPageProps> = async ({
       },
     };
   } catch (e) {
+    log("Thread error", e);
     if (e instanceof ParamNotFoundError) {
       return Promise.resolve({
         notFound: true,

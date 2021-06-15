@@ -3,6 +3,7 @@ import Busboy from "busboy";
 import * as openpgp from "openpgp";
 import connectDB from "../../middlewares/mongoose";
 import { PublicKey } from "../../schemas/PublicKey";
+import LoggingFactory from "../../middlewares/logging";
 
 export const config: PageConfig = {
   api: {
@@ -11,6 +12,7 @@ export const config: PageConfig = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const log = LoggingFactory(req, res, "Revoke");
   await connectDB();
 
   let busboy = new Busboy({
@@ -24,6 +26,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   var publicKeyArmored: string;
 
   busboy.on("field", (fieldname: string, val: string) => {
+    log("Busboy field", fieldname, val);
     if (fieldname === "publickey") {
       publicKeyArmored = val;
     }
@@ -31,11 +34,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   busboy.on("finish", async () => {
     if (publicKeyArmored.length > 0) {
+      log("Busboy finished");
       let rev = await openpgp.readKey({
         armoredKey: publicKeyArmored,
       });
 
       if (rev.revocationSignatures.length) {
+        log(
+          "Public key revoked",
+          rev.revocationSignatures.map((x) => x.issuerKeyID.toHex())
+        );
+
         await PublicKey.findOneAndUpdate(
           { keyid: rev.getKeyID().toHex() },
           {
@@ -51,6 +60,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         res.status(200).send("Public key successfully revoked");
       } else {
+        log("Public key not revoked");
         res.status(400).send("Public key is not revoked");
       }
     } else {

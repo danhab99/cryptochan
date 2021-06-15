@@ -3,6 +3,7 @@ import Busboy from "busboy";
 import * as openpgp from "openpgp";
 import connectDB from "../../middlewares/mongoose";
 import { PublicKey } from "../../schemas/PublicKey";
+import LoggingFactory from "../../middlewares/logging";
 
 export const config: PageConfig = {
   api: {
@@ -11,6 +12,7 @@ export const config: PageConfig = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const log = LoggingFactory(req, res, "RegKey");
   await connectDB();
 
   let busboy = new Busboy({
@@ -25,6 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   let sigArmored: string;
 
   busboy.on("field", (fieldname: string, val: string) => {
+    log("Busboy fiend", fieldname, val);
     if (fieldname === "newkey") {
       newkeyArmored = val;
     } else if (fieldname == "signature") {
@@ -33,6 +36,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   busboy.on("finish", async () => {
+    log("Busboy finished");
     debugger;
     if (newkeyArmored) {
       let ok: boolean | string = false;
@@ -44,10 +48,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         let signers = sig.getSigningKeyIDs().map((x) => x.toHex());
 
+        log("Signature included", signers);
+
         let dbpks = await PublicKey.find({
           keyid: { $in: signers },
           approved: true,
         });
+
+        log(
+          "Found public keys",
+          dbpks.map((x) => x.keyid)
+        );
 
         let pks = await Promise.all(
           dbpks.map((pk) =>
@@ -67,6 +78,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (verified.some((x) => x)) {
           ok = v.signatures[verified.findIndex((x) => x)].keyID.toHex();
+          log("Signature verified", ok);
+        } else {
+          log("Invalid signature, ignoring");
         }
       }
 
@@ -75,6 +89,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       let owner = (await npk.getPrimaryUser()).user.userID;
+      log("Retrieved public key", owner);
       try {
         let completedKey = await PublicKey.create({
           key: newkeyArmored,
@@ -92,9 +107,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         if (completedKey) {
+          log("Completed key", completedKey);
           res.status(201).end("Created");
         }
       } catch (e) {
+        log("Error", e);
         res.status(400).json(e);
       }
     }

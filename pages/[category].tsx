@@ -10,6 +10,7 @@ import {
 } from "../query/getThreadsAndReplies";
 import { sanatizeParams } from "../sanatizeQuery";
 import { ThreadList } from "../components/threadList";
+import LoggingFactory from "../middlewares/logging";
 
 type HomeProps = {
   threads: ThreadWithReplys;
@@ -39,13 +40,18 @@ export default Category;
 export const getServerSideProps: GetServerSideProps = async ({
   query,
   params,
+  req,
+  res,
 }) => {
+  const log = LoggingFactory(req, res, "Category props");
   await connectDB();
 
   const page = parseInt(sanatizeParams(query.page, "0"));
   const category = sanatizeParams(params?.["category"]);
+  log("Getting category", category, page);
 
   if (!category) {
+    log("Not found");
     return {
       notFound: true,
     };
@@ -59,6 +65,8 @@ export const getServerSideProps: GetServerSideProps = async ({
       }
     );
 
+    log("Collected threads");
+
     return {
       props: {
         threads: threadsAndReplies,
@@ -68,6 +76,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     };
   } catch (e) {
+    log("Error", e);
     return {
       props: {
         error: e,

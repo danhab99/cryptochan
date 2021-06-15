@@ -9,6 +9,7 @@ import { VerifyThread } from "../../crypto";
 import _ from "lodash";
 import { minioClient } from "../../middlewares/minio";
 import { Readable } from "stream";
+import LoggingFactory from "../../middlewares/logging";
 
 export const config: PageConfig = {
   api: {
@@ -17,6 +18,7 @@ export const config: PageConfig = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const log = LoggingFactory(req, res, "Upload Thread");
   await connectDB();
 
   if (req.method === "POST") {
@@ -30,6 +32,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     var thread: IThreadSimple;
 
     busboy.on("field", (fieldname, value) => {
+      log("Busboy field", fieldname, value);
       console.log("FIELD", fieldname, value);
       if (fieldname === "thread") {
         thread = JSON.parse(value);
@@ -39,7 +42,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     busboy.on(
       "file",
       async (fieldname, file, filename, _encoding, mimetype) => {
-        console.log("FILE", fieldname, filename);
+        log("Busboy file", fieldname, filename, mimetype);
 
         minioClient
           .putObject(
@@ -53,9 +56,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     busboy.on("finish", async () => {
-      console.log("Busboy finished");
+      log("Busboy finished");
 
       if (thread.body.content.length > Policy.maxLength) {
+        log("Body too long", thread.body.content.length);
         res.status(413).json(new Error("Body too long"));
         return;
       }
@@ -67,6 +71,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         if (!exists) {
+          log("Thread replying to non existing thread", thread.parenthash);
           res
             .status(406)
             .json(
@@ -77,11 +82,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       if (Policy.publickey.require && !thread.signature) {
+        log("Thread is not signed");
         res.status(401).json(new Error("Signature required"));
         return;
       }
 
       if (!Policy.categories.map((x) => x.name).includes(thread.category)) {
+        log("Thread is in unknown category", thread.category);
         res.status(406).json(new Error("Unknown category"));
         return;
       }
@@ -93,11 +100,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       let dbPublicKey = await PublicKey.findOne({ keyid: issuer });
 
       if (dbPublicKey === null) {
+        log("Unknow signing public key", issuer, thread.signature);
         res.status(404).json(new Error("Public key not found"));
         return;
       }
 
       if (dbPublicKey.revoked) {
+        log("Public key revoked");
         res
           .status(401)
           .json(new Error("Public key has been revoked by certificate"));
@@ -105,21 +114,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       if (Policy.publickey.preapproved && !dbPublicKey.approved) {
+        log("Public key not approved");
         res.status(401).json(new Error("Public key not approved"));
         return;
       }
 
       try {
         if (await VerifyThread(dbPublicKey.key, sig, thread)) {
+          log("Good signature");
           Thread.create(thread).then((thread) => {
             res.status(201).end(thread.hash.value);
           });
         } else {
+          log("Bad signature");
           res
             .status(401)
             .json(new Error("One or more issuers were not verifiable"));
         }
       } catch (e) {
+        log("Error", e);
         console.error(e);
         res.writeHead(401).json(e);
         return;
@@ -128,6 +141,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     req.pipe(busboy);
   } else {
+    log("Method not allowed");
     res.writeHead(405);
     res.end("Method not allowed");
   }
