@@ -27,7 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   let sigArmored: string;
 
   busboy.on("field", (fieldname: string, val: string) => {
-    log("Busboy fiend", fieldname, val);
+    log("Busboy field", fieldname, val);
     if (fieldname === "newkey") {
       newkeyArmored = val;
     } else if (fieldname == "signature") {
