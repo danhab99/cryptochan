@@ -97,10 +97,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      if (dbPublicKey.revokeCert) {
+      if (dbPublicKey.revoked) {
         res
           .status(401)
           .json(new Error("Public key has been revoked by certificate"));
+        return;
       }
 
       if (Policy.publickey.preapproved && !dbPublicKey.approved) {

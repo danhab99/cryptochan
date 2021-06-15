@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import _, { shuffle } from "lodash";
+import _ from "lodash";
 import prettyBytes from "pretty-bytes";
 import * as openpgp from "openpgp";
 import { Policy } from "../policy";

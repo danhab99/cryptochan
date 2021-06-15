@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { generateKey, PrivateKey, readPrivateKey } from "openpgp";
+import { generateKey } from "openpgp";
 import { LabeledInput } from "../../components/labeledinput";
 import Title from "../../components/title";
 import { Header } from "../../components/header";
