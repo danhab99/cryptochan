@@ -1,8 +1,9 @@
 import { IPolicy } from "./IPolicy";
 
-if (!process.env.POLICY) {
+if (typeof process.env.POLICY === "undefined") {
   console.error(
-    "Please run yarn env to generate policy variable and place it in the POLICY= line in your .env"
+    "Please run yarn env to generate policy variable and place it in the POLICY= line in your .env",
+    process.env
   );
   process.exit(1);
 }
