@@ -50,6 +50,7 @@ const SigValidator: React.FC<SigValidatorProps> = (props) => {
       href={`https://cirw.in/gpg-decoder/#${encodeURI(props.thread.signature)}`}
       target="_blank"
       className="no-underline"
+      rel="noopener"
     >
       {" "}
       {(() => {

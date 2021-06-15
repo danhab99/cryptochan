@@ -53,6 +53,7 @@ const PKPage: React.FC<PKPageProps> = (props) => {
         className="embedControl"
         href={`https://cirw.in/gpg-decoder/#${encodeURI(props.publicKey.key)}`}
         target="_blank"
+        rel="noopener"
       >
         [Analysis]
       </a>
