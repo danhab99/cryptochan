@@ -19,8 +19,9 @@ const Title: React.FC<TitleProps> = (props) => {
         <p>{"]"}</p>
 
         <p>{"["}</p>
-        <a href="/keys">Keys</a>
-        <a href="/keys/newkeys">Generate new keys</a>
+        <a href="/keys/newkeys">Generate</a>
+        <a href="/keys/register">Register</a>
+        <a href="/keys/revoke">Revoke</a>
         <p>{"]"}</p>
       </div>
       <header>
