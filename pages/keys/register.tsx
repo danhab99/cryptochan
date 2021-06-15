@@ -68,8 +68,8 @@ const NewKeys: React.FC = () => {
         <div className="desktop:w-1/2">
           <h1 className="text-center">Register key</h1>
           <p>
-            Public keys must be uploaded to the {process.env.TITLE} server for
-            verification.{" "}
+            Public keys must be uploaded to the {process.env.NEXT_PUBLIC_TITLE}{" "}
+            server for verification.{" "}
             {Policy.publickey.preapproved
               ? "In accordance with the policy, all public keys must be approved before submitting threads. Please use information that the admins can use to identify you or contact them through other means to get verified"
               : ""}
@@ -85,15 +85,15 @@ const NewKeys: React.FC = () => {
               <summary>More info about signing keys</summary>
               <p>
                 To preserve privacy yet provide accountabilty,{" "}
-                {process.env.TITLE} allows its users with already approved
-                public/private key pairs to sign other public keys and use those
-                to submit threads while appearing as a different identity. By
-                providing approved keys for signing your new keys you will be
-                identifying and taking responsibility for the actions signed by
-                your new keys. {process.env.TITLE} will strive to not publish
-                any link between any of your signed keys and as far as other
-                readers are conserned, your new keys are a completely different
-                identity
+                {process.env.NEXT_PUBLIC_TITLE} allows its users with already
+                approved public/private key pairs to sign other public keys and
+                use those to submit threads while appearing as a different
+                identity. By providing approved keys for signing your new keys
+                you will be identifying and taking responsibility for the
+                actions signed by your new keys. {process.env.NEXT_PUBLIC_TITLE}{" "}
+                will strive to not publish any link between any of your signed
+                keys and as far as other readers are conserned, your new keys
+                are a completely different identity
               </p>
             </details>
           ) : null}

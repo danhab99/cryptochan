@@ -11,12 +11,14 @@ const Home: React.FC = () => {
 
       <div className="centeredFlex">
         <div className="desktop:w-1/2">
-          <p className="text-lg text-center">Welcom to {process.env.TITLE}!!</p>
+          <p className="text-lg text-center">
+            Welcom to {process.env.NEXT_PUBLIC_TITLE}!!
+          </p>
           <p className="text-center">
-            {process.env.TITLE} is a confederated blockchain based image board
-            that supports cryptographic signing through PGP. All threads are
-            hashed through a standardized protocol allowing them to be
-            recognized even when mirrored to other Cryptochan-Compatible
+            {process.env.NEXT_PUBLIC_TITLE} is a confederated blockchain based
+            image board that supports cryptographic signing through PGP. All
+            threads are hashed through a standardized protocol allowing them to
+            be recognized even when mirrored to other Cryptochan-Compatible
             platforms. Each platform is able to enstate their own policy
             regarding their operations. If you don't like my rules, then screw
             me! Mirror this blockchain onto your own CCC server and run it

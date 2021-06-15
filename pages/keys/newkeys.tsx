@@ -62,9 +62,9 @@ const NewKeys: React.FC = () => {
           <p>
             This utility is for generating PGP crypto keys meant exclusivly for
             signing and verifying entries. Be mindful that no secrets and
-            passwords will be transmitted to {process.env.TITLE}, instead you
-            will be expected to keep your secret key secure. Your secret key and
-            password are not recoverable.
+            passwords will be transmitted to {process.env.NEXT_PUBLIC_TITLE},
+            instead you will be expected to keep your secret key secure. Your
+            secret key and password are not recoverable.
           </p>
           <details>
             <summary>More info</summary>

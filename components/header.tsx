@@ -11,7 +11,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
       <title>
         {props.prefix}
         {props.prefix ? " - " : ""}
-        {process.env.TITLE}
+        {process.env.NEXT_PUBLIC_TITLE}
       </title>
     </Head>
   );

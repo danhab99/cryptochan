@@ -63,9 +63,9 @@ const NewKeys: React.FC = () => {
           <p>
             In the event you believe that your private key has been compromised
             or you do not wish to use it anymore, fill out this form to announce
-            to {process.env.TITLE} and all related peers that no new thread may
-            be signed with this public/private key pair. Please note that this
-            will not delete existing threads.
+            to {process.env.NEXT_PUBLIC_TITLE} and all related peers that no new
+            thread may be signed with this public/private key pair. Please note
+            that this will not delete existing threads.
           </p>
           <form className="centeredFlex">
             <table>

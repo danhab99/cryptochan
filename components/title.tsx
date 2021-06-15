@@ -26,7 +26,7 @@ const Title: React.FC<TitleProps> = (props) => {
       </div>
       <header>
         <h1 className="text-primary-600 desktop:text-8xl tablet:text-7xl phone:text-5xl">
-          {process.env.TITLE}
+          {process.env.NEXT_PUBLIC_TITLE}
         </h1>
 
         {props.newThreads ? (
