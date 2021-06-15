@@ -10,9 +10,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       if (pk) {
         res.setHeader("Cache-Control", "public, max-age=604800, immutable");
         res.write(pk.key);
-        if (pk.revokeCert) {
-          res.write(pk.revokeCert);
-        }
         res.end();
       } else {
         res.status(404).json(new Error("Not found"));
