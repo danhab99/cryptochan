@@ -5,6 +5,7 @@ import SigValidator from "./sigvalidator";
 import ThreadForm from "./threadform";
 import { Policy } from "../policy";
 import { Category } from "../IPolicy";
+import useCryptoAvaliable from "./useCryptoAvaliable";
 
 interface ThreadProps {
   entry: IThreadSimple;
@@ -14,6 +15,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
   const router = useRouter();
   const [embedPage, setEmbedPage] = useState(0);
   const [showReply, setShowReply] = useState(false);
+  const hasCrypto = useCryptoAvaliable();
 
   const currentEmbed = entry.embeds[embedPage] || {};
   const currentEmbedSource = `/api/e/${currentEmbed?.hash}`;
@@ -104,7 +106,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
             </span>
           </a>{" "}
           {new Date(entry.published).toISOString()}
-          <SigValidator thread={entry} />
+          {hasCrypto ? <SigValidator thread={entry} /> : null}
           <br />
           <span className="text-muted-600 shortHash">
             {"#"}
@@ -117,12 +119,14 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
             [View Thread]
           </a>
           &nbsp;
-          <span
-            className="embedControl"
-            onClick={() => setShowReply((x) => !x)}
-          >
-            [Reply]
-          </span>
+          {hasCrypto ? (
+            <span
+              className="embedControl"
+              onClick={() => setShowReply((x) => !x)}
+            >
+              [Reply]
+            </span>
+          ) : null}
         </div>
 
         <p className="text-sm font-mono text-black">{entry.body.content}</p>

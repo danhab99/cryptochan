@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ThreadForm from "./threadform";
 import { Policy } from "../policy";
+import useCryptoAvaliable from "./useCryptoAvaliable";
 
 interface TitleProps {
   newThreads: boolean;
@@ -8,6 +9,7 @@ interface TitleProps {
 
 const Title: React.FC<TitleProps> = (props) => {
   const [showForm, setShowForm] = useState(false);
+  const hasCrypto = useCryptoAvaliable();
 
   return (
     <div>
@@ -29,7 +31,20 @@ const Title: React.FC<TitleProps> = (props) => {
           {process.env.NEXT_PUBLIC_TITLE}
         </h1>
 
-        {props.newThreads ? (
+        {!hasCrypto ? (
+          <h1 className="text-red-800">
+            Your browser does not support{" "}
+            <a
+              className="text-red-800"
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API#browser_compatibility"
+            >
+              WebCrypto
+            </a>
+            , you will be unable to submit or verify threads.
+          </h1>
+        ) : null}
+
+        {props.newThreads && hasCrypto ? (
           <div className="newthread">
             <button onClick={() => setShowForm((x) => !x)}>
               Start a new thread
