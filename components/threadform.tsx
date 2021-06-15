@@ -184,7 +184,12 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
                 Policy.maxLength - (form?.["body"]?.length || 0)
               } characters left)`}
             >
-              <textarea name="body" cols={50} rows={4} onChange={handle} />
+              <textarea
+                name="body"
+                rows={4}
+                onChange={handle}
+                className="w-full"
+              />
             </LabeledRow>
             <LabeledRow label="private key">
               <div className="flex">
