@@ -24,65 +24,75 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
 
   return (
     <div className="entryCard desktop:flex flex-row p-2">
-      <div className="m-4">
-        {(() => {
-          if (Object.keys(currentEmbed).length > 0) {
-            switch (currentEmbed.mimetype.split("/")[0]) {
-              case "image":
-                return (
-                  <img
-                    src={currentEmbedSource}
-                    className="embed"
-                    onClick={() => window.open(currentEmbedSource)}
-                  />
-                );
+      {entry.embeds.length > 0 ? (
+        <div className="p-4">
+          {(() => {
+            if (Object.keys(currentEmbed).length > 0) {
+              switch (currentEmbed.mimetype.split("/")[0]) {
+                case "image":
+                  return (
+                    <img
+                      src={currentEmbedSource}
+                      className="embed"
+                      onClick={() => window.open(currentEmbedSource)}
+                    />
+                  );
 
-              case "video":
-                return (
-                  <video src={currentEmbedSource} className="embed" controls />
-                );
+                case "video":
+                  return (
+                    <video
+                      src={currentEmbedSource}
+                      className="embed"
+                      controls
+                    />
+                  );
 
-              default:
-                return (
-                  <div className="embed aspect-w-1">
-                    <h4>{currentEmbed?.mimetype}</h4>
-                    <a href={currentEmbedSource}>Open</a>
-                  </div>
-                );
+                default:
+                  return (
+                    <div className="embed aspect-w-1">
+                      <h4>{currentEmbed?.mimetype}</h4>
+                      <a href={currentEmbedSource}>Open</a>
+                    </div>
+                  );
+              }
+            } else {
+              return <div></div>;
             }
-          } else {
-            return <div></div>;
-          }
-        })()}
+          })()}
 
-        <div className="flex flex-row justify-between pr-1 pl-1 ">
-          {entry.embeds.length > 1 ? (
-            <p
-              className="embedControl"
-              onClick={() =>
-                setEmbedPage((x) => (x === 0 ? entry.embeds.length - 1 : x - 1))
-              }
-            >
-              {"<<<"}
-            </p>
-          ) : null}
-          {entry.url ? (
-            <a className="embedControl" href={entry.url}>
-              [Link]
-            </a>
-          ) : null}
-          {entry.embeds.length > 1 ? (
-            <a
-              className="embedControl"
-              onClick={() =>
-                setEmbedPage((x) => (x === entry.embeds.length - 1 ? 0 : x + 1))
-              }
-            >
-              {">>>"}
-            </a>
-          ) : null}
+          <div className="flex flex-row justify-between pr-1 pl-1 ">
+            {entry.embeds.length > 1 ? (
+              <p
+                className="embedControl"
+                onClick={() =>
+                  setEmbedPage((x) =>
+                    x === 0 ? entry.embeds.length - 1 : x - 1
+                  )
+                }
+              >
+                {"<<<"}
+              </p>
+            ) : null}
+            {entry.url ? (
+              <a className="embedControl" href={entry.url}>
+                [Link]
+              </a>
+            ) : null}
+            {entry.embeds.length > 1 ? (
+              <a
+                className="embedControl"
+                onClick={() =>
+                  setEmbedPage((x) =>
+                    x === entry.embeds.length - 1 ? 0 : x + 1
+                  )
+                }
+              >
+                {">>>"}
+              </a>
+            ) : null}
+          </div>
         </div>
-      </div>
+      ) : null}
       <div>
         <p className="entryTitle">
           <span className="font-bold">{entry.author.name}</span>{" "}
