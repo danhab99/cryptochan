@@ -21,7 +21,7 @@ interface PKPageProps {
 const PKPage: React.FC<PKPageProps> = (props) => {
   return (
     <div>
-      <Title newThreads={false} />
+      <Title newThreads />
       <Header prefix={`${props.publicKey.owner.name}'s key`} />
 
       <h2 className={`phone:text-center`}>
