@@ -38,8 +38,8 @@ const PKPage: React.FC<PKPageProps> = (props) => {
             {"["}REVOKED{"]"}
           </h2>
           <p className="text-red-600 font-bold">
-            THE PUBLIC KEY WAS REVOKED ITS OWNER. SIGNING POSTS WITH THIS PUBLIC
-            KEY IS NO LONGER POSSIBLE.
+            THE PUBLIC KEY WAS REVOKED BY ITS OWNER. SIGNING POSTS WITH THIS
+            PUBLIC KEY IS NO LONGER POSSIBLE.
           </p>
         </>
       ) : null}
