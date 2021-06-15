@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import immutable from "../../../middlewares/immutable";
 import { minioClient } from "../../../middlewares/minio";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  immutable(req, res);
   if (!req.query.eid) {
     res.status(400).json(new Error("Embed hash required"));
     return;
@@ -12,7 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     req.query.eid as string,
     (err, stat) => {
       if (err) {
-        res.status(500).json(err);
+        res.status(500).send(err.message);
       } else {
         minioClient.presignedGetObject(
           (process.env.S3_PREFIX as string) + "-embeds",
@@ -24,12 +26,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           },
           (err, url) => {
             if (err) {
-              res.status(500).json(err);
+              res.status(500).send(err.message);
             } else {
-              res.setHeader(
-                "Cache-Control",
-                "public, max-age=604800, immutable"
-              );
               res.redirect(url);
             }
           }

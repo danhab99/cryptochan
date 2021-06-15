@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import immutable from "../../../middlewares/immutable";
 import connectDB from "../../../middlewares/mongoose";
 import { sanatizeDB } from "../../../sanatizeQuery";
 import { Thread } from "../../../schemas/Thread";
@@ -17,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     .then((thread) => {
       if (thread) {
         if (!req.query.replies) {
-          res.setHeader("Cache-Control", "public, max-age=604800, immutable");
+          immutable(req, res);
         }
         res.json(thread);
       } else {

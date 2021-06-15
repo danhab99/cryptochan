@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const pk = sanatizeParams(req.query.kid);
 
   if (!pk) {
-    res.status(406).json(new Error("Unknow key"));
+    res.status(406).send("Unknow key");
     return;
   }
 

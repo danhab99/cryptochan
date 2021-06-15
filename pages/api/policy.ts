@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import immutable from "../../middlewares/immutable";
 import { Policy } from "../../policy";
 
-export default async (_req: NextApiRequest, res: NextApiResponse) => {
-  res.setHeader("Cache-Control", "public, max-age=604800, immutable");
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  immutable(req, res);
   res.json(Policy);
 };
