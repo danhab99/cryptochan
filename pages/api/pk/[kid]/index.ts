@@ -11,18 +11,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   log("Getting public key", req.query);
 
-  PublicKey.findOne({ keyid: req.query.kid as string })
-    .then((pk) => {
-      if (pk) {
-        log("Sending public key");
-        res.send(pk.key);
-      } else {
-        log("Public key not found");
-        res.status(404).send("Not found");
-      }
-    })
-    .catch((e: Error) => {
-      log("Error", e);
-      res.status(500).send(e.message);
-    });
+  const pk = await PublicKey.findOne({ keyid: req.query.kid as string });
+
+  if (pk) {
+    log("Sending public key");
+    res.send(pk.key);
+  } else {
+    log("Public key not found");
+    res.status(404).send("Not found");
+  }
 };
