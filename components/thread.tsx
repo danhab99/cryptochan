@@ -26,7 +26,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
 
   return (
     <div className="entryCard desktop:flex flex-row p-2">
-      {entry.embeds.length > 0 ? (
+      {entry.embeds.length > 0 || entry.url ? (
         <div className="p-4">
           {(() => {
             if (Object.keys(currentEmbed).length > 0) {
@@ -76,7 +76,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
               </p>
             ) : null}
             {entry.url ? (
-              <a className="embedControl" href={entry.url}>
+              <a className="embedControl" href={entry.url} target="_blank">
                 [Link]
               </a>
             ) : null}
