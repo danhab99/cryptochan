@@ -2118,7 +2118,7 @@ onetime@^5.1.2:
 
 "openpgp@https://github.com/danhab99/openpgpjs":
   version "5.0.0-3"
-  resolved "https://github.com/danhab99/openpgpjs#fa83e14fca94faed44e75509db9e2dd923e29c98"
+  resolved "https://github.com/danhab99/openpgpjs#2cb562a182952aa0b12f562c1115416d2ff2bffd"
   dependencies:
     asn1.js "^5.0.0"
 

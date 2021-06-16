@@ -12,6 +12,7 @@ export const config: PageConfig = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  openpgp.config.ignoreTime = true
   const log = LoggingFactory(req, res, "Revoke");
   await connectDB();
 
