@@ -4,6 +4,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 Cryptochan is a confederated blockchain based image board that supports cryptographic signing through PGP. All threads are hashed through a standardized protocol allowing them to be recognized even when mirrored to other Cryptochan-Compatible platforms. Each platform is able to enstate their own policy regarding their operations. If you don't like my rules, then screw me! Mirror this blockchain onto your own CCC server and run it yourself!
 
+[Demo site](https://cryptochan.vercel.app/)
+
 - [Cryptochan](#cryptochan)
 - [Environments and Policies](#environments-and-policies)
   - [.env.local](#envlocal)
