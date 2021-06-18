@@ -76,7 +76,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
               </p>
             ) : null}
             {entry.url ? (
-              <a className="embedControl" href={entry.url} target="_blank">
+              <a className="embedControl" href={entry.url} target="_blank" rel="noreferrer">
                 [Link]
               </a>
             ) : null}

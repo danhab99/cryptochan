@@ -5,7 +5,7 @@ import { sanatizeDB } from "../../../sanatizeQuery";
 import { Thread } from "../../../schemas/Thread";
 import LoggingFactory from "../../../middlewares/logging";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const ThreadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
   const log = LoggingFactory(req, res, "API Thread");
   await connectDB();
 
@@ -36,3 +36,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(500).json(e);
     });
 };
+
+export default ThreadAPI;

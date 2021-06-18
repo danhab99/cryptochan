@@ -27,7 +27,7 @@ const PKPage: React.FC<PKPageProps> = (props) => {
 
       <h2 className={`phone:text-center`}>
         {props.publicKey.owner.name} {"("}
-        <a href={`mailto:${props.publicKey.owner.email}`} target="_blank">
+        <a href={`mailto:${props.publicKey.owner.email}`} target="_blank" rel="noreferrer">
           {props.publicKey.owner.email}
         </a>
         {")"}
@@ -54,7 +54,7 @@ const PKPage: React.FC<PKPageProps> = (props) => {
         className="embedControl"
         href={`https://cirw.in/gpg-decoder/#${encodeURI(props.publicKey.key)}`}
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
       >
         [Analysis]
       </a>

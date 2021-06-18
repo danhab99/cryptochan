@@ -3,7 +3,7 @@ import immutable from "../../../middlewares/immutable";
 import { minioClient } from "../../../middlewares/minio";
 import LoggingFactory from "../../../middlewares/logging";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const EmbeddedAPI = async (req: NextApiRequest, res: NextApiResponse) => {
   return new Promise<void>(async (resolve) => {
     const log = LoggingFactory(req, res, "Embed");
     immutable(req, res);
@@ -47,3 +47,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     resolve();
   });
 };
+
+export default EmbeddedAPI;

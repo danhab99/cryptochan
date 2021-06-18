@@ -4,7 +4,7 @@ import connectDB from "../../../../middlewares/mongoose";
 import { PublicKey } from "../../../../schemas/PublicKey";
 import LoggingFactory from "../../../../middlewares/logging";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const PKAPI = async (req: NextApiRequest, res: NextApiResponse) => {
   const log = LoggingFactory(req, res, "PK");
   await connectDB();
   immutable(req, res);
@@ -21,3 +21,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(404).send("Not found");
   }
 };
+
+export default PKAPI;

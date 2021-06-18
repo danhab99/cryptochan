@@ -4,7 +4,7 @@ import { getThreadsAndReplies } from "../../../../query/getThreadsAndReplies";
 import { sanatizeParams } from "../../../../sanatizeQuery";
 import LoggingFactory from "../../../../middlewares/logging";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const PKThreadsAPI = async (req: NextApiRequest, res: NextApiResponse) => {
   const log = LoggingFactory(req, res, "PK Threads");
   await connectDB();
   const page = parseInt(sanatizeParams(req.query.page, "0"));
@@ -27,3 +27,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   res.json({ threads: threadsAndReplies, moreAvaliable: more });
 };
+
+export default PKThreadsAPI;
