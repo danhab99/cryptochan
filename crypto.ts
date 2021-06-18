@@ -1,6 +1,6 @@
 import * as openpgp from "openpgp";
 import { decode } from "base64-arraybuffer";
-import { IThreadSimple, IEmbed } from "./schemas/Thread";
+import { IThreadSimple } from "./schemas/Thread";
 import { Policy } from "./policy";
 import _ from "lodash";
 import stringify from "json-stable-stringify";
@@ -25,12 +25,6 @@ export const HashArrayBuffer = async (data: ArrayBuffer): Promise<string> => {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 };
-
-export type ThreadWithEmbeds = {
-  embeds: Array<{ bits: ArrayBuffer } & IEmbed>;
-} & IThreadSimple;
-
-export type PartialThreadWithEmbeds = Partial<ThreadWithEmbeds>;
 
 const HashThread = async (entry: Partial<IThreadSimple>) => {
   console.log("Hashing thread", entry);
