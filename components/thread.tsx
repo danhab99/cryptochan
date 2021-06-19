@@ -22,7 +22,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
 
   useEffect(() => {
     router.prefetch(`/t/${entry.hash.value}`);
-  }, []);
+  }, [entry.hash.value, router]);
 
   return (
     <div className="entryCard desktop:flex flex-row p-2">
@@ -37,6 +37,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
                       src={currentEmbedSource}
                       className="embed"
                       onClick={() => window.open(currentEmbedSource)}
+                      alt={currentEmbedSource}
                     />
                   );
 
@@ -76,7 +77,12 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
               </p>
             ) : null}
             {entry.url ? (
-              <a className="embedControl" href={entry.url} target="_blank" rel="noreferrer">
+              <a
+                className="embedControl"
+                href={entry.url}
+                target="_blank"
+                rel="noreferrer"
+              >
                 [Link]
               </a>
             ) : null}
@@ -129,8 +135,11 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
           ) : null}
         </div>
 
-        {entry.body.content.split("\n").map((x) => (
-          <p className="text-sm font-mono text-black desktop:max-w-prose">
+        {entry.body.content.split("\n").map((x, i) => (
+          <p
+            key={i}
+            className="text-sm font-mono text-black desktop:max-w-prose"
+          >
             {x}
           </p>
         ))}

@@ -99,7 +99,7 @@ const NewKeys: React.FC = () => {
                     Key might be compromised
                   </option>
                   <option value={enums.reasonForRevocation.keyRetired}>
-                    I don't want to use this key anymore
+                    I don&apos;t want to use this key anymore
                   </option>
                   <option value={enums.reasonForRevocation.keySuperseded}>
                     Using new key

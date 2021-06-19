@@ -11,8 +11,8 @@ export const config: PageConfig = {
   },
 };
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  openpgp.config.ignoreTime = true
+const RegkeyAPI = async (req: NextApiRequest, res: NextApiResponse) => {
+  openpgp.config.ignoreTime = true;
   const log = LoggingFactory(req, res, "RegKey");
   await connectDB();
 
@@ -120,3 +120,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   req.pipe(busboy);
 };
+
+export default RegkeyAPI;

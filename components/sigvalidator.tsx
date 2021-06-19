@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { VerifyThread } from "../crypto";
 import { IThreadSimple } from "../schemas/Thread";
 
@@ -46,42 +47,43 @@ const SigValidator: React.FC<SigValidatorProps> = (props) => {
   }, [props.thread]);
 
   return (
-    <a
+    <Link
       href={`https://cirw.in/gpg-decoder/#${encodeURI(props.thread.signature)}`}
-      target="_blank"
-      className="no-underline"
-      rel="noopener noreferrer"
     >
-      {" "}
-      {(() => {
-        switch (state) {
-          case ValidatorState.INVALID:
-            return (
-              <span className="text-invalid-500 sigValidator">[INVALID]</span>
-            );
+      <a target="_blank" className="no-underline" rel="noopener noreferrer">
+        {" "}
+        {(() => {
+          switch (state) {
+            case ValidatorState.INVALID:
+              return (
+                <span className="text-invalid-500 sigValidator">[INVALID]</span>
+              );
 
-          case ValidatorState.VALID:
-            return <span className="text-valid-500 sigValidator">[VALID]</span>;
+            case ValidatorState.VALID:
+              return (
+                <span className="text-valid-500 sigValidator">[VALID]</span>
+              );
 
-          case ValidatorState.WORKING:
-            return (
-              <span className="text-validating-500 sigValidator">
-                [WORKING...]
-              </span>
-            );
+            case ValidatorState.WORKING:
+              return (
+                <span className="text-validating-500 sigValidator">
+                  [WORKING...]
+                </span>
+              );
 
-          case ValidatorState.ERROR:
-            return (
-              <span className="text-invalid-500 sigValidator">[ERROR]</span>
-            );
+            case ValidatorState.ERROR:
+              return (
+                <span className="text-invalid-500 sigValidator">[ERROR]</span>
+              );
 
-          case ValidatorState.REVOKED:
-            return (
-              <span className="text-revoked-500 sigValidator">[REVOKED]</span>
-            );
-        }
-      })()}
-    </a>
+            case ValidatorState.REVOKED:
+              return (
+                <span className="text-revoked-500 sigValidator">[REVOKED]</span>
+              );
+          }
+        })()}
+      </a>
+    </Link>
   );
 };
 

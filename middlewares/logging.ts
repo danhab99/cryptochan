@@ -8,7 +8,7 @@ export default function LoggingFactory(
 ) {
   return (msg: string, ...args: any[]) => {
     console.log(
-      `${new Date().toISOString()} ${req.socket.remoteAddress} | ${
+      `${new Date().toISOString()} ${req?.socket?.remoteAddress} | ${
         req.method
       } ${req.url}: [${mod}] ${msg}`,
       ...args

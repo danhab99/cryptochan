@@ -90,7 +90,7 @@ const NewKeys: React.FC = () => {
                     . Anyone who has this file can sign whatever they want with
                     it and everybody will thing that it was you. As citizens of
                     the internet, we can all imagine some less that moral things
-                    we don't want someone else signing with our name.{" "}
+                    we don&apos;t want someone else signing with our name.{" "}
                     <MoreInfo link="https://en.wikipedia.org/wiki/Public-key_cryptography" />
                   </p>
                 </li>

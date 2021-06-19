@@ -34,8 +34,8 @@ const ThreadPage: React.FC<ThreadPageProps> = (props) => {
 
       {props.parents ? (
         <>
-          {props.parents.map((thread) => (
-            <ThreadComponent entry={thread} />
+          {props.parents.map((thread, i) => (
+            <ThreadComponent entry={thread} key={i} />
           ))}
           <hr />
         </>

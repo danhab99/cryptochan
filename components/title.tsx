@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import ThreadForm from "./threadform";
 import { Policy } from "../policy";
 import useCryptoAvaliable from "./useCryptoAvaliable";
@@ -15,15 +16,23 @@ const Title: React.FC<TitleProps> = (props) => {
     <div>
       <div className="categories">
         <p>{"["}</p>
-        {Policy.categories.map((cat) => (
-          <a href={`/${cat.name}`}>/{cat.name}/</a>
+        {Policy.categories.map((cat, i) => (
+          <Link key={i} href={`/${cat.name}`}>
+            <a>/{cat.name}/</a>
+          </Link>
         ))}
         <p>{"]"}</p>
 
         <p>{"["}</p>
-        <a href="/keys/newkeys">Generate</a>
-        <a href="/keys/register">Register</a>
-        <a href="/keys/revoke">Revoke</a>
+        <Link href="/keys/newkeys">
+          <a>Generate</a>
+        </Link>
+        <Link href="/keys/register">
+          <a>Register</a>
+        </Link>
+        <Link href="/keys/revoke">
+          <a>Revoke</a>
+        </Link>
         <p>{"]"}</p>
       </div>
       <header>

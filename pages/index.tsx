@@ -20,15 +20,15 @@ const Home: React.FC = () => {
             threads are hashed through a standardized protocol allowing them to
             be recognized even when mirrored to other Cryptochan-Compatible
             platforms. Each platform is able to enstate their own policy
-            regarding their operations. If you don't like my rules, then screw
-            me! Mirror this blockchain onto your own CCC server and run it
+            regarding their operations. If you don&apos;t like my rules, then
+            screw me! Mirror this blockchain onto your own CCC server and run it
             yourself!
           </p>
 
           <h2>Rules</h2>
           <ol className="text-center list-inside">
-            {Policy.rules.map((x) => (
-              <li>{x}</li>
+            {Policy.rules.map((x, i) => (
+              <li key={i}>{x}</li>
             ))}
           </ol>
 
@@ -36,8 +36,8 @@ const Home: React.FC = () => {
             <h2>Categories</h2>
 
             <div className="px-5">
-              {Policy.categories.map((cat) => (
-                <div>
+              {Policy.categories.map((cat, i) => (
+                <div key={i}>
                   <p>
                     <a href={`/${cat.name}`} className="embedControl">
                       <span className="text-lg font-bold">{cat.title}</span>

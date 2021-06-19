@@ -37,12 +37,12 @@ export const ThreadList: React.FC<ThreadListProps> = (props) => {
 
   return (
     <div>
-      {threads?.map((thread) => (
-        <div>
+      {threads?.map((thread, i) => (
+        <div key={i}>
           <ThreadComponent entry={thread} />
           <div className="replyBlock">
-            {thread?.replyThreads?.map?.((reply) => {
-              return <ThreadComponent entry={reply} />;
+            {thread?.replyThreads?.map?.((reply, j) => {
+              return <ThreadComponent entry={reply} key={j} />;
             })}
           </div>
         </div>

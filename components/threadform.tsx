@@ -304,8 +304,10 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
                 }
                 disabled={props.category ? true : false}
               >
-                {Policy.categories.map((x) => (
-                  <option value={x.name}>{x.title}</option>
+                {Policy.categories.map((x, i) => (
+                  <option key={i} value={x.name}>
+                    {x.title}
+                  </option>
                 ))}
               </select>
             </LabeledRow>
