@@ -1,7 +1,7 @@
 import React from "react";
 import Title from "../../components/title";
 import { Header } from "../../components/header";
-import { Link } from "next/link";
+import Link from "next/link";
 
 const Keys: React.FC = () => {
   return (
