@@ -11,19 +11,31 @@ import {
 import { sanatizeParams } from "../sanatizeQuery";
 import { ThreadList } from "../components/threadList";
 import LoggingFactory from "../middlewares/logging";
+import { Category as ICategory } from "../IPolicy";
+import { Policy } from "../policy";
 
 type HomeProps = {
   threads: ThreadWithReplys;
   more: boolean;
   startPage: number;
-  category: string;
+  category: ICategory;
 };
 
 const Category: React.FC<HomeProps> = (props) => {
   return (
     <div>
-      <Header prefix={props.category} />
+      <Header prefix={props.category.name} />
       <Title newThreads />
+
+      <header>
+        <p className="text-center ">
+          <span className="text-primary-800 text-2xl font-bold align-middle">
+            {props.category.title}
+            {" - "}
+          </span>
+          <span className="align-middle">{props.category.description}</span>
+        </p>
+      </header>
 
       <ThreadList
         threads={props.threads}
@@ -47,8 +59,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   await connectDB();
 
   const page = parseInt(sanatizeParams(query.page, "0"));
-  const category = sanatizeParams(params?.["category"]);
-  log("Getting category", category, page);
+  const c = sanatizeParams(params?.["category"]);
+  log("Getting category", c, page);
+  const category = Policy.categories.filter((x) => x.name === c)[0];
 
   if (!category) {
     log("Not found");
@@ -59,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   try {
     const { threadsAndReplies, more } = await getThreadsAndReplies(
-      { type: "category", category: category },
+      { type: "category", category: category.name },
       {
         page,
       }
