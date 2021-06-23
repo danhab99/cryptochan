@@ -36,21 +36,35 @@ const HashThread = async (entry: Partial<IThreadSimple>) => {
   return hash;
 };
 
+const sanatizeThread = (thread: Partial<IThreadSimple>) => {
+  let cleanThread: any = _.cloneDeep(thread);
+  delete cleanThread.hash;
+  delete cleanThread.signature;
+  delete cleanThread.__v;
+  delete cleanThread.replies;
+  delete cleanThread.replyThreads;
+  delete cleanThread.approved;
+  return cleanThread;
+};
+
+const stringifyThread = (thread: Partial<IThreadSimple>) =>
+  stringify(sanatizeThread(thread));
+
 export interface ThreadSignature {
   hash: string;
   signature: string;
+  thread: IThreadSimple;
 }
 
 export const SignThread = async (
   armoredKey: string,
   passphrase: string,
-  entry: Partial<IThreadSimple>
+  thread: Partial<IThreadSimple>
 ): Promise<ThreadSignature> => {
-  console.log("Signing Thread", armoredKey, entry);
-  let hash = await HashThread(entry);
+  console.log("Signing Thread", armoredKey, thread);
 
   let unsignedMessage = openpgp.createMessage({
-    text: hash,
+    text: stringifyThread(thread),
   });
 
   const privateKey = openpgp.decryptKey({
@@ -66,15 +80,29 @@ export const SignThread = async (
 
   console.log("Signature", signature);
 
-  return { hash, signature };
+  let newThread: IThreadSimple = {
+    ...(thread as IThreadSimple),
+    signature,
+  };
+
+  let hash = await HashThread(newThread);
+
+  console.log("Hash", hash);
+
+  newThread.hash = {
+    algorithm: Policy.hash_algo,
+    value: hash,
+  };
+
+  return { hash, signature, thread: newThread };
 };
 
 export const VerifyThread = async (
   armoredKey: string,
   signature: string | openpgp.Signature,
-  entry: Partial<IThreadSimple>
+  thread: Partial<IThreadSimple>
 ): Promise<boolean> => {
-  console.log("Verifying Thread", armoredKey, signature, entry);
+  console.log("Verifying Thread", armoredKey, signature, thread);
   let publicKey = openpgp.readKey({
     armoredKey: armoredKey,
   });
@@ -87,20 +115,8 @@ export const VerifyThread = async (
     parsedSig = await openpgp.readSignature({ armoredSignature: signature });
   }
 
-  let cleanEntry: any = _.cloneDeep(entry);
-  delete cleanEntry.hash;
-  delete cleanEntry.signature;
-  delete cleanEntry.__v;
-  delete cleanEntry.replies;
-  delete cleanEntry.replyThreads;
-  delete cleanEntry.approved;
-
-  let hash = await HashThread(cleanEntry);
-
-  console.log("Hashed for verifying", hash);
-
   let testMessage = await openpgp.createMessage({
-    text: hash,
+    text: stringifyThread(thread),
   });
 
   let verify = await openpgp.verify({

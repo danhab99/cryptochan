@@ -154,28 +154,17 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
         url: form["url"],
       };
 
-      let hash: string, signature: string;
+      let thread: IThreadSimple;
 
       try {
-        ({ hash, signature } = await SignThread(
-          useSKArmored,
-          useSKPassword,
-          rawThread
-        ));
+        ({ thread } = await SignThread(useSKArmored, useSKPassword, rawThread));
       } catch (e) {
         alert("Unable to decrypt private key with password");
         setSubmitting(false);
         return;
       }
 
-      rawThread["hash"] = {
-        algorithm: Policy.hash_algo,
-        value: hash,
-      };
-
-      rawThread["signature"] = signature;
-
-      submissionForm.append("thread", JSON.stringify(rawThread));
+      submissionForm.append("thread", JSON.stringify(thread));
 
       let resp = await fetch("/api/upload", {
         method: "post",
