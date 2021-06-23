@@ -8,7 +8,7 @@ header {
 }
 
 .categories {
-  @apply flex flex-row;
+  @apply flex flex-row flex-wrap;
 }
 
 .categories a,
