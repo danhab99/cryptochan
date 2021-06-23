@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ThreadWithReplys } from "../query/getThreadsAndReplies";
 import ThreadComponent from "./thread";
 
@@ -14,6 +14,12 @@ export const ThreadList: React.FC<ThreadListProps> = (props) => {
   const [loading, setLoading] = useState(false);
   const [more, setMore] = useState(props.more);
   const page = useRef(props.startPage);
+
+  useEffect(() => {
+    setThreads(props.threads);
+    setMore(props.more);
+    page.current = props.startPage;
+  }, [props]);
 
   const loadMore = async () => {
     page.current += 1;
