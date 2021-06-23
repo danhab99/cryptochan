@@ -7,6 +7,7 @@ import { Category } from "../IPolicy";
 import { LabeledInput, LabeledRow } from "./labeledinput";
 import { HashArrayBuffer, SignThread } from "../crypto";
 import { IEmbed, IThreadSimple } from "../schemas/Thread";
+import { readFileAsArrayBuffer, readFileAsString } from "../readFile";
 
 interface ThreadFormProps {
   replyTo?: string;
@@ -43,24 +44,18 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
             .filter((file) => file.size < Policy.maxSize)
             .map(
               (file) =>
-                new Promise<IEmbed>((resolve) => {
-                  let reader = new FileReader();
+                new Promise<IEmbed>(async (resolve) => {
+                  let bits = await readFileAsArrayBuffer(file);
+                  let hashname = await HashArrayBuffer(bits);
 
-                  reader.onload = () => {
-                    let bytes = reader.result as ArrayBuffer;
-                    HashArrayBuffer(bytes).then((hashname) => {
-                      submissionForm.append("embeds", file, hashname);
+                  submissionForm.append("embeds", file, hashname);
 
-                      resolve({
-                        algorithm: Policy.hash_algo,
-                        hash: hashname,
-                        mimetype: file.type,
-                        size: `${file.size}`,
-                      });
-                    });
-                  };
-
-                  reader.readAsArrayBuffer(file);
+                  resolve({
+                    algorithm: Policy.hash_algo,
+                    hash: hashname,
+                    mimetype: file.type,
+                    size: `${file.size}`,
+                  });
                 })
             )
         );
@@ -71,11 +66,10 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
       let PrivateKeyReadPromise = await new Promise<{
         author: openpgp.PrimaryUser;
         sk: openpgp.PrivateKey;
-      }>((resolve) => {
-        let skReader = new FileReader();
+      }>(async (resolve) => {
+        if (skFile) {
+          let bits = await readFileAsString(skFile);
 
-        skReader.onload = () => {
-          let bits = skReader.result?.toString();
           if (bits) {
             openpgp
               .readPrivateKey({
@@ -87,12 +81,6 @@ const ThreadForm: React.FC<ThreadFormProps> = (props) => {
                 });
               });
           }
-        };
-
-        if (skFile) {
-          skReader.readAsText(skFile);
-        } else {
-          throw new Error("Secret key needed");
         }
       });
 

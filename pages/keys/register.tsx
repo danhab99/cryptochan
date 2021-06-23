@@ -4,16 +4,7 @@ import { LabeledInput } from "../../components/labeledinput";
 import Title from "../../components/title";
 import { Header } from "../../components/header";
 import { Policy } from "../../policy";
-
-const readFile = (f: File): Promise<string> => {
-  return new Promise((resolve) => {
-    let reader = new FileReader();
-    reader.onload = () => {
-      resolve((reader.result as string) || "");
-    };
-    reader.readAsText(f);
-  });
-};
+import { readFileAsString } from "../../readFile";
 
 const NewKeys: React.FC = () => {
   const [newKeyFile, setNewKeyFile] = useState<File>();
@@ -26,13 +17,13 @@ const NewKeys: React.FC = () => {
       setUploading(true);
       const form = new FormData();
 
-      const newkey = await readFile(newKeyFile);
+      const newkey = await readFileAsString(newKeyFile);
       form.append("newkey", newkey);
 
       if (signingKeyFile && password) {
         const sk = await decryptKey({
           privateKey: await readPrivateKey({
-            armoredKey: await readFile(signingKeyFile),
+            armoredKey: await readFileAsString(signingKeyFile),
           }),
           passphrase: password,
         });
