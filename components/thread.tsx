@@ -125,7 +125,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
             [View Thread]
           </a>
           &nbsp;
-          {hasCrypto ? (
+          {hasCrypto && entry.replies ? (
             <span
               className="embedControl"
               onClick={() => setShowReply((x) => !x)}
