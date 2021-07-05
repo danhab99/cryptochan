@@ -57,6 +57,7 @@ const UploadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     busboy.on("finish", async () => {
+      debugger;
       log("Busboy finished");
 
       if (thread.body.content.length > Policy.maxLength) {
@@ -121,7 +122,10 @@ const UploadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         if (await VerifyThread(dbPublicKey.key, sig, thread)) {
           log("Good signature");
-          Thread.create(thread).then((thread) => {
+          Thread.create({
+            ...thread,
+            approved: dbPublicKey.clearance.always_approved,
+          }).then((thread) => {
             res.status(201).end(thread.hash.value);
           });
         } else {

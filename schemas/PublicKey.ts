@@ -16,6 +16,9 @@ export interface IPublicKey extends Document {
   revoked: boolean;
   signingKey: String;
   signingKeyID: String;
+  clearance: {
+    always_approved: Boolean;
+  };
 }
 
 const UserSchema: Schema = new Schema({
@@ -40,6 +43,12 @@ const PublicKeySchema: Schema = new Schema({
   revoked: Boolean,
   signingKey: String,
   signingKeyID: String,
+  clearance: {
+    always_approved: {
+      type: Boolean,
+      default: false,
+    },
+  },
 });
 
 export const PublicKey: Model<IPublicKey> =
