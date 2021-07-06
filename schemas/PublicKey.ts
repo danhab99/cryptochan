@@ -18,6 +18,7 @@ export interface IPublicKey extends Document {
   signingKeyID: String;
   clearance: {
     always_approved: Boolean;
+    master: Boolean;
   };
 }
 
@@ -45,6 +46,10 @@ const PublicKeySchema: Schema = new Schema({
   signingKeyID: String,
   clearance: {
     always_approved: {
+      type: Boolean,
+      default: false,
+    },
+    master: {
       type: Boolean,
       default: false,
     },
