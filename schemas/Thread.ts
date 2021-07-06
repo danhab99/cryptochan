@@ -51,7 +51,7 @@ const ThreadSchema: Schema = new Schema({
   parenthash: String,
   replies: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   body: {
     mimetype: String,
