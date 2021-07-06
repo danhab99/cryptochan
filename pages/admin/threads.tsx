@@ -44,7 +44,7 @@ const ControlledThread: React.FC<{ thread: IThreadSimple }> = ({ thread }) => {
             doDirective({
               action: "approve",
               approved: !cthread.approved,
-              hash: thread.hash.value
+              hash: thread.hash.value,
             });
           }}
         />
@@ -61,7 +61,7 @@ const ControlledThread: React.FC<{ thread: IThreadSimple }> = ({ thread }) => {
             doDirective({
               action: "replies",
               replies: !cthread.replies,
-              hash: thread.hash.value
+              hash: thread.hash.value,
             });
           }}
         />
@@ -111,8 +111,8 @@ const AdminThreads: React.FC = () => {
 
       {loading ? <h3>Getting threads...</h3> : null}
 
-      {threads.map((thread) => (
-        <ControlledThread thread={thread} />
+      {threads.map((thread, i) => (
+        <ControlledThread key={`${i}`} thread={thread} />
       ))}
     </div>
   );

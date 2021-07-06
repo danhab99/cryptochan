@@ -33,7 +33,7 @@ const AdminThreadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
         let verify = await openpgp.verify({
           message: await openpgp.readCleartextMessage({
             cleartextMessage: req.body as string,
-          }),
+          }) as any,
           verificationKeys: await Promise.all(
             mks.map((mk: IPublicKey) => openpgp.readKey({ armoredKey: mk.key }))
           ),
