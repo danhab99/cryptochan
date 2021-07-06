@@ -30,3 +30,15 @@
     height: auto;
   }
 }
+
+.entryBody {
+  @apply text-black desktop:max-w-prose leading-none m-0;
+}
+
+.entryBody > p {
+  @apply text-sm;
+}
+
+.entryBody > * {
+  margin-block: 0.1em;
+}

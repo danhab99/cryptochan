@@ -6,6 +6,7 @@ import ThreadForm from "./threadform";
 import { Policy } from "../policy";
 import { Category } from "../IPolicy";
 import useCryptoAvaliable from "./useCryptoAvaliable";
+import FormattedBody from "./formattedBody";
 
 interface ThreadProps {
   entry: IThreadSimple;
@@ -135,14 +136,7 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
           ) : null}
         </div>
 
-        {entry.body.content.split("\n").map((x, i) => (
-          <p
-            key={i}
-            className="text-sm font-mono text-black desktop:max-w-prose"
-          >
-            {x}
-          </p>
-        ))}
+        <FormattedBody body={entry.body.content} />
 
         {showReply ? (
           <ThreadForm
