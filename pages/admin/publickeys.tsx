@@ -4,7 +4,7 @@ import Title from "../../components/title";
 import useMasterKey from "../../components/useMasterKey";
 import stringify from "json-stable-stringify";
 import * as openpgp from "openpgp";
-import { IPublicKey, PublicKey } from "../../schemas/PublicKey";
+import { IPublicKey } from "../../schemas/PublicKey";
 import Link from "next/link";
 
 const AdminPublicKey: React.FC = () => {
