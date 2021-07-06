@@ -4,8 +4,6 @@ import LoggingFactory from "../../../middlewares/logging";
 import encryptForMasters from "../../../query/encryptForMasters";
 import { Thread } from "../../../schemas/Thread";
 import { sanatizeDB, sanatizeParams } from "../../../sanatizeQuery";
-import * as openpgp from "openpgp";
-import { IPublicKey, PublicKey } from "../../../schemas/PublicKey";
 import verifyMaster from "../../../query/verifyMaster";
 
 const PAGE_COUNT = 12;
