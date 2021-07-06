@@ -33,6 +33,9 @@ const Title: React.FC<TitleProps> = (props) => {
         <Link href="/keys/revoke">
           <a>Revoke</a>
         </Link>
+        <Link href="/admin">
+          <a>Admin</a>
+        </Link>
         <p>{"]"}</p>
       </div>
       <header>

@@ -57,11 +57,12 @@ const UploadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     busboy.on("finish", async () => {
+      debugger;
       log("Busboy finished");
 
       if (thread.body.content.length > Policy.maxLength) {
         log("Body too long", thread.body.content.length);
-        res.status(413).json(new Error("Body too long"));
+        res.status(413).send("Body too long");
         return;
       }
 
@@ -69,10 +70,11 @@ const UploadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
         let exists = await Thread.exists({
           "hash.value": thread.parenthash,
           approved: true,
+          replies: true
         });
 
         if (!exists) {
-          log("Thread replying to non existing thread", thread.parenthash);
+          log("Thread replying to non existing or banned thread", thread.parenthash);
           res
             .status(406)
             .json(
@@ -84,13 +86,13 @@ const UploadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
 
       if (Policy.publickey.require && !thread.signature) {
         log("Thread is not signed");
-        res.status(401).json(new Error("Signature required"));
+        res.status(401).send("Signature required");
         return;
       }
 
       if (!Policy.categories.map((x) => x.name).includes(thread.category)) {
         log("Thread is in unknown category", thread.category);
-        res.status(406).json(new Error("Unknown category"));
+        res.status(406).send("Unknown category");
         return;
       }
 
@@ -102,35 +104,34 @@ const UploadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
 
       if (dbPublicKey === null) {
         log("Unknow signing public key", issuer, thread.signature);
-        res.status(404).json(new Error("Public key not found"));
+        res.status(404).send("Public key not found");
         return;
       }
 
       if (dbPublicKey.revoked) {
         log("Public key revoked");
-        res
-          .status(401)
-          .json(new Error("Public key has been revoked by certificate"));
+        res.status(401).send("Public key has been revoked by certificate");
         return;
       }
 
       if (Policy.publickey.preapproved && !dbPublicKey.approved) {
         log("Public key not approved");
-        res.status(401).json(new Error("Public key not approved"));
+        res.status(401).send("Public key not approved");
         return;
       }
 
       try {
         if (await VerifyThread(dbPublicKey.key, sig, thread)) {
           log("Good signature");
-          Thread.create(thread).then((thread) => {
+          Thread.create({
+            ...thread,
+            approved: dbPublicKey.clearance.always_approved,
+          }).then((thread) => {
             res.status(201).end(thread.hash.value);
           });
         } else {
           log("Bad signature");
-          res
-            .status(401)
-            .json(new Error("One or more issuers were not verifiable"));
+          res.status(401).send("One or more issuers were not verifiable");
         }
       } catch (e) {
         log("Error", e);

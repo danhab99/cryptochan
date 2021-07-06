@@ -28,7 +28,7 @@ const Category: React.FC<HomeProps> = (props) => {
       <Title newThreads />
 
       <header>
-        <p className="text-center ">
+        <p className="text-center">
           <span className="text-primary-800 text-2xl font-bold align-middle">
             {props.category.title}
             {" - "}

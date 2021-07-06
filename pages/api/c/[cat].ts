@@ -13,7 +13,7 @@ const CategoryAPI = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (!cat) {
     log("Unknown category", cat);
-    res.status(406).json(new Error("Unknow category"));
+    res.status(406).send("Unknow category");
     return;
   }
 
@@ -29,4 +29,4 @@ const CategoryAPI = async (req: NextApiRequest, res: NextApiResponse) => {
   res.json({ threads: threadsAndReplies, moreAvaliable: more });
 };
 
-export default CategoryAPI
+export default CategoryAPI;

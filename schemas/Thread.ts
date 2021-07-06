@@ -18,6 +18,7 @@ export interface IThreadSimple {
   };
   signature: string;
   parenthash: string | undefined;
+  approved: boolean;
   replies: boolean;
   body: {
     mimetype: string;
@@ -51,7 +52,7 @@ const ThreadSchema: Schema = new Schema({
   parenthash: String,
   replies: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   body: {
     mimetype: String,

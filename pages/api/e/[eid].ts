@@ -8,7 +8,7 @@ const EmbeddedAPI = async (req: NextApiRequest, res: NextApiResponse) => {
     const log = LoggingFactory(req, res, "Embed");
     immutable(req, res);
     if (!req.query.eid) {
-      res.status(400).json(new Error("Embed hash required"));
+      res.status(400).send("Embed hash required");
       return;
     }
 

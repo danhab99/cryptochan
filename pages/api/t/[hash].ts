@@ -28,7 +28,7 @@ const ThreadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
         res.json(thread);
       } else {
         log("Thread not found", req.query);
-        res.status(404).json(new Error("Not found"));
+        res.status(404).send("Not found");
       }
     })
     .catch((e) => {
