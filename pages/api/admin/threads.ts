@@ -4,8 +4,7 @@ import LoggingFactory from "../../../middlewares/logging";
 import encryptForMasters from "../../../query/encryptForMasters";
 import { Thread } from "../../../schemas/Thread";
 import { sanatizeDB, sanatizeParams } from "../../../sanatizeQuery";
-import * as openpgp from "openpgp";
-import { IPublicKey, PublicKey } from "../../../schemas/PublicKey";
+import verifyMaster from "../../../query/verifyMaster";
 
 const PAGE_COUNT = 12;
 
@@ -28,60 +27,40 @@ const AdminThreadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
 
     case "post": {
       log("Updating thread");
-      let mks = await PublicKey.find({ "clearance.master": true });
-      if (mks) {
-        let verify = await openpgp.verify({
-          message: await openpgp.readCleartextMessage({
-            cleartextMessage: req.body as string,
-          }) as any,
-          verificationKeys: await Promise.all(
-            mks.map((mk: IPublicKey) => openpgp.readKey({ armoredKey: mk.key }))
-          ),
-        });
+      let verifiedBody = await verifyMaster(req.body);
+      if (verifiedBody) {
+        let payload = JSON.parse(verifiedBody as string);
+        log("Good verification", payload);
 
-        let verifications = await Promise.all(
-          verify.signatures.map((x) => x.verified)
-        );
+        switch (payload.action) {
+          case "approve":
+            log("Approving thread");
+            await Thread.updateOne(
+              { "hash.value": payload.hash },
+              { approved: payload.approved }
+            );
+            return res.status(201).send("Updated");
 
-        log("Verification", verifications);
+          case "replies":
+            log("Setting replies");
+            await Thread.updateOne(
+              { "hash.value": payload.hash },
+              { replies: payload.replies }
+            );
+            return res.status(201).send("Updated");
 
-        if (verifications.some((x) => x)) {
-          let payload = JSON.parse(verify.data as string);
-          log("Good verification", payload);
-
-          switch (payload.action) {
-            case "approve":
-              log("Approving thread");
-              await Thread.updateOne(
-                { "hash.value": payload.hash },
-                { approved: payload.approved }
-              );
-              res.status(201).send("Updated");
-              break;
-
-            case "replies":
-              log("Setting replies");
-              await Thread.updateOne(
-                { "hash.value": payload.hash },
-                { replies: payload.replies }
-              );
-              res.status(201).send("Updated");
-              break;
-
-            default:
-              log("Unknown directive");
-              res.status(402).send("Unknown directive");
-          }
-        } else {
-          log("Bad signatures")
-          res.status(401).send("Unauthorized signature")
+          default:
+            log("Unknown directive");
+            return res.status(402).send("Unknown directive");
         }
+      } else {
+        log("Bad signatures");
+        return res.status(401).send("Unauthorized signature");
       }
-      break;
     }
 
     default:
-      res.status(406).send("Method not allowed");
+      return res.status(406).send("Method not allowed");
   }
 };
 
