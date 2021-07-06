@@ -113,7 +113,7 @@ const AdminPage: React.FC = () => {
                     </Link>
                   </li>
                   <li>
-                  <Link href="/admin/pks">
+                  <Link href="/admin/publickeys">
                   <a>Manage public keys</a>
                   </Link>
                   </li>
