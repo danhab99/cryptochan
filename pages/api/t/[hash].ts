@@ -15,12 +15,13 @@ const ThreadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
     Thread.find({
       [req.query.replies ? "parenthash" : "hash.value"]: req.query
         .hash as string,
+      approved: true,
     })
       .skip(parseInt((req.query.skip as string) || "0"))
       .limit(Math.min(10, parseInt((req.query.take as string) || "10")))
   )
     .then((thread) => {
-      if (thread) {
+      if (thread?.length > 0) {
         log("Got thread");
         if (!req.query.replies) {
           immutable(req, res);
