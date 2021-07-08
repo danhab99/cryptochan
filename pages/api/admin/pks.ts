@@ -18,6 +18,7 @@ const AdminPublicKeyAPI = async (req: NextApiRequest, res: NextApiResponse) => {
       log("Getting public keys", page);
       let pks = await sanatizeDB(
         PublicKey.find({})
+          .sort({ _id: -1 })
           .skip(page * PAGE_COUNT)
           .limit(PAGE_COUNT)
       );

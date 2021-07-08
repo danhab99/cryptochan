@@ -18,6 +18,7 @@ const AdminThreadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
       log("Getting threads", page);
       let t = await sanatizeDB(
         Thread.find({})
+          .sort({ published: -1 })
           .skip(page * PAGE_COUNT)
           .limit(PAGE_COUNT)
       );
