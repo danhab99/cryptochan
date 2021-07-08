@@ -25,17 +25,42 @@ const AdminPublicKeyAPI = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.send(e);
     }
     case "post": {
+      log("Updating public key", req.body);
       let verifiedBody = await verifyMaster(req.body);
-      if (verifiedBody)
-      {
-        let directive = JSON.parse(verifiedBody as string);
+      if (verifiedBody) {
+        let payload = JSON.parse(verifiedBody as string);
 
-        await PublicKey.updateOne(
-          { keyid: directive?.pkid },
-          { approved: directive?.approved }
-        );
+        switch (payload.action) {
+          case "approve":
+            log("Approving public key");
+            await PublicKey.updateOne(
+              { keyid: payload?.keyid },
+              { approved: payload?.approve }
+            );
+            return res.status(201).send("Updated");
 
-        return res.status(201).send("Updated");
+          case "always approve":
+            log("Clearing public key for always approved");
+            await PublicKey.updateOne(
+              { keyid: payload?.keyid },
+              { "clearance.always_approved": payload?.approve }
+            );
+            return res.status(201).send("Updated");
+
+          case "master":
+            log("Setting public key as master");
+            await PublicKey.updateOne(
+              { keyid: payload?.keyid },
+              { "clearance.master": payload?.master }
+            );
+            return res.status(201).send("Updated");
+
+          default:
+            log("Unknown directive");
+            return res.status(402).send("Unknown directive");
+        }
+      } else {
+        return res.status(401).send("Unauthorized");
       }
     }
   }
