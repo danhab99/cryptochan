@@ -20,9 +20,9 @@ const AdminPage: React.FC = () => {
 
   useEffect(() => {
     if (window.sessionStorage.getItem("masterkey")) {
-      setStatus(STATUS.GOOD)
-      }
-      }, []);
+      setStatus(STATUS.GOOD);
+    }
+  }, []);
 
   const test = async () => {
     if (keyFile && password) {
@@ -74,10 +74,12 @@ const AdminPage: React.FC = () => {
       <Header prefix="Admin" />
       <Title newThreads={false} />
 
-      <h1 className="text-red-600 text-center font-bold">
-        WARNING!! This page is reserved for those who possess a valid master
-        key. If you are not an administrator please click off.
-      </h1>
+      {status === STATUS.BLANK ? (
+          <div>
+          <h1 className="text-red-600 text-center font-bold">
+          WARNING!! This page is reserved for those who possess a valid master
+          key. If you are not an administrator please click off.
+          </h1>
 
       <form className="centeredFlex">
         <table>
@@ -104,6 +106,9 @@ const AdminPage: React.FC = () => {
           </tbody>
         </table>
       </form>
+          </div>
+      ) : null}
+
 
       {(() => {
         switch (status) {
@@ -119,9 +124,9 @@ const AdminPage: React.FC = () => {
                     </Link>
                   </li>
                   <li>
-                  <Link href="/admin/publickeys">
-                  <a>Manage public keys</a>
-                  </Link>
+                    <Link href="/admin/publickeys">
+                      <a>Manage public keys</a>
+                    </Link>
                   </li>
                 </ul>
               </div>
