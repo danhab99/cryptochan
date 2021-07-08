@@ -25,10 +25,10 @@ const AdminPublicKey: React.FC = () => {
     })();
   }, [masterKey, page]);
 
-  const change = async (pkid: string, approved: boolean) => {
+  const change = async (pkid: string, action: string, payload: any) => {
     let signPayload = await openpgp.sign({
       message: await openpgp.createCleartextMessage({
-        text: stringify({ pkid, approved }),
+        text: stringify({ keyid: pkid, action, ...payload }),
       }),
       signingKeys: masterKey,
     });
@@ -63,6 +63,8 @@ const AdminPublicKey: React.FC = () => {
             <tr>
               <td>User ID</td>
               <td>Approved</td>
+              <td>Always Approved</td>
+              <td>Master</td>
               <td>Viable</td>
               <td>Key ID</td>
               <td>Signatore</td>
@@ -72,14 +74,43 @@ const AdminPublicKey: React.FC = () => {
             {publicKeys.map((pk, i) => (
               <tr key={`${i}`}>
                 <td className="whitespace-nowrap">{pk.owner.userID}</td>
-                <td className="flex flex-row justify-center">
-                  <input
-                    type="checkbox"
-                    defaultChecked={pk.approved}
-                    disabled={pk.revoked}
-                    onChange={(e) => change(pk.keyid, e.target.checked
-                    )}
-                  />
+                <td >
+                <div className="flex flex-row justify-center">
+                <input
+                type="checkbox"
+                defaultChecked={pk.approved}
+                disabled={pk.revoked}
+                onChange={(e) =>
+                change(pk.keyid, "approve", { approve: e.target.checked })
+                }
+                />
+                </div>
+                </td>
+                <td>
+                  <div className="flex flex-row justify-center">
+                    <input
+                      type="checkbox"
+                      defaultChecked={Boolean(pk?.clearance?.always_approved)}
+                      disabled={pk.revoked}
+                      onChange={(e) =>
+                        change(pk.keyid, "always approve", {
+                          approve: e.target.checked,
+                        })
+                      }
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div className="flex flex-row justify-center">
+                    <input
+                      type="checkbox"
+                      defaultChecked={Boolean(pk?.clearance?.master)}
+                      disabled={pk.revoked}
+                      onChange={(e) =>
+                        change(pk.keyid, "master", { master: e.target.checked })
+                      }
+                    />
+                  </div>
                 </td>
                 <td className={pk.revoked ? "text-revoked-500" : ""}>
                   {pk.revoked ? "revoked" : "in use"}
