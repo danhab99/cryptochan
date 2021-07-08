@@ -43,11 +43,11 @@ const AdminPublicKey: React.FC = () => {
 
   return (
     <div>
-      <Header prefix="Admin Threads" />
+      <Header prefix="Admin Public Keys" />
       <Title newThreads={false} />
 
       <header className="text-center">
-        <h2>Manage threads</h2>
+        <h2>Manage public keys</h2>
       </header>
 
       {page > 0 ? (
@@ -57,7 +57,7 @@ const AdminPublicKey: React.FC = () => {
 
       {loading ? <h3>Getting public keys...</h3> : null}
 
-      <div className="overflow-x-scroll">
+      <div className="phone:overflow-x-scroll">
         <table>
           <thead>
             <tr>

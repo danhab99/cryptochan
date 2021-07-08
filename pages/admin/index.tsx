@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Header } from "../../components/header";
 import Title from "../../components/title";
 import { LabeledInput } from "../../components/labeledinput";
@@ -17,6 +17,12 @@ const AdminPage: React.FC = () => {
   const [keyFile, setKeyFile] = useState<File>();
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<STATUS>(STATUS.BLANK);
+
+  useEffect(() => {
+    if (window.sessionStorage.getItem("masterkey")) {
+      setStatus(STATUS.GOOD)
+      }
+      }, []);
 
   const test = async () => {
     if (keyFile && password) {
