@@ -1,0 +1,24 @@
+label {
+  @apply text-xs px-1;
+}
+
+td {
+  @apply bg-background-600 text-white text-right border-background-400 border border-solid;
+}
+
+input,
+select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+,
+table {
+  display: inline-block;
+}
+
+@screen desktop {
+  input[type="submit"] {
+    width: 50%;
+  }
+}

@@ -1,0 +1,44 @@
+.entryCard {
+  @apply border-primary-400 border border-solid bg-background-300 mb-4 desktop:w-max;
+}
+
+.entryTitle {
+  @apply text-xs leading-none m-0;
+  /* display: inline-block; */
+  /* overflow-wrap: break-word; */
+  word-break: break-all;
+}
+
+.embedControl {
+  @apply text-xs leading-none m-0 text-primary-700 underline;
+}
+
+.embed {
+  @apply p-0 m-0;
+}
+
+@screen desktop {
+  .embed {
+    height: 10em !important;
+    width: auto !important;
+  }
+}
+
+@screen phone {
+  .embed {
+    @apply w-full;
+    height: auto;
+  }
+}
+
+.entryBody {
+  @apply text-black desktop:max-w-prose leading-none m-0;
+}
+
+.entryBody > p {
+  @apply text-sm;
+}
+
+.entryBody > * {
+  margin-block: 0.1em;
+}
