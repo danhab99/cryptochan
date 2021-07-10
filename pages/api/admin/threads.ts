@@ -32,26 +32,28 @@ const AdminThreadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
         let payload = JSON.parse(verifiedBody as string);
         log("Good verification", payload);
 
-        switch (payload.action) {
-          case "approve":
-            log("Approving thread");
-            await Thread.updateOne(
-              { "hash.value": payload.hash },
-              { approved: payload.approved }
-            );
+        if (payload.action && payload.hash) {
+          let update = async (content: any) => {
+            await Thread.updateOne({ "hash.value": payload.hash }, content);
             return res.status(201).send("Updated");
+          };
 
-          case "replies":
-            log("Setting replies");
-            await Thread.updateOne(
-              { "hash.value": payload.hash },
-              { replies: payload.replies }
-            );
-            return res.status(201).send("Updated");
+          switch (payload.action) {
+            case "approve":
+              log("Approving thread");
+              return update({ approved: payload.approved });
 
-          default:
-            log("Unknown directive");
-            return res.status(402).send("Unknown directive");
+            case "replies":
+              log("Setting replies");
+              return update({ replies: payload.replies });
+
+            default:
+              log("Unknown directive");
+              return res.status(402).send("Unknown directive");
+          }
+        } else {
+          log("Bad format", payload);
+          return res.status(400).send("Bad format");
         }
       } else {
         log("Bad signatures");
