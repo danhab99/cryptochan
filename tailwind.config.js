@@ -11,7 +11,7 @@ module.exports = {
       },
       colors: {
         background: colors.coolGray,
-        primary: colors.sky,
+        primary: colors.lightBlue,
         muted: colors.gray,
         validating: colors.yellow,
         invalid: colors.red,
@@ -24,10 +24,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  future: {
-    removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true,
-  },
-  purge: ["./src/components/**/*.ts*", "./pages/**/*.ts*"],
-  plugins: [require("tailwindcss"), require("precss"), require("autoprefixer")],
+  plugins: [],
 };
