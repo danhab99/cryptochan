@@ -12,13 +12,16 @@ select {
   box-sizing: border-box;
 }
 
-,
 table {
   display: inline-block;
 }
 
 @screen desktop {
   input[type="submit"] {
-    width: 50%;
+    width: 10em;
   }
+}
+
+form {
+  @apply flex flex-col items-center;
 }
