@@ -1,6 +1,6 @@
 import React from "react";
 import * as openpgp from "openpgp";
-import "../styles/styles.css";
+import "../styles/global.css";
 
 interface MyAppProps {
   Component: React.FC<any>;
