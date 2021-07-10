@@ -1,0 +1,135 @@
+@tailwind components;
+@tailwind utilities;
+
+.entryCard {
+  @apply border-primary-400 border border-solid bg-background-300 mb-4 desktop:w-max;
+}
+
+.entryTitle {
+  @apply text-xs leading-none m-0;
+  /* display: inline-block; */
+  /* overflow-wrap: break-word; */
+  word-break: break-all;
+}
+
+.embedControl {
+  @apply text-xs leading-none m-0 text-primary-700 underline;
+}
+
+.embed {
+  @apply p-0 m-0;
+}
+
+@screen desktop {
+  .embed {
+    height: 10em !important;
+    width: auto !important;
+  }
+}
+
+@screen phone {
+  .embed {
+    @apply w-full;
+    height: auto;
+  }
+}
+
+.entryBody {
+  @apply text-black desktop:max-w-prose leading-none m-0;
+}
+
+.entryBody > p {
+  @apply text-sm;
+}
+
+.entryBody > * {
+  margin-block: 0.1em;
+}
+
+body {
+  @apply bg-background-400 m-0 p-3 desktop:px-6;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+code {
+  @apply bg-primary-900 text-white pr-1 pl-1;
+}
+
+.centeredFlex {
+  @apply flex flex-row justify-center;
+}
+
+.replyBlock {
+  @apply pl-6;
+}
+
+.shortHash:not(:hover) {
+  @apply truncate;
+  max-width: 30ch;
+  display: block;
+}
+
+.sigValidator {
+  @apply font-mono font-bold;
+}
+
+.home {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-center;
+  }
+}
+
+label {
+  @apply text-xs px-1;
+}
+
+td {
+  @apply bg-background-600 text-white text-right border-background-400 border border-solid;
+}
+
+input:not([type="checkbox"]),
+select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+table {
+  display: inline-block;
+}
+
+@screen desktop {
+  input[type="submit"] {
+    width: 50%;
+  }
+}
+
+header h1,
+.newthread {
+  @apply text-center;
+}
+
+header {
+  @apply mb-16;
+}
+
+.categories {
+  @apply flex flex-row flex-wrap;
+
+  a,
+  p {
+    @apply leading-none m-0 pr-1 font-mono text-xs text-primary-800 no-underline;
+  }
+
+  a {
+    @apply mr-1 ml-1;
+  }
+
+  a:hover {
+    @apply text-primary-600;
+  }
+}
