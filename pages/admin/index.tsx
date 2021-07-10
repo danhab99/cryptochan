@@ -75,40 +75,43 @@ const AdminPage: React.FC = () => {
       <Title newThreads={false} />
 
       {status === STATUS.BLANK ? (
-          <div>
+        <div>
           <h1 className="text-red-600 text-center font-bold">
-          WARNING!! This page is reserved for those who possess a valid master
-          key. If you are not an administrator please click off.
+            WARNING!! This page is reserved for those who possess a valid master
+            key. If you are not an administrator please click off.
           </h1>
 
-      <form className="centeredFlex">
-        <table>
-          <tbody>
-            <LabeledInput
-              type="file"
-              accept="application/pgp"
-              label="master key"
-              onChange={(e) => setKeyFile(e.target.files?.[0])}
-            />
-            <LabeledInput
-              type="password"
-              label="password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
+          <form className="centeredFlex">
+            <table>
+              <tbody>
+                <LabeledInput
+                  type="file"
+                  accept="application/pgp"
+                  label="master key"
+                  onChange={(e) => setKeyFile(e.target.files?.[0])}
+                />
+                <LabeledInput
+                  type="password"
+                  label="password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
 
-            <tr>
-              <td colSpan={2}>
-                <button type="button" className="w-full" onClick={() => test()}>
-                  {loading ? "Decrypting..." : "Decrypt"}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </form>
-          </div>
+                <tr>
+                  <td colSpan={2}>
+                    <button
+                      type="button"
+                      className="w-full"
+                      onClick={() => test()}
+                    >
+                      {loading ? "Decrypting..." : "Decrypt"}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
       ) : null}
-
 
       {(() => {
         switch (status) {

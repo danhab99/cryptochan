@@ -70,11 +70,14 @@ const UploadAPI = async (req: NextApiRequest, res: NextApiResponse) => {
         let exists = await Thread.exists({
           "hash.value": thread.parenthash,
           approved: true,
-          replies: true
+          replies: true,
         });
 
         if (!exists) {
-          log("Thread replying to non existing or banned thread", thread.parenthash);
+          log(
+            "Thread replying to non existing or banned thread",
+            thread.parenthash
+          );
           res
             .status(406)
             .json(

@@ -112,9 +112,9 @@ Register a new public key
 
 Webform:
 
-| field | expected value |
-|---|---|
-| newkey | The armored public key up for registration |
+| field     | expected value                                                                                                                 |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| newkey    | The armored public key up for registration                                                                                     |
 | signature | (OPTIONAL) If you wish to associate your new key with an existing key, include a detatched signature of the armored public key |
 
 ## `POST /api/upload`
@@ -123,9 +123,9 @@ Uploads a new thread. See [signing and hashing](#signing-and-hashing) for more i
 
 Webform:
 
-| field | expected value |
-|---|---|
-| thread | a JSON object representing a thread. [[schema]](schemas/Thread.ts#L10) |
+| field                   | expected value                                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| thread                  | a JSON object representing a thread. [[schema]](schemas/Thread.ts#L10)                                                          |
 | embeds (file, multiple) | include the embedded files you wish to associate with this thread, the file name should be the hash digest of the file's binary |
 
 ## `POST /api/revoke`
@@ -134,10 +134,9 @@ Announce to the cryptochan that this public key is revoked
 
 Webform:
 
-
-| field | expected value |
-|---|---|
-| public key| The new public key after it's been revoked |
+| field      | expected value                             |
+| ---------- | ------------------------------------------ |
+| public key | The new public key after it's been revoked |
 
 # Signing and hashing
 
