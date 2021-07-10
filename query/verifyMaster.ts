@@ -1,7 +1,7 @@
 import { PublicKey, IPublicKey } from "../schemas/PublicKey";
 import * as openpgp from "openpgp";
 
-const VerifyMaster = async (armored: string):Promise< string | boolean> => {
+const VerifyMaster = async (armored: string): Promise<string | boolean> => {
   let mks = await PublicKey.find({ "clearance.master": true });
   if (mks) {
     let verify = await openpgp.verify({

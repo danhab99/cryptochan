@@ -74,17 +74,19 @@ const AdminPublicKey: React.FC = () => {
             {publicKeys.map((pk, i) => (
               <tr key={`${i}`}>
                 <td className="whitespace-nowrap">{pk.owner.userID}</td>
-                <td >
-                <div className="flex flex-row justify-center">
-                <input
-                type="checkbox"
-                defaultChecked={pk.approved}
-                disabled={pk.revoked}
-                onChange={(e) =>
-                change(pk.keyid, "approve", { approve: e.target.checked })
-                }
-                />
-                </div>
+                <td>
+                  <div className="flex flex-row justify-center">
+                    <input
+                      type="checkbox"
+                      defaultChecked={pk.approved}
+                      disabled={pk.revoked}
+                      onChange={(e) =>
+                        change(pk.keyid, "approve", {
+                          approve: e.target.checked,
+                        })
+                      }
+                    />
+                  </div>
                 </td>
                 <td>
                   <div className="flex flex-row justify-center">

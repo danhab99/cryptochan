@@ -31,37 +31,36 @@ const AdminPublicKeyAPI = async (req: NextApiRequest, res: NextApiResponse) => {
       if (verifiedBody) {
         let payload = JSON.parse(verifiedBody as string);
 
-        switch (payload.action) {
-          case "approve":
-            log("Approving public key");
-            await PublicKey.updateOne(
-              { keyid: payload?.keyid },
-              { approved: payload?.approve }
-            );
+        if (payload.action && payload.keyid) {
+          let update = async (content: any) => {
+            await PublicKey.updateOne({ keyid: payload.keyid }, content);
             return res.status(201).send("Updated");
+          };
 
-          case "always approve":
-            log("Clearing public key for always approved");
-            await PublicKey.updateOne(
-              { keyid: payload?.keyid },
-              { "clearance.always_approved": payload?.approve }
-            );
-            return res.status(201).send("Updated");
+          switch (payload.action) {
+            case "approve":
+              log("Approving public key");
+              return update({ approved: payload?.approve });
 
-          case "master":
-            log("Setting public key as master");
-            await PublicKey.updateOne(
-              { keyid: payload?.keyid },
-              { "clearance.master": payload?.master }
-            );
-            return res.status(201).send("Updated");
+            case "always approve":
+              log("Clearing public key for always approved");
+              return update({ "clearance.always_approved": payload?.approve });
 
-          default:
-            log("Unknown directive");
-            return res.status(402).send("Unknown directive");
+            case "master":
+              log("Setting public key as master");
+              return update({ "clearance.master": payload?.master });
+
+            default:
+              log("Unknown directive");
+              return res.status(400).send("Unknown directive");
+          }
+        } else {
+          log("Bad format", payload);
+          return res.status(400).send("Bad format");
         }
       } else {
-        return res.status(401).send("Unauthorized");
+        log("Unauthorized");
+        return res.status(403).send("Unauthorized");
       }
     }
   }

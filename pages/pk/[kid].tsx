@@ -27,7 +27,11 @@ const PKPage: React.FC<PKPageProps> = (props) => {
 
       <h2 className={`phone:text-center`}>
         {props.publicKey.owner.name} {"("}
-        <a href={`mailto:${props.publicKey.owner.email}`} target="_blank" rel="noreferrer">
+        <a
+          href={`mailto:${props.publicKey.owner.email}`}
+          target="_blank"
+          rel="noreferrer"
+        >
           {props.publicKey.owner.email}
         </a>
         {")"}

@@ -1,6 +1,6 @@
 import React from "react";
-import * as openpgp from "openpgp"
-import "../styles/global.css";
+import * as openpgp from "openpgp";
+import "../styles/styles.scss";
 
 interface MyAppProps {
   Component: React.FC<any>;
@@ -8,7 +8,7 @@ interface MyAppProps {
 }
 
 function MyApp({ Component, pageProps }: MyAppProps) {
-  openpgp.config.ignoreTime = true
+  openpgp.config.ignoreTime = true;
   return <Component {...pageProps} />;
 }
 

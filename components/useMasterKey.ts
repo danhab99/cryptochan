@@ -4,7 +4,7 @@ import * as openpgp from "openpgp";
 
 const useMasterKey = (): [
   openpgp.PrivateKey | undefined,
-  (armored: string) => Promise<openpgp.DecryptMessageResult & {data: string}>
+  (armored: string) => Promise<openpgp.DecryptMessageResult & { data: string }>
 ] => {
   const [mk, setMK] = useState<openpgp.PrivateKey>();
   const router = useRouter();
