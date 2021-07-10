@@ -104,7 +104,7 @@ table {
 
 @screen desktop {
   input[type="submit"] {
-    width: 50%;
+    width: 10em;
   }
 }
 
@@ -132,4 +132,8 @@ header {
   a:hover {
     @apply text-primary-600;
   }
+}
+
+form {
+  @apply flex flex-col items-center;
 }
