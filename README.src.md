@@ -58,6 +58,23 @@ export const Policy: IPolicy = {
 };
 ```
 
+# Deploy
+
+## docker-compose
+
+1. Clone the repo
+2. Configure the environment. See [.env.local](#envlocal)
+3. Run `docker-compos up --build`
+
+## Manual build
+
+1. Clone the repo
+2. Configure the environment. See [.env.local](#envlocal)
+3. Run `npm run build`
+4. Run `npm start`
+
+Port 5000 will open to http
+
 # API
 
 ## `GET /api/policy`

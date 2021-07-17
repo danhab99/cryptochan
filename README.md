@@ -10,6 +10,9 @@ Cryptochan is a confederated blockchain based image board that supports cryptogr
 - [Environments and Policies](#environments-and-policies)
     - [.env.local](#envlocal)
     - [policy.ts](#policyts)
+- [Deploy](#deploy)
+    - [docker-compose](#docker-compose)
+    - [Manual build](#manual-build)
 - [API](#api)
     - [`GET /api/policy`](#get-apipolicy)
     - [`GET /api/e/[hash]`](#get-apiehash)
@@ -85,6 +88,23 @@ export const Policy: IPolicy = {
 };
 ```
 
+# Deploy
+
+## docker-compose
+
+1. Clone the repo
+2. Configure the environment. See [.env.local](#envlocal)
+3. Run `docker-compos up --build`
+
+## Manual build
+
+1. Clone the repo
+2. Configure the environment. See [.env.local](#envlocal)
+3. Run `npm run build`
+4. Run `npm start`
+
+Port 5000 will open to http
+
 # API
 
 ## `GET /api/policy`
@@ -145,7 +165,7 @@ Webform:
 
 ## `GET /api/admin`
 
-Returns a PGP message containing `{success: true}` encrypted for all master public keys. Used to test if a public/secret key pair is a master
+Returns a PGP message containing `{success: true}` encrypted for all master public keys. Used to test if a public/secret key pair is a master.
 
 ## `GET /api/admin/threads&page=[number]`
 
