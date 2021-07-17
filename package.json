@@ -11,7 +11,10 @@
     "toc": "md-toc-filter README.src.md > README.md",
     "prestart": "npm run env"
   },
-  "pre-commit": ["pretty", "toc"],
+  "pre-commit": [
+    "pretty",
+    "toc"
+  ],
   "dependencies": {
     "babel-plugin-superjson-next": "^0.3.0",
     "base64-arraybuffer": "^0.2.0",

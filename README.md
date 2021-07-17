@@ -20,6 +20,11 @@ Cryptochan is a confederated blockchain based image board that supports cryptogr
     - [`POST /api/regkey`](#post-apiregkey)
     - [`POST /api/upload`](#post-apiupload)
     - [`POST /api/revoke`](#post-apirevoke)
+    - [`GET /api/admin`](#get-apiadmin)
+    - [`GET /api/admin/threads&page=[number]`](#get-apiadminthreadspagenumber)
+    - [`GET /api/admin/pks&page=[number]`](#get-apiadminpkspagenumber)
+    - [`POST /api/admin/threads`](#post-apiadminthreads)
+    - [`POST /api/admin/pks`](#post-apiadminpks)
 - [Signing and hashing](#signing-and-hashing)
     - [Hashing files](#hashing-files)
     - [Hashing a thread](#hashing-a-thread)
@@ -27,7 +32,6 @@ Cryptochan is a confederated blockchain based image board that supports cryptogr
     - [Verifying](#verifying)
 - [NEXT.JS](#nextjs)
     - [Getting Started](#getting-started)
-- [or](#or)
     - [Learn More](#learn-more)
     - [Deploy on Vercel](#deploy-on-vercel)
 
@@ -139,6 +143,70 @@ Webform:
 | ---------- | ------------------------------------------ |
 | public key | The new public key after it's been revoked |
 
+## `GET /api/admin`
+
+Returns a PGP message containing `{success: true}` encrypted for all master public keys. Used to test if a public/secret key pair is a master
+
+## `GET /api/admin/threads&page=[number]`
+
+Returns a PGP message containing all threads encrypted for masters
+
+## `GET /api/admin/pks&page=[number]`
+
+Returns a PGP message containing all public keys encrypted for masters
+
+## `POST /api/admin/threads`
+
+Edits an existing thread. Body is a JSON object that must be signed by a master secret key.
+
+Payloads:
+
+```json
+{
+  action: "approve",
+  hash: string, // the hash of an existing thread
+  approved: boolean // is the thread approved
+}
+```
+
+```json
+{
+  action: "replies",
+  hash: string, // the hash of an existing thread
+  replies: boolean // can the thread receive replies
+}
+```
+
+## `POST /api/admin/pks`
+
+Edits an existing public key. Body is a JSON object that must be signed by a master secret key.
+
+Payloads:
+
+```json
+{
+  action: "aprove",
+  keyid: string, // the keyid of the public key
+  approved: boolean // is the thread approved
+}
+```
+
+```json
+{
+  action: "aprove",
+  keyid: string, // the keyid of the public key
+  "always approve": boolean // should threads signed by this key be automatically approved
+}
+```
+
+```json
+{
+  action: "aprove",
+  keyid: string, // the keyid of the public key
+  master: boolean // is this key a master
+}
+```
+
 # Signing and hashing
 
 Cryptochan follows specific guidelines for hashing, signing and verifying threads. For detail see the [crypto.ts](crypto.ts) file for specific implementations.
@@ -169,7 +237,7 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
+
 yarn dev
 ```
 
