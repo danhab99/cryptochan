@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "env": "tsc ./scripts/generate_policy.ts --outDir g && node ./g/scripts/generate_policy.js && rm -r g",
-    "pretty": "prettier --write .",
+    "pretty": "prettier --write $(git diff --name-only)",
     "toc": "md-toc-filter README.src.md > README.md",
     "prestart": "npm run env"
   },
