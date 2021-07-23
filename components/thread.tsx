@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { IThreadSimple } from "../schemas/Thread";
 import SigValidator from "./sigvalidator";
 import ThreadForm from "./threadform";
@@ -106,12 +107,14 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
         <p className="entryTitle">
           <span className="font-bold">{entry.author.name}</span>{" "}
           <span>in {entry.category} </span>
-          <a href={`/pk/${entry.author.publickey}`}>
-            <span>
-              (pk:
-              {entry.author.publickey})
-            </span>
-          </a>{" "}
+          <Link href={`/pk/${entry.author.publickey}`}>
+            <a>
+              <span>
+                (pk:
+                {entry.author.publickey})
+              </span>
+            </a>
+          </Link>{" "}
           {new Date(entry.published).toISOString()}
           {hasCrypto ? <SigValidator thread={entry} /> : null}
           <br />
@@ -122,9 +125,9 @@ const ThreadComponent: React.FC<ThreadProps> = ({ entry }) => {
         </p>
 
         <div className="flex flex-row mt-2">
-          <a className="embedControl" href={`/t/${entry.hash.value}`}>
-            [View Thread]
-          </a>
+          <Link href={`/t/${entry.hash.value}`}>
+            <a className="embedControl">[View Thread]</a>
+          </Link>
           &nbsp;
           {hasCrypto && entry.replies ? (
             <span

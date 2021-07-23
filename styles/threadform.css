@@ -6,7 +6,7 @@ td {
   @apply bg-background-600 text-white text-right border-background-400 border border-solid;
 }
 
-input,
+input:not([type="checkbox"]),
 select {
   width: 100%;
   box-sizing: border-box;
