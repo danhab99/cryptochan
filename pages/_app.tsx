@@ -7,7 +7,7 @@ import "../styles/global.css";
 const progress = new ProgressBar({
   size: 2,
   className: "bar-of-progress",
-  delay: 100,
+  delay: 10,
 });
 
 Router.events.on("routeChangeStart", progress.start);
