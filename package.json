@@ -16,6 +16,7 @@
     "toc"
   ],
   "dependencies": {
+    "@badrap/bar-of-progress": "^0.1.2",
     "babel-plugin-superjson-next": "^0.3.0",
     "base64-arraybuffer": "^0.2.0",
     "busboy": "^0.3.1",
