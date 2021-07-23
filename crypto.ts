@@ -6,6 +6,8 @@ import _ from "lodash";
 import stringify from "json-stable-stringify";
 import * as node_crypto from "crypto";
 
+type PartialThread = Partial<IThreadSimple>;
+
 export const HashArrayBuffer = async (data: ArrayBuffer): Promise<string> => {
   let hashab: Promise<ArrayBuffer>;
   if (typeof window === "undefined") {
@@ -26,17 +28,7 @@ export const HashArrayBuffer = async (data: ArrayBuffer): Promise<string> => {
     .join("");
 };
 
-const HashThread = async (entry: Partial<IThreadSimple>) => {
-  console.log("Hashing thread", entry);
-  const serialized = stringify(entry);
-  console.log("Hashing input", serialized);
-  let hash = await HashArrayBuffer(decode(serialized));
-  console.log("Hash", hash);
-
-  return hash;
-};
-
-const sanatizeThread = (thread: Partial<IThreadSimple>) => {
+const sanatizeThread = (thread: PartialThread) => {
   let cleanThread: any = _.cloneDeep(thread);
   delete cleanThread.hash;
   delete cleanThread.signature;
@@ -47,8 +39,18 @@ const sanatizeThread = (thread: Partial<IThreadSimple>) => {
   return cleanThread;
 };
 
-const stringifyThread = (thread: Partial<IThreadSimple>) =>
+const stringifyThread = (thread: PartialThread) =>
   stringify(sanatizeThread(thread));
+
+const HashThread = async (entry: PartialThread) => {
+  console.log("Hashing thread", entry);
+  const serialized = stringifyThread(entry);
+  console.log("Hashing input", serialized);
+  const hash = await HashArrayBuffer(decode(serialized));
+  console.log("Hash", hash);
+
+  return hash;
+};
 
 export interface ThreadSignature {
   hash: string;
@@ -59,7 +61,7 @@ export interface ThreadSignature {
 export const SignThread = async (
   armoredKey: string,
   passphrase: string,
-  thread: Partial<IThreadSimple>
+  thread: PartialThread
 ): Promise<ThreadSignature> => {
   console.log("Signing Thread", armoredKey, thread);
 
@@ -100,7 +102,7 @@ export const SignThread = async (
 export const VerifyThread = async (
   armoredKey: string,
   signature: string | openpgp.Signature,
-  thread: Partial<IThreadSimple>
+  thread: PartialThread
 ): Promise<boolean> => {
   console.log("Verifying Thread", armoredKey, signature, thread);
   let publicKey = openpgp.readKey({

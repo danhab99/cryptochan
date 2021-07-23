@@ -6,37 +6,7 @@ Cryptochan is a confederated blockchain based image board that supports cryptogr
 
 [Demo site](https://cryptochan.vercel.app/)
 
-- [Cryptochan](#cryptochan)
-- [Environments and Policies](#environments-and-policies)
-    - [.env.local](#envlocal)
-    - [policy.ts](#policyts)
-- [Deploy](#deploy)
-    - [docker-compose](#docker-compose)
-    - [Manual build](#manual-build)
-- [API](#api)
-    - [`GET /api/policy`](#get-apipolicy)
-    - [`GET /api/e/[hash]`](#get-apiehash)
-    - [`GET /api/c/[cat]?page=[number]`](#get-apiccatpagenumber)
-    - [`GET /api/pk/[kid]`](#get-apipkkid)
-    - [`GET /api/pk/[kid]/t?page=[number]`](#get-apipkkidtpagenumber)
-    - [`GET /api/t/[hash]?page=[number]&replies=[true|false]`](#get-apithashpagenumberrepliestruefalse)
-    - [`POST /api/regkey`](#post-apiregkey)
-    - [`POST /api/upload`](#post-apiupload)
-    - [`POST /api/revoke`](#post-apirevoke)
-    - [`GET /api/admin`](#get-apiadmin)
-    - [`GET /api/admin/threads&page=[number]`](#get-apiadminthreadspagenumber)
-    - [`GET /api/admin/pks&page=[number]`](#get-apiadminpkspagenumber)
-    - [`POST /api/admin/threads`](#post-apiadminthreads)
-    - [`POST /api/admin/pks`](#post-apiadminpks)
-- [Signing and hashing](#signing-and-hashing)
-    - [Hashing files](#hashing-files)
-    - [Hashing a thread](#hashing-a-thread)
-    - [Signing a thread](#signing-a-thread)
-    - [Verifying](#verifying)
-- [NEXT.JS](#nextjs)
-    - [Getting Started](#getting-started)
-    - [Learn More](#learn-more)
-    - [Deploy on Vercel](#deploy-on-vercel)
+@@TOC@@
 
 # Environments and Policies
 
